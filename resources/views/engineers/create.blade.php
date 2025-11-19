@@ -347,6 +347,107 @@
         font-weight: 600;
         color: #0C4079;
     }
+
+@media (max-width: 992px) {
+
+    .wizard-header {
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .wizard-header::before {
+        display: none;
+    }
+
+    .wizard-step {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        justify-content: flex-start;
+        text-align: right;
+    }
+
+    .step-circle {
+        margin-bottom: 0;
+    }
+
+    .wizard-container {
+        padding: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .image-upload {
+        padding: 20px 10px;
+    }
+
+    .image-preview-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .wizard-actions {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .btn-wizard {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .step-title {
+        font-size: 13px;
+    }
+
+    .wizard-container {
+        padding: 15px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .form-control {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+
+    .gender-section,
+    .contact-section {
+        padding: 15px;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .attachment-item {
+        padding: 12px;
+    }
+
+    .attachment-item-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}
+
 </style>
 @endpush
 

@@ -198,12 +198,8 @@
         background: #d4edda;
         color: #155724;
     }
-    /* ============================
-   RESPONSIVE DESIGN
-=============================== */
-
-/* الشاشات من 992px وأقل (تابلت وجوال كبير) */
-@media (max-width: 992px) {
+    
+    @media (max-width: 992px) {
 
     .table-header {
         flex-direction: column;
@@ -240,7 +236,6 @@
     }
 }
 
-/* الشاشات من 768px وأقل (جوال متوسط) */
 @media (max-width: 768px) {
 
     .page-title {
@@ -253,7 +248,7 @@
     }
 
     .custom-table thead {
-        display: none; /* إخفاء رأس الجدول في الجوال */
+        display: none;
     }
 
     .custom-table tbody tr {
@@ -287,7 +282,6 @@
     }
 }
 
-/* الشاشات من 480px وأقل (جوال صغير جداً) */
 @media (max-width: 480px) {
 
     .btn-add {
