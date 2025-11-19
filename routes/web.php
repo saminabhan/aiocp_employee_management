@@ -20,14 +20,14 @@ Route::get('/dashboard', function () {
     return view('main.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('constants', ConstantController::class);
+Route::resource('constants', ConstantController::class)->middleware(['auth', 'verified']);
 
     
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 Route::prefix('engineers')->name('engineers.')->group(function () {
     Route::get('/', [EngineerController::class, 'index'])->name('index');
@@ -39,6 +39,6 @@ Route::prefix('engineers')->name('engineers.')->group(function () {
     Route::delete('/{engineer}', [EngineerController::class, 'destroy'])->name('destroy');
     
     Route::get('/cities/{governorate}', [EngineerController::class, 'getCities'])->name('cities');
-});
+})->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';

@@ -25,13 +25,12 @@ class EngineerController extends Controller
 
        public function create()
     {
-        $genders = Constant::childrenOfId(4)->get();
-        $maritalStatuses = Constant::childrenOfId(7)->get();
-        $governorates = Constant::childrenOfId(39)->get();
-        $currencies = Constant::childrenOfId(49)->get();
+        $genders = Constant::childrenOfId(1)->get();
+        $maritalStatuses = Constant::childrenOfId(4)->get();
+        $governorates = Constant::childrenOfId(14)->get();
+        $currencies = Constant::childrenOfId(36)->get();
         
-        // جلب أنواع المرفقات من الثوابت - غير الرقم حسب جدول الثوابت عندك
-        $attachmentTypes = Constant::childrenOfId(36)->get(); // ضع رقم الـ Parent ID لأنواع المرفقات
+        $attachmentTypes = Constant::childrenOfId(9)->get();
 
         return view('engineers.create', compact(
             'genders',
@@ -124,11 +123,9 @@ class EngineerController extends Controller
 ]);
 
 
-        // Handle base64 image
         if ($request->filled('personal_image')) {
             $imageData = $request->personal_image;
             
-            // Remove data:image/...;base64, prefix if exists
             if (strpos($imageData, 'data:image') !== false) {
                 $imageData = substr($imageData, strpos($imageData, ',') + 1);
             }
@@ -141,10 +138,8 @@ class EngineerController extends Controller
             $validated['personal_image'] = $path;
         }
 
-        // Create engineer
         $engineer = Engineer::create($validated);
 
-        // Handle attachments
         if ($request->has('attachments')) {
             foreach ($request->attachments as $attachment) {
                 if (isset($attachment['file'])) {
@@ -191,7 +186,6 @@ class EngineerController extends Controller
         $governorates = Constant::where('type', 'governorate')->where('is_active', true)->get();
         $currencies = Constant::where('type', 'currency')->where('is_active', true)->get();
         
-        // جلب المدن الخاصة بالمحافظات المختارة
         $homeCities = Constant::where('type', 'city')
             ->where('parent_id', $engineer->home_governorate_id)
             ->where('is_active', true)
@@ -270,7 +264,6 @@ class EngineerController extends Controller
 
     public function destroy(Engineer $engineer)
     {
-        // حذف الصورة الشخصية
         if ($engineer->personal_image) {
             Storage::disk('public')->delete($engineer->personal_image);
         }
