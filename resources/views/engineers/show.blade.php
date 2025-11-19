@@ -178,7 +178,10 @@
             <form action="{{ route('engineers.destroy', $engineer) }}" method="POST" style="display: inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذا المهندس؟')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn-profile-action" title="حذف">
+                <button type="submit" class="btn-profile-action"style="
+                        pointer-events: none;
+                        opacity: 0.5;
+                        cursor: not-allowed;" title="حذف">
                     <i class="fas fa-trash"></i>
                 </button>
             </form>

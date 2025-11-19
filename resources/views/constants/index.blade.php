@@ -104,7 +104,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             <form action="{{ route('constants.destroy', $parent->id) }}" method="POST" style="display:inline-block">
                                             @csrf
                                             @method('DELETE')
-                                             <button class="btn btn-sm text-danger" style="border: none; background: none;">
+                                             <button class="btn btn-sm text-danger" style="
+                        pointer-events: none;
+                        opacity: 0.5;
+                        cursor: not-allowed;" style="border: none; background: none;">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
