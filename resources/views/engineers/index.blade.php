@@ -198,6 +198,113 @@
         background: #d4edda;
         color: #155724;
     }
+    /* ============================
+   RESPONSIVE DESIGN
+=============================== */
+
+/* الشاشات من 992px وأقل (تابلت وجوال كبير) */
+@media (max-width: 992px) {
+
+    .table-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .btn-add {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .engineer-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .engineer-details h6 {
+        font-size: 13px;
+    }
+
+    .engineer-details p {
+        font-size: 11px;
+    }
+}
+
+/* الشاشات من 768px وأقل (جوال متوسط) */
+@media (max-width: 768px) {
+
+    .page-title {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .page-header {
+        text-align: center;
+    }
+
+    .custom-table thead {
+        display: none; /* إخفاء رأس الجدول في الجوال */
+    }
+
+    .custom-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .custom-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 5px;
+        border-bottom: 1px solid #f3f3f3;
+    }
+
+    .custom-table tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .custom-table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #0C4079;
+    }
+
+    .action-btns {
+        justify-content: flex-start;
+    }
+}
+
+/* الشاشات من 480px وأقل (جوال صغير جداً) */
+@media (max-width: 480px) {
+
+    .btn-add {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .engineer-avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    .engineer-details h6 {
+        font-size: 12px;
+    }
+}
+
 </style>
 @endpush
 
@@ -244,8 +351,8 @@
         <tbody>
             @forelse($engineers as $engineer)
             <tr>
-                <td>{{ $loop->iteration + ($engineers->currentPage() - 1) * $engineers->perPage() }}</td>
-                <td>
+                <td data-label="#">{{ $loop->iteration + ($engineers->currentPage() - 1) * $engineers->perPage() }}</td>
+                <td data-label="المهندس">
                     <div class="engineer-info">
                         @if($engineer->personal_image)
                             <img src="{{ asset('storage/' . $engineer->personal_image) }}" alt="{{ $engineer->full_name }}" class="engineer-avatar">
@@ -258,16 +365,16 @@
                         </div>
                     </div>
                 </td>
-                <td>{{ $engineer->national_id }}</td>
-                <td>{{ $engineer->mobile_1 }}</td>
-                <td>{{ $engineer->homeGovernorate->name ?? 'غير محدد' }}</td>
-                <td>{{ $engineer->specialization ?? 'غير محدد' }}</td>
-                <td>
+                <td data-label="رقم الهوية">{{ $engineer->national_id }}</td>
+                <td data-label="الجوال">{{ $engineer->mobile_1 }}</td>
+                <td data-label="المحافظة">{{ $engineer->homeGovernorate->name ?? 'غير محدد' }}</td>
+                <td data-label="التخصص">{{ $engineer->specialization ?? 'غير محدد' }}</td>
+                <td data-label="سنوات الخبرة">
                     <span class="badge-status badge-active">
                         {{ $engineer->experience_years }} سنة
                     </span>
                 </td>
-                <td>
+                <td data-label="الإجراءات">
                     <div class="action-btns">
                         <a href="{{ route('engineers.show', $engineer) }}" class="btn-action btn-view" title="عرض">
                             <i class="fas fa-eye"></i>
