@@ -1,0 +1,70 @@
+        .login-card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .login-card img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .login-card h1 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.75rem;
+            width: 100%;
+        }
+
+        .alert {
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-custom {
+            background-color: #4162AE;
+            color: #ffffff;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.75rem;
+            width: 100%;
+        }
+
+            .btn-custom:hover,
+            .btn-custom:focus,
+            .btn-custom:active,
+            .btn-custom:focus-visible {
+                background-color: #797979;
+                color: #ffffff;
+                box-shadow: none;
+            }
+
+            .small, small {
+                font-size: .675em;
+            }
+            
