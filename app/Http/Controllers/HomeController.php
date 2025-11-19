@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Engineer;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+       public function index()
     {
-        return view('main.index');
+        $engineer_count = Engineer::count();
+        return view('main.index', compact('engineer_count'));
     }
-    public function login()
-    {
-        return view('auth.login');
-    }
+
 }

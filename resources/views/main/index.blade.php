@@ -7,7 +7,7 @@
         <div class="stat-card">
             <div class="stat-info">
                 <h3>إجمالي المهندسين</h3>
-                <p>45 مهندس/ة</p>
+                <p>{{ $engineer_count }} مهندس/ة</p>
             </div>
             <div class="stat-icon bg-blue">
                 <i class="fas fa-user-friends"></i>
