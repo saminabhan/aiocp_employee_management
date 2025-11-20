@@ -42,18 +42,18 @@
                         <div class="dropdown-user-name">{{ Auth::user()->name }}</div>
                         <div class="dropdown-user-email">{{ Auth::user()->email ?? Auth::user()->username }}</div>
                     </div>
-                    <a href="#" class="dropdown-item-custom">
+                    <a href="{{ route('profile.index') }}" class="dropdown-item-custom">
                         <i class="fas fa-user"></i>
                         <span>الملف الشخصي</span>
                     </a>
-                    <a href="#" class="dropdown-item-custom">
+                    <a href="{{ route('profile.edit') }}" class="dropdown-item-custom">
                         <i class="fas fa-cog"></i>
                         <span>إعدادات الحساب</span>
                     </a>
-                    <a href="#" class="dropdown-item-custom">
+                    <!-- <a href="#" class="dropdown-item-custom">
                         <i class="fas fa-question-circle"></i>
                         <span>المساعدة</span>
-                    </a>
+                    </a> -->
                     <div class="dropdown-divider"></div>
                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -86,20 +86,26 @@
         </div>
 
         <nav class="sidebar-nav">
+             @if(user_can('dashboard.view'))
              <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-th-large"></i>
                 <span>لوحة التحكم</span>
             </a>
+            @endif
 
+             @if(user_can('engineers.view'))
             <a href="{{ route('engineers.index') }}" class="nav-item {{ request()->routeIs('engineers.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-users"></i>
                 <span>المهندسين</span>
             </a>
+            @endif
+
+             @if(user_can('constants.view'))
             <a href="{{ route('constants.index') }}" class="nav-item {{ request()->routeIs('constants.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-sliders-h"></i>
                 <span>إدارة الثوابت</span>
             </a>
-
+            @endif
 
             <div class="nav-item">
                 <i class="fas fa-chart-bar"></i>
@@ -122,19 +128,22 @@
 
             <div class="sidebar-divider"></div>
 
-            <a href="#" class="nav-item" style="text-decoration: none;">
+            @if(user_can('users.view'))
+           <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-user-shield"></i>
                 <span>إدارة مستخدمين النظام</span>
             </a>
+            @endif
 
-            <div class="nav-item">
+             <a href="{{ route('profile.edit') }}" class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-cog"></i>
                 <span>إعدادات الحساب</span>
-            </div>
-            <div class="nav-item">
+            </a>
+
+            <!-- <div class="nav-item">
                 <i class="fas fa-question-circle"></i>
                 <span>المساعدة</span>
-            </div>
+            </div> -->
         </nav>
     </aside>
         <main class="main-content">

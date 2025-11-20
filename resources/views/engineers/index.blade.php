@@ -323,10 +323,12 @@
             <input type="text" id="searchInput" placeholder="بحث عن مهندس...">
             <i class="fas fa-search"></i>
         </div>
+        @if(user_can('engineers.create'))
         <a href="{{ route('engineers.create') }}" class="btn-add">
             <i class="fas fa-plus"></i>
             إضافة مهندس جديد
         </a>
+        @endif
     </div>
 
     <table class="custom-table">
@@ -370,15 +372,22 @@
                 </td>
                 <td data-label="الإجراءات">
                     <div class="action-btns">
+                        @if(user_can('engineers.view'))
                         <a href="{{ route('engineers.show', $engineer) }}" class="btn-action btn-view" title="عرض">
                             <i class="fas fa-eye"></i>
                         </a>
+                        @endif
+
+                         @if(user_can('engineers.edit'))
                         <a href="{{ route('engineers.edit', $engineer) }}" class="btn-action btn-edit" style="
                         pointer-events: none;
                         opacity: 0.5;
                         cursor: not-allowed;" title="تعديل">
                             <i class="fas fa-edit"></i>
                         </a>
+                        @endif
+
+                         @if(user_can('engineers.delete'))
                         <form action="{{ route('engineers.destroy', $engineer) }}" method="POST" style="display: inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذا المهندس؟')">
                             @csrf
                             @method('DELETE')
@@ -389,6 +398,7 @@
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </div>
                 </td>
             </tr>

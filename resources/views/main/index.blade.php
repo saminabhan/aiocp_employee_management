@@ -4,6 +4,7 @@
 
     <div class="stats-grid">
 
+        @if(user_can('engineers.view'))
         <div class="stat-card">
             <div class="stat-info">
                 <h3>إجمالي المهندسين</h3>
@@ -13,6 +14,7 @@
                 <i class="fas fa-user-friends"></i>
             </div>
         </div>
+        @endif
 
          <div class="stat-card">
             <div class="stat-info">

@@ -5,9 +5,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="fw-bold">إدارة الثوابت</h3>
+        @if(user_can('constants.create'))
         <a href="{{ route('constants.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> إضافة ثابت جديد
         </a>
+        @endif
     </div>
 
     <style>
@@ -93,14 +95,20 @@ document.addEventListener("DOMContentLoaded", function() {
                             <strong>{{ $parent->name }}</strong>
                         </div>
 
+                        @if(user_can('constants.edit') || user_can('constants.delete') || user_can('constants.create'))
                         <div>
+                            @if(user_can('constants.edit'))
                             <a href="{{ route('constants.edit', $parent->id) }}" class="text-primary me-2">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            @endif
 
+                            @if(user_can('constants.create'))
                             <a href="{{ route('constants.create', ['parent' => $parent->id]) }}" class="text-success">
                                 <i class="fas fa-plus-circle"></i>
                             </a>
+                            @endif
+                            @if(user_can('constants.delete'))
                             <form action="{{ route('constants.destroy', $parent->id) }}" method="POST" style="display:inline-block">
                                             @csrf
                                             @method('DELETE')
@@ -111,7 +119,9 @@ document.addEventListener("DOMContentLoaded", function() {
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
+                            @endif
                         </div>
+                        @endif
                     </div>
 
                 @if($parent->children->count())
