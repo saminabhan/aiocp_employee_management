@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="action-btns">
 
             {{-- المدير رقم 1 لا يمكن تعديله أو حذفه --}}
-            @if($user->id == 1)
+            @if($user->id == 4)
                 <span class="badge bg-secondary">مدير النظام</span>
             @else
 
