@@ -181,6 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <table class="table table-striped table-bordered">
     <thead>
         <tr>
+            <th>#</th>
             <th>الاسم</th>
             <th>اسم المستخدم</th>
             <th>الدور</th>
@@ -191,37 +192,50 @@ document.addEventListener("DOMContentLoaded", function() {
     <tbody>
         @foreach($users as $user)
         <tr>
-            <td data-label="الاسم">{{ $user->name }}</td>
-            <td data-label="اسم المستخدم">{{ $user->username }}</td>
-            <td data-label="الدور">{{ $user->role?->display_name ?? 'موظف' }}</td>
+                    <td data-label="#">{{$loop->iteration}}</td>
 
+    <td data-label="الاسم">{{ $user->name }}</td>
+    <td data-label="اسم المستخدم">{{ $user->username }}</td>
+    <td data-label="الدور">{{ $user->role?->display_name ?? 'موظف' }}</td>
 
-            <td data-label="التحكم">
-                    <div class="action-btns">
-                         @if(user_can('users.view'))
-                       <a href="{{ route('users.show', $user->id) }}" class="btn-action btn-view" title="عرض">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        @endif
+    <td data-label="التحكم">
+        <div class="action-btns">
 
-                         @if(user_can('users.edit'))
-                        <a href="{{ route('users.edit', $user->id) }}" class="btn-action btn-edit" title="تعديل">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        @endif
+            {{-- المدير رقم 1 لا يمكن تعديله أو حذفه --}}
+            @if($user->id == 1)
+                <span class="badge bg-secondary">مدير النظام</span>
+            @else
 
-                         @if(user_can('users.delete'))
-                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-action btn-delete" title="حذف">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                        @endif
-                    </div>
-                </td>
-        </tr>
+                @if(user_can('users.view'))
+                <a href="{{ route('users.show', $user->id) }}" class="btn-action btn-view" title="عرض">
+                    <i class="fas fa-eye"></i>
+                </a>
+                @endif
+
+                @if(user_can('users.edit'))
+                <a href="{{ route('users.edit', $user->id) }}" class="btn-action btn-edit" title="تعديل">
+                    <i class="fas fa-edit"></i>
+                </a>
+                @endif
+
+                @if(user_can('users.delete'))
+                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                      style="display: inline;"
+                      onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-action btn-delete" title="حذف">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+                @endif
+
+            @endif
+
+        </div>
+    </td>
+</tr>
+
         @endforeach
     </tbody>
 </table>
