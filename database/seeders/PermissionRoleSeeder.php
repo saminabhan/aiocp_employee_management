@@ -57,9 +57,9 @@ class PermissionRoleSeeder extends Seeder
 
         // -------- Create Super Admin User (ID = 1) --------
         $adminUser = User::firstOrCreate([
-            'username' => 'sami'
+            'username' => 'admin'
         ],[
-            'name' => 'Super Admin',
+            'name' => 'administrator',
             'password' => bcrypt('123456'),
             'role_id' => $adminRole->id,
         ]);
