@@ -60,7 +60,7 @@ class PermissionRoleSeeder extends Seeder
             'username' => 'admin'
         ],[
             'name' => 'administrator',
-            'password' => bcrypt('123456'),
+            'password' => bcrypt('12345678'),
             'role_id' => $adminRole->id,
         ]);
 
