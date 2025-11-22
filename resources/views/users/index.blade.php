@@ -195,7 +195,17 @@ document.addEventListener("DOMContentLoaded", function() {
     <td data-label="#">{{$loop->iteration}}</td>
     <td data-label="الاسم">{{ $user->name }}</td>
     <td data-label="اسم المستخدم">{{ $user->username }}</td>
-    <td data-label="الدور">{{ $user->role?->display_name ?? 'موظف' }}</td>
+    <td data-label="الدور">
+    @if ( $user->role?->display_name ) 
+    {{ $user->role->display_name }}
+        @if ($user->governorate_id != null)
+            - {{ $user->governorate?->name }}
+            
+        @endif
+        @else
+        {{ 'موظف' }}
+    @endif    
+ </td>
 
     <td data-label="التحكم">
         <div class="action-btns">

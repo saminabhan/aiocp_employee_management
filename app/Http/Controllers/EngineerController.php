@@ -11,17 +11,46 @@ use Illuminate\Support\Facades\Hash;
 
 class EngineerController extends Controller
 {
-    public function index()
-    {
-        $engineers = Engineer::with([
-            'gender',
-            'maritalStatus',
-            'homeGovernorate',
-            'workGovernorate'
-        ])->latest()->paginate(15);
 
-        return view('engineers.index', compact('engineers'));
+    private function authorizeEngineer(Engineer $engineer)
+{
+    $user = auth()->user();
+
+    if ($user->role->name === 'governorate_manager' &&
+        $engineer->home_governorate_id != $user->governorate_id) 
+    {
+        abort(403, 'غير مصرح لك بالوصول إلى هذا المهندس.');
     }
+}
+
+
+public function index()
+{
+    $user = auth()->user();
+
+    $query = Engineer::with([
+        'gender',
+        'maritalStatus',
+        'homeGovernorate',
+        'workGovernorate'
+    ]);
+
+    switch ($user->role->name) {
+
+        case 'governorate_manager':
+            $query->where('home_governorate_id', $user->governorate_id);
+            break;
+
+        case 'system_admin':
+        default:
+            break;
+    }
+
+    $engineers = $query->latest()->paginate(15);
+
+    return view('engineers.index', compact('engineers'));
+}
+
 
        public function create()
     {
@@ -97,6 +126,7 @@ class EngineerController extends Controller
     'attachments.*.details' => 'nullable|string',
     'attachments.*.file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
 
+    'work_area_code' => 'nullable|string||max:255',
 ], [
 
     'required' => 'حقل :attribute مطلوب.',
@@ -167,38 +197,38 @@ class EngineerController extends Controller
 
 
 
-    public function show(Engineer $engineer)
-    {
-        $engineer->load([
-            'gender',
-            'maritalStatus',
-            'homeGovernorate',
-            'homeCity',
-            'workGovernorate',
-            'workCity',
-            'salaryCurrency'
-        ]);
-        $problemTypes = Constant::childrenOfId(41)->get();
-
-
-        return view('engineers.show', compact('engineer', 'problemTypes'));
-    }
-
-   public function edit(Engineer $engineer)
+public function show(Engineer $engineer)
 {
-    // نفس القيم الأساسية المستخدمة في create
+    $this->authorizeEngineer($engineer);
+
+    $engineer->load([
+        'gender',
+        'maritalStatus',
+        'homeGovernorate',
+        'homeCity',
+        'workGovernorate',
+        'workCity',
+        'salaryCurrency'
+    ]);
+
+    $problemTypes = Constant::childrenOfId(41)->get();
+
+    return view('engineers.show', compact('engineer', 'problemTypes'));
+}
+
+public function edit(Engineer $engineer)
+{
+    $this->authorizeEngineer($engineer);
+
     $genders          = Constant::childrenOfId(1)->get();
     $maritalStatuses  = Constant::childrenOfId(4)->get();
     $governorates     = Constant::childrenOfId(14)->get();
     $currencies       = Constant::childrenOfId(36)->get();
-    $specializations = Constant::childrenOfId(46)->get();
+    $specializations  = Constant::childrenOfId(46)->get();
 
-
-    // جلب المدن بناء على المحافظة المختارة من بيانات المهندس
     $homeCities = Constant::childrenOfId($engineer->home_governorate_id)->get();
     $workCities = Constant::childrenOfId($engineer->work_governorate_id)->get();
 
-    // أنواع المرفقات (لو تحتاجها في edit)
     $attachmentTypes = Constant::childrenOfId(9)->get();
 
     return view('engineers.edit', compact(
@@ -217,6 +247,8 @@ class EngineerController extends Controller
 
 public function update(Request $request, Engineer $engineer)
 {
+        $this->authorizeEngineer($engineer);
+
     $validated = $request->validate([
         'personal_image' => 'nullable|string',
         'national_id' => 'required|digits:9|unique:engineers,national_id,' . $engineer->id,
@@ -259,7 +291,9 @@ public function update(Request $request, Engineer $engineer)
         'new_attachments' => 'nullable|array',
         'new_attachments.*.type_id' => 'required|exists:constants,id',
         'new_attachments.*.details' => 'nullable|string',
-        'new_attachments.*.file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
+        'new_attachments.*.file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',   
+
+        'work_area_code' => 'nullable|string||max:255',
 
     ], [
         'required' => 'حقل :attribute مطلوب.',
@@ -346,31 +380,35 @@ $engineer->update($validated);
         ->with('success', 'تم تحديث بيانات المهندس بنجاح');
 }
 
-// Add this method to handle attachment deletion (optional)
 public function deleteAttachment(EngineerAttachment $attachment)
 {
-    // Delete file from storage
+    $engineer = $attachment->engineer;
+
+    $this->authorizeEngineer($engineer);
+
     if ($attachment->file_path) {
         Storage::disk('public')->delete($attachment->file_path);
     }
-    
-    // Delete database record
+
     $attachment->delete();
-    
+
     return response()->json([
         'success' => true,
         'message' => 'تم حذف المرفق بنجاح'
     ]);
 }
-    public function destroy(Engineer $engineer)
-    {
-        if ($engineer->personal_image) {
-            Storage::disk('public')->delete($engineer->personal_image);
-        }
 
-        $engineer->delete();
+public function destroy(Engineer $engineer)
+{
+    $this->authorizeEngineer($engineer);
 
-        return redirect()->route('engineers.index')
-            ->with('success', 'تم حذف المهندس بنجاح');
+    if ($engineer->personal_image) {
+        Storage::disk('public')->delete($engineer->personal_image);
     }
+
+    $engineer->delete();
+
+    return redirect()->route('engineers.index')
+        ->with('success', 'تم حذف المهندس بنجاح');
+}
 }

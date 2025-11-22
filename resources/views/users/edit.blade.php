@@ -99,12 +99,32 @@
                                             @foreach($roles as $role)
                                                 <option value="{{ $role->id }}"
                                                     data-permissions="{{ $role->permissions->pluck('id')->toJson() }}"
+                                                    data-requires-governorate="{{ $role->name === 'governorate_manager' ? '1' : '0' }}"
                                                     {{ $user->role_id == $role->id ? 'selected' : '' }}>
                                                     {{ $role->display_name }}
                                                 </option>
                                             @endforeach
 
                                             <option value="custom" {{ $user->role_id === null ? 'selected' : '' }}>مخصص</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- حقل المحافظة -->
+                                    @php
+                                        $showGovernorate = $user->role && $user->role->name === 'governorate_manager';
+                                    @endphp
+                                    <div class="col-md-6 mb-3" id="governorate-field" style="display: {{ $showGovernorate ? 'block' : 'none' }};">
+                                        <label class="form-label fw-medium">
+                                            اختر المحافظة
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="governorate_id" id="governorate_id" class="form-select" {{ $showGovernorate ? 'required' : '' }}>
+                                            <option value="">— اختر المحافظة —</option>
+                                            @foreach($governorates as $gov)
+                                                <option value="{{ $gov->id }}" {{ $user->governorate_id == $gov->id ? 'selected' : '' }}>
+                                                    {{ $gov->name }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -138,7 +158,6 @@
                                         'Users' => 'إدارة المستخدمين',
                                         'engineers' => 'إدارة المهندسين',
                                         'constants' => 'إدارة الثوابت',
-                                       
                                     ];
 
                                     $permissionsByCategory = $permissions->groupBy('category');
@@ -205,6 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const roleSelect = document.getElementById("role");
     const roleDiv = document.getElementById("role-permissions");
     const perms = document.querySelectorAll(".perm-check");
+    const governorateField = document.getElementById("governorate-field");
+    const governorateSelect = document.getElementById("governorate_id");
 
     // Roles permissions data
     const rolesData = {};
@@ -229,6 +250,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // When selecting a role
     roleSelect.addEventListener("change", () => {
         let role = roleSelect.value;
+        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+        const requiresGovernorate = selectedOption.getAttribute("data-requires-governorate") === "1";
+
+        // Show or hide governorate field
+        if (requiresGovernorate) {
+            governorateField.style.display = "block";
+            governorateSelect.required = true;
+        } else {
+            governorateField.style.display = "none";
+            governorateSelect.required = false;
+            governorateSelect.value = "";
+        }
 
         if (role === "custom" || role === "") {
             perms.forEach(p => p.checked = false);
@@ -265,28 +298,28 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!matched) {
                 roleSelect.value = "custom";
                 showRolePermissions(selected);
+                // Hide governorate on custom
+                governorateField.style.display = "none";
+                governorateSelect.required = false;
             }
         });
     });
 
-    // Show role permissions on load if user has role
-(function initPermissionsOnLoad() {
-    let currentRole = roleSelect.value;
+    // Show role permissions on load
+    (function initPermissionsOnLoad() {
+        let currentRole = roleSelect.value;
 
-    if (currentRole && currentRole !== "custom") {
-        // Role assigned → show role permissions
-        showRolePermissions(rolesData[currentRole] ?? []);
-    } else {
-        // Custom role → show user’s actual permissions from checked boxes
-        const selected = Array.from(perms)
-            .filter(x => x.checked)
-            .map(x => parseInt(x.value));
+        if (currentRole && currentRole !== "custom") {
+            showRolePermissions(rolesData[currentRole] ?? []);
+        } else {
+            const selected = Array.from(perms)
+                .filter(x => x.checked)
+                .map(x => parseInt(x.value));
 
-        showRolePermissions(selected);
-    }
-})();
+            showRolePermissions(selected);
+        }
+    })();
 
 });
-
 </script>
 @endpush

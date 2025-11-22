@@ -5,11 +5,21 @@
 @push('styles')
     <style>
         .form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-}
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .category-header { font-size: .9rem; font-weight: 600; }
+        .category-section { border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .category-section:last-child { border-bottom: 0; }
+        .form-control, .form-select { padding: .75rem; }
+        .form-check-input:checked {
+            background-color: #0C4079;
+            border-color: #0C4079;
+        }
+        .card:hover { transform: translateY(-2px); transition: .2s; }
     </style>
 @endpush
+
 @section('content')
 
 <div class="container-fluid">
@@ -87,12 +97,27 @@
 
                                             @foreach($roles as $role)
                                                 <option value="{{ $role->id }}"
-                                                    data-permissions="{{ $role->permissions->pluck('id')->toJson() }}">
+                                                    data-permissions="{{ $role->permissions->pluck('id')->toJson() }}"
+                                                    data-requires-governorate="{{ $role->name === 'governorate_manager' ? '1' : '0' }}">
                                                     {{ $role->display_name }}
                                                 </option>
                                             @endforeach
 
-                                                <option value="custom" id="custom-role-option" style="display:none;">مخصص</option>
+                                            <option value="custom" id="custom-role-option" style="display:none;">مخصص</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- حقل المحافظة - يظهر فقط عند اختيار دور مدير محافظة -->
+                                    <div class="col-md-6 mb-3" id="governorate-field" style="display: none;">
+                                        <label class="form-label fw-medium">
+                                            اختر المحافظة
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select name="governorate_id" id="governorate_id" class="form-select">
+                                            <option value="">— اختر المحافظة —</option>
+                                            @foreach($governorates as $gov)
+                                                <option value="{{ $gov->id }}">{{ $gov->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -127,7 +152,6 @@
                                         'Users' => 'إدارة المستخدمين',
                                         'engineers' => 'إدارة المهندسين',
                                         'constants' => 'إدارة الثوابت',
-                                       
                                     ];
 
                                     $permissionsByCategory = $permissions->groupBy('category');
@@ -184,20 +208,6 @@
 
 @endsection
 
-@push('styles')
-<style>
-    .category-header { font-size: .9rem; font-weight: 600; }
-    .category-section { border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    .category-section:last-child { border-bottom: 0; }
-    .form-control, .form-select { padding: .75rem; }
-    .form-check-input:checked {
-        background-color: #0C4079;
-        border-color: #0C4079;
-    }
-    .card:hover { transform: translateY(-2px); transition: .2s; }
-</style>
-@endpush
-
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -205,6 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const roleSelect = document.getElementById("role");
     const roleDiv = document.getElementById("role-permissions");
     const perms = document.querySelectorAll(".perm-check");
+    const governorateField = document.getElementById("governorate-field");
+    const governorateSelect = document.getElementById("governorate_id");
 
     // صلاحيات الأدوار
     const rolesData = {};
@@ -230,8 +242,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // عند اختيار دور
     roleSelect.addEventListener("change", () => {
-
         let role = roleSelect.value;
+        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+        const requiresGovernorate = selectedOption.getAttribute("data-requires-governorate") === "1";
+
+        // إظهار أو إخفاء حقل المحافظة
+        if (requiresGovernorate) {
+            governorateField.style.display = "block";
+            governorateSelect.required = true;
+        } else {
+            governorateField.style.display = "none";
+            governorateSelect.required = false;
+            governorateSelect.value = "";
+        }
 
         if (role === "custom" || role === "") {
             perms.forEach(p => p.checked = false);
@@ -270,6 +293,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!matched) {
                 roleSelect.value = "custom";
                 showRolePermissions(selected);
+                // إخفاء حقل المحافظة عند التخصيص
+                governorateField.style.display = "none";
+                governorateSelect.required = false;
             }
         });
     });

@@ -39,8 +39,17 @@
                 alt="Profile" class="profile-avatar" id="profileBtn">
                 <div class="dropdown-menu-custom" id="profileDropdown">
                     <div class="dropdown-header">
-                        <div class="dropdown-user-name">{{ Auth::user()->name }}</div>
-                        <div class="dropdown-user-email">{{ Auth::user()->email ?? Auth::user()->username }}</div>
+                        <div class="dropdown-user-name">مرحبا, {{ Auth::user()->name }} !</div>
+                        <div class="dropdown-user-email">
+                            @if (Auth::user()->role->name === 'governorate_manager')
+                            مدير محافظة 
+                            {{  Auth::user()->governorate->name }}           
+                            @elseif (Auth::user()->role?->display_name)
+                            {{ Auth::user()->role->display_name }}
+                            @else
+                            موظف
+                            @endif
+                        </div>
                     </div>
                     <a href="{{ route('profile.index') }}" class="dropdown-item-custom">
                         <i class="fas fa-user"></i>
@@ -81,9 +90,21 @@
             <!-- <img src="https://ui-avatars.com/api/?name=sami+nabhan&background=047857&color=fff&size=110" 
                  alt="User" class="user-avatar"> -->
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 135px; height: auto;">
-            <div class="user-name">{{ Auth::user()->name }}</div>
-            <div class="user-email">{{ Auth::user()->email ?? Auth::user()->username }}</div>
+            <div class="user-name">مرحبا, {{ Auth::user()->name }} !</div>
+            <div class="user-email">
+                @if (Auth::user()->role->name === 'governorate_manager')
+                مدير محافظة 
+                {{  Auth::user()->governorate->name }}           
+                @elseif (Auth::user()->role?->display_name)
+                {{ Auth::user()->role->display_name }}
+                @else
+                موظف
+                @endif
+            </div>
         </div>
+
+
+
 
         <nav class="sidebar-nav">
              @if(user_can('dashboard.view'))

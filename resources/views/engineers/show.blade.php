@@ -344,7 +344,9 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="info-grid">
                 <div class="info-item"><div class="info-label">المحافظة</div>{{ $engineer->workGovernorate->name ?? 'غير محدد' }}</div>
                 <div class="info-item"><div class="info-label">المدينة</div>{{ $engineer->workCity->name ?? 'غير محدد' }}</div>
+                <div class="info-item"><div class="info-label">كود منطقة العمل</div><span class="badge-custom badge-success">{{ $engineer->work_area_code ?? 'غير محدد' }}</span></div>
                 <div class="info-item" style="grid-column:1/-1;"><div class="info-label">مكان العمل بالتفصيل</div>{{ $engineer->work_address_details ?? 'غير محدد' }}</div>
+
             </div>
         </div>
 
@@ -431,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
        <div class="tab-pane fade" id="employee-attendance">
     <div class="section-title">
-        <i class="fas fa-user-clock"></i> جدول دوام الموظفين
+        <i class="fas fa-user-clock"></i> جدول دوام الموظف
     </div>
 
     <div class="table-responsive mt-3">

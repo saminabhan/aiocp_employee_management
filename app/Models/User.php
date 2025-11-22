@@ -18,6 +18,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'role_id',
+        'governorate_id',
     ];
 
     protected $hidden = [
@@ -117,4 +118,10 @@ class User extends Authenticatable
 
         return $rolePerms->merge($direct)->unique('id');
     }
+
+        public function governorate()
+    {
+        return $this->belongsTo(Constant::class, 'governorate_id');
+    }
+
 }

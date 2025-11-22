@@ -48,6 +48,7 @@ class Engineer extends Model
         'account_owner_last',
         'account_owner_national_id',
         'account_owner_mobile',
+        'work_area_code',
     ];
 
     protected $casts = [

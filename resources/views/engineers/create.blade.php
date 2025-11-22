@@ -696,6 +696,15 @@
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
+
+                <div class="form-group">
+                    <label>كود منطقة العمل</label>
+                    <input type="text" name="work_area_code" class="form-control @error('work_area_code') is-invalid @enderror" required>
+                        @error('work_area_code')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                </div>
+
             </div>
 
             <!-- Step 3: Job Info -->
