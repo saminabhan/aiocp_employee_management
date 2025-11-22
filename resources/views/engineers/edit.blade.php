@@ -36,6 +36,12 @@
         text-align: center;
         position: relative;
         z-index: 1;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .wizard-step:hover .step-circle {
+        transform: scale(1.1);
     }
 
     .step-circle {
@@ -200,6 +206,36 @@
 
     .btn-submit:hover {
         background: #059669;
+    }
+
+    .btn-quick-save {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        transition: all 0.3s;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-quick-save:hover {
+        background: #059669;
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-quick-save:active {
+        transform: scale(0.95);
     }
 
     .image-upload-wrapper {
@@ -421,6 +457,14 @@
             width: 100%;
             justify-content: center;
         }
+
+        .btn-quick-save {
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
     }
 </style>
 @endpush
@@ -428,27 +472,27 @@
 @section('content')
 <div class="wizard-container">
     <div class="wizard-header">
-        <div class="wizard-step active" data-step="1">
+        <div class="wizard-step active" data-step="1" onclick="goToStep(1)">
             <div class="step-circle">1</div>
             <div class="step-title">البيانات الشخصية</div>
         </div>
-        <div class="wizard-step" data-step="2">
+        <div class="wizard-step" data-step="2" onclick="goToStep(2)">
             <div class="step-circle">2</div>
             <div class="step-title">بيانات السكن والعمل</div>
         </div>
-        <div class="wizard-step" data-step="3">
+        <div class="wizard-step" data-step="3" onclick="goToStep(3)">
             <div class="step-circle">3</div>
             <div class="step-title">بيانات الوظيفة</div>
         </div>
-        <div class="wizard-step" data-step="4">
+        <div class="wizard-step" data-step="4" onclick="goToStep(4)">
             <div class="step-circle">4</div>
             <div class="step-title">بيانات التطبيق</div>
         </div>
-        <div class="wizard-step" data-step="5">
+        <div class="wizard-step" data-step="5" onclick="goToStep(5)">
             <div class="step-circle">5</div>
             <div class="step-title">الحساب البنكي</div>
         </div>
-        <div class="wizard-step" data-step="6">
+        <div class="wizard-step" data-step="6" onclick="goToStep(6)">
             <div class="step-circle">6</div>
             <div class="step-title">المرفقات</div>
         </div>
@@ -519,14 +563,13 @@
                         @enderror
                     </div>
                     
-                      <div class="form-group">
+                    <div class="form-group">
                         <label class="required">اسم الجد</label>
                         <input type="text" name="third_name" class="form-control @error('third_name') is-invalid @enderror" value="{{ old('third_name', $engineer->third_name) }}" required>
                         @error('third_name')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
-
 
                     <div class="form-group">
                         <label class="required">اسم العائلة</label>
@@ -699,13 +742,12 @@
                     @enderror
                 </div>
 
-                 <div class="form-group">
+                <div class="form-group">
                     <label>كود منطقة العمل</label>
                     <input type="text" name="work_area_code" class="form-control @error('work_area_code') is-invalid @enderror" value="{{ old('work_area_code', $engineer->work_area_code) }}" required>
-                        @error('work_area_code')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-
+                    @error('work_area_code')
+                        <span class="invalid-feedback">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
 
@@ -724,10 +766,8 @@
 
                     <div class="form-group">
                         <label>التخصص</label>
-
                         <select name="specialization_id" class="form-control @error('specialization_id') is-invalid @enderror">
                             <option value="">اختر التخصص</option>
-
                             @foreach($specializations as $sp)
                                 <option value="{{ $sp->id }}" 
                                     {{ old('specialization_id', $engineer->specialization_id) == $sp->id ? 'selected' : '' }}>
@@ -735,12 +775,10 @@
                                 </option>
                             @endforeach
                         </select>
-
                         @error('specialization_id')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
-
                 </div>
 
                 <div class="form-row">
@@ -808,7 +846,7 @@
 
                     <div class="form-group">
                         <label>كلمة المرور</label>
-                        <input type="text" name="app_password" class="form-control @error('app_password') is-invalid @enderror" value="{{ old('app_username', $engineer->app_password) }}" placeholder="اتركه فارغاً إذا لم ترغب بالتغيير">
+                        <input type="text" name="app_password" class="form-control @error('app_password') is-invalid @enderror" value="{{ old('app_password', $engineer->app_password) }}" placeholder="اتركه فارغاً إذا لم ترغب بالتغيير">
                         @error('app_password')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
@@ -995,6 +1033,11 @@
         </div>
     </form>
 </div>
+
+<!-- Quick Save Button -->
+<button type="button" class="btn-quick-save" id="quickSaveBtn" title="حفظ سريع">
+    <i class="fas fa-save"></i>
+</button>
 
 <!-- Image Cropper Modal -->
 <div class="cropper-modal" id="cropperModal">
@@ -1251,6 +1294,11 @@ function removeAttachment(index) {
 }
 
 // Wizard Navigation
+function goToStep(step) {
+    currentStep = step;
+    showStep(currentStep);
+}
+
 function showStep(step) {
     document.querySelectorAll('.step-content').forEach(content => {
         content.classList.remove('active');
@@ -1338,6 +1386,37 @@ document.getElementById('wizardForm').addEventListener('submit', function(e) {
     if (!validateStep(currentStep)) {
         e.preventDefault();
     }
+});
+
+// Quick Save Button
+document.getElementById('quickSaveBtn').addEventListener('click', function() {
+    const form = document.getElementById('wizardForm');
+    
+    Swal.fire({
+        icon: 'question',
+        title: 'حفظ التعديلات',
+        text: 'هل تريد حفظ التعديلات الحالية؟',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save"></i> نعم، احفظ',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#6c757d'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+                title: 'جاري الحفظ...',
+                text: 'يرجى الانتظار',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            form.submit();
+        }
+    });
 });
 </script>
 @endpush
