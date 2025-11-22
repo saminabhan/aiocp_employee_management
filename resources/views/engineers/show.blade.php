@@ -18,28 +18,34 @@
     }
 
     /* الصورة والاسم على اليمين */
-    .profile-right-section {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        min-width: 250px;
-    }
+   .profile-right-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* المسافة الطولية بين الصورة والاسم */
+    min-width: 190px;
+    text-align: center;
+}
 
-    .profile-avatar-compact {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        border: 3px solid #0C4079;
-        object-fit: cover;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-        flex-shrink: 0;
-    }
+.profile-avatar-compact {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #0C4079;
+    object-fit: cover;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
 
-    .profile-info-compact {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-    }
+.profile-info-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+    text-align: center;
+}
+
 
     .profile-name {
         font-size: 18px;
@@ -63,7 +69,7 @@
 
     .profile-left-section .nav-tabs {
         border: none;
-        gap: 0px;
+        gap: 6px;
         flex-wrap: wrap;
     }
 
@@ -427,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a class="nav-link" data-bs-toggle="tab" href="#app">بيانات تطبيق الحصر</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#bank">الحساب البنكي</a>
+                <a class="nav-link" data-bs-toggle="tab" href="#bank">البنك</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#attachments">المرفقات</a>
@@ -559,7 +565,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <!-- APP INFO -->
     <div class="tab-pane fade" id="app">
-        <div class="section-title"><i class="fas fa-mobile-alt"></i> بيانات تطبيق حصر الأضرار</div>
+        <div class="section-title"><i class="fas fa-mobile-alt"></i> بيانات التطبيق</div>
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">اسم المستخدم</div>
