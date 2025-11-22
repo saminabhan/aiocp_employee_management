@@ -51,6 +51,8 @@
         });
     });
 </script>
+    <script src="{{ asset('assets/js/pace.min.js') }}"></script>
+
 
 </body>
 </html>
