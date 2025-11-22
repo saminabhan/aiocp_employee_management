@@ -29,6 +29,7 @@ class Engineer extends Model
         'work_address_details',
         'experience_years',
         'specialization',
+        'specialization_id',
         'salary_amount',
         'salary_currency_id',
         'work_start_date',
@@ -146,5 +147,16 @@ class Engineer extends Model
 
     return \Carbon\Carbon::parse($this->birth_date)->age;
     }
+
+    public function issues()
+{
+    return $this->hasMany(AppIssue::class, 'engineer_id');
+}
+
+public function engineer_specialization()
+{
+    return $this->belongsTo(Constant::class, 'specialization_id');
+}
+
 
 }

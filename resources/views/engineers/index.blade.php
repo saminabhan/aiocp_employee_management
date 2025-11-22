@@ -364,7 +364,7 @@
                 <td data-label="رقم الهوية">{{ $engineer->national_id }}</td>
                 <td data-label="الجوال">{{ $engineer->mobile_1 }}</td>
                 <td data-label="المحافظة">{{ $engineer->homeGovernorate->name ?? 'غير محدد' }}</td>
-                <td data-label="التخصص">{{ $engineer->specialization ?? 'غير محدد' }}</td>
+                <td data-label="التخصص">{{ $engineer->engineer_specialization?->name ?? 'غير محدد' }}</td>
                 <td data-label="سنوات الخبرة">
                     <span class="badge-status badge-active">
                         {{ $engineer->experience_years }} سنة
@@ -379,10 +379,7 @@
                         @endif
 
                          @if(user_can('engineers.edit'))
-                        <a href="{{ route('engineers.edit', $engineer) }}" class="btn-action btn-edit" style="
-                        pointer-events: none;
-                        opacity: 0.5;
-                        cursor: not-allowed;" title="تعديل">
+                        <a href="{{ route('engineers.edit', $engineer) }}" class="btn-action btn-edit" title="تعديل">
                             <i class="fas fa-edit"></i>
                         </a>
                         @endif

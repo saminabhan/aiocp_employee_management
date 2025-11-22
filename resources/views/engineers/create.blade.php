@@ -711,13 +711,24 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                   <div class="form-group">
                         <label>التخصص</label>
-                        <input type="text" name="specialization" class="form-control @error('specialization') is-invalid @enderror" value="{{ old('specialization') }}">
-                        @error('specialization')
+                        <select name="specialization_id" class="form-control @error('specialization_id') is-invalid @enderror">
+                            <option value="">اختر التخصص</option>
+
+                            @foreach($specializations as $sp)
+                                <option value="{{ $sp->id }}" {{ old('specialization_id') == $sp->id ? 'selected' : '' }}>
+                                    {{ $sp->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        @error('specialization_id')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
+
+
                 </div>
 
                 <div class="form-row">

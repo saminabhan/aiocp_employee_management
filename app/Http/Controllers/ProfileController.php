@@ -44,7 +44,6 @@ class ProfileController extends Controller
         $user->username = $request->username;
         $user->phone = $request->phone;
 
-        // ⚠️ ممنوع تعديل الدور
         $user->save();
 
         return redirect()->route('profile.index')->with('success', 'تم تحديث البيانات بنجاح');

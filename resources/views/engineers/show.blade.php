@@ -99,6 +99,11 @@
         color: #155724;
     }
 
+    .badge-danger {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
     .badge-warning {
         background: #fff3e0;
         color: #e65100;
@@ -203,6 +208,22 @@
         color: white;
     }
 
+.btn-outline-primary {
+    --bs-btn-color: #083061;
+    --bs-btn-border-color: #083061;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #083061;
+    --bs-btn-hover-border-color: #083061;
+    --bs-btn-focus-shadow-rgb: 13, 110, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #083061;
+    --bs-btn-active-border-color: #083061;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #083061;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #083061;
+    --bs-gradient: none;
+}
 </style>
 @endpush
 
@@ -213,6 +234,36 @@
     العودة إلى القائمة
 </a>
 
+@if (Session::has('success'))
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        toast: true,
+        position: 'bottom-start',
+        icon: 'success',
+        title: '{{ Session::get("success") }}',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: false,
+        customClass: {
+            popup: 'medium-small-toast'
+        }
+    });
+});
+</script>
+@endif
+
+  @if ($errors->any())
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-1"></i>
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="engineer-profile">
     
     <!-- Header -->
@@ -244,6 +295,10 @@
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#bank">الحساب البنكي</a></li>
 
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#attachments">المرفقات</a></li>
+
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#employee-attendance">جدول دوام الموظف</a></li>
+
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#employee-app-problems">مشاكل تطبيق حصر الأضرار</a></li>
 
     </ul>
 
@@ -299,7 +354,7 @@
             
             <div class="info-grid">
                 <div class="info-item"><div class="info-label">سنوات الخبرة</div><span class="badge-custom badge-success">{{ $engineer->experience_years }} سنة</span></div>
-                <div class="info-item"><div class="info-label">التخصص</div>{{ $engineer->specialization ?? 'غير محدد' }}</div>
+                <div class="info-item"><div class="info-label">التخصص</div>{{ $engineer->engineer_specialization?->name ?? 'غير محدد' }}</div>
                 <div class="info-item"><div class="info-label">الراتب</div>{{ $engineer->salary_amount ? number_format($engineer->salary_amount,2).' '.$engineer->salaryCurrency->name : 'غير محدد' }}</div>
                 <div class="info-item"><div class="info-label">تاريخ بدء العمل</div>{{ $engineer->work_start_date ? $engineer->work_start_date->format('Y-m-d') : 'غير محدد' }}</div>
                 <div class="info-item"><div class="info-label">تاريخ نهاية العمل</div>{{ $engineer->work_end_date ? $engineer->work_end_date->format('Y-m-d') : 'غير محدد' }}</div>
@@ -374,7 +429,224 @@
             @endif
         </div>
 
+       <div class="tab-pane fade" id="employee-attendance">
+    <div class="section-title">
+        <i class="fas fa-user-clock"></i> جدول دوام الموظفين
     </div>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-bordered table-striped text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>التاريخ</th>
+                    <th>اليوم</th>
+                    <th>الدوام</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2025-06-22</td>
+                    <td>الأحد</td>
+                    <td>8:00 - 4:00</td>
+                    <td><span class="badge-custom badge-success">حاضر</span></td>
+                </tr>
+                <tr>
+                    <td>2025-06-23</td>
+                    <td>الاثنين</td>
+                    <td>8:00 - 4:00</td>
+                    <td><span class="badge-custom badge-warning text-dark">متأخر</span></td>
+                </tr>
+                <tr>
+                    <td>2025-06-24</td>
+                    <td>الثلاثاء</td>
+                    <td>8:00 - 4:00</td>
+                    <td><span class="badge-custom badge-danger">غائب</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="tab-pane fade" id="employee-app-problems">
+
+    <div class="section-title">
+        <i class="fas fa-exclamation-triangle"></i> مشاكل تطبيق حصر الأضرار
+    </div>
+
+    {{-- نموذج إضافة مشكلة --}}
+    <div class="card mt-3">
+        <div class="card-body">
+            <form action="{{ route('engineers.issues.store', $engineer->id) }}" method="POST">
+                @csrf
+                <input type="hidden" name="active_tab" value="employee-app-problems">
+
+                <div class="mb-3">
+                    <label class="form-label">اسم المشكلة</label>
+                    <select name="problem_type_id" class="form-select">
+                        <option value="">اختر نوع المشكلة</option>
+                        @foreach($problemTypes as $problem)
+                            <option value="{{ $problem->id }}">{{ $problem->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">وصف المشكلة</label>
+                    <textarea class="form-control" name="description" rows="3"
+                        placeholder="أدخل وصف المشكلة"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-plus"></i> إضافة مشكلة
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    {{-- عرض المشاكل --}}
+    <div class="mt-3">
+
+        @forelse($engineer->issues as $issue)
+
+            <div class="ticket card shadow-sm border-0 mb-3">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="m-0">
+                            <i class="fas fa-bug text-primary"></i>
+                            {{ $issue->problem->name }}
+                        </h5>
+
+                        <span class="badge-custom
+                            @if($issue->status=='open') badge-danger 
+                            @elseif($issue->status=='in_progress') badge-warning
+                            @else badge-success @endif">
+                            @if($issue->status=='open') مفتوحة
+                            @elseif($issue->status=='in_progress') قيد المعالجة
+                            @else مغلقة @endif
+                        </span>
+                    </div>
+                    <hr>
+
+                    <p class="mb-2">
+                        <strong class="text-muted">الوصف:</strong><br>
+                        {{ $issue->description }}
+                    </p>
+
+                    @if($issue->status == 'closed' && $issue->solution)
+                        <p class="mt-2 p-2 bg-light border rounded">
+                            <strong>وصف الحل:</strong><br>
+                            {{ $issue->solution }}
+                        </p>
+                    @endif
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="far fa-clock"></i>
+                            {{ $issue->created_at->format('Y-m-d H:i A') }}
+                        </small>
+
+                        @if ($issue->status == 'closed')
+                            <span class="text-success">
+                                <i class="fas fa-check-circle"></i> تم الحل
+                            </span>
+                            
+                        @else
+                        <button class="btn btn-sm btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#statusModal-{{ $issue->id }}">
+                            تحديث الحالة
+                        </button>
+                        @endif
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- Modal تحديث الحالة --}}
+            <div class="modal fade" id="statusModal-{{ $issue->id }}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <form action="{{ route('issues.updateStatus', $issue->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="active_tab" value="employee-app-problems">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title">تحديث حالة المشكلة</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+
+                                <label class="form-label">الحالة الجديدة:</label>
+                                <select name="status" id="statusSelect-{{ $issue->id }}"
+                                    class="form-select mb-3">
+                                    <option value="open"        {{ $issue->status=='open' ? 'selected' : '' }}>مفتوحة</option>
+                                    <option value="in_progress" {{ $issue->status=='in_progress' ? 'selected' : '' }}>قيد المعالجة</option>
+                                    <option value="closed"      {{ $issue->status=='closed' ? 'selected' : '' }}>مغلقة</option>
+                                </select>
+
+                                <div id="solutionBox-{{ $issue->id }}" style="display:none;">
+                                    <label class="form-label">وصف الحل:</label>
+                                    <textarea name="solution" class="form-control" rows="3"
+                                        placeholder="اشرح كيف تم حل المشكلة"></textarea>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">إلغاء</button>
+
+                                <button type="submit" class="btn btn-primary">تحديث</button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            {{-- JS لعرض خانة الحل عند اختيار مغلقة --}}
+            <script>
+                document.getElementById('statusSelect-{{ $issue->id }}').addEventListener('change', function () {
+                    let box = document.getElementById('solutionBox-{{ $issue->id }}');
+                    box.style.display = this.value === "closed" ? "block" : "none";
+                });
+            </script>
+
+        @empty
+
+            <p class="text-muted text-center">لا توجد مشاكل لهذا المهندس.</p>
+
+        @endforelse
+    </div>
+
+</div>
+
+
+
+{{-- Script لتفعيل نفس التاب عند العودة --}}
+@if(session('active_tab'))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tab = '{{ session("active_tab") }}';
+    const trigger = document.querySelector(`[data-bs-target="#${tab}"]`);
+    if (trigger) new bootstrap.Tab(trigger).show();
+});
+</script>
+@endif
+
+
+
+    </div>
+
 </div>
 
 @endsection
