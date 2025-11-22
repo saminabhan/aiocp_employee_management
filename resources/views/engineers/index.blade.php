@@ -310,11 +310,24 @@
     </h1>
 </div>
 
-@if(session('success'))
-<div class="alert alert-success">
-    <i class="fas fa-check-circle"></i>
-    {{ session('success') }}
-</div>
+@if (Session::has('success'))
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        toast: true,
+        position: 'bottom-start',
+        icon: 'success',
+        title: '{{ Session::get("success") }}',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: false,
+        customClass: {
+            popup: 'medium-small-toast'
+        }
+    });
+});
+</script>
 @endif
 
 <div class="table-card">
