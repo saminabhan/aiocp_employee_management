@@ -11,6 +11,8 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
 
      @stack('styles')
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js/themes/blue/pace-theme-minimal.css">
+
     <script src="{{ asset('assets/js/pace.min.js') }}"></script>
 
 </head>
