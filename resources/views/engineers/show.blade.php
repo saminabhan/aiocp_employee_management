@@ -17,6 +17,174 @@
         justify-content: center;
         gap: 20px;
         text-align: center;
+        position: relative;
+    }
+
+    /* الزر العودة في الزاوية */
+    .back-btn-wrapper {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 1200px) {
+        .back-btn-wrapper {
+            top: 15px;
+            right: 15px;
+        }
+
+        .back-btn {
+            padding: 7px 14px;
+            font-size: 13px;
+        }
+
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 9px 12px;
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .profile-header-wrapper {
+            padding: 50px 20px 25px 20px;
+        }
+
+        .back-btn-wrapper {
+            position: static;
+            margin-bottom: 0;
+            width: 100%;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+        .back-btn {
+            padding: 7px 12px;
+            font-size: 12px;
+        }
+
+        .profile-avatar-compact {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-header-wrapper {
+            padding: 50px 15px 20px 15px;
+            position: relative;
+        }
+
+        .back-btn-wrapper {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding-right: 0;
+            z-index: 10;
+        }
+
+        .back-btn {
+            padding: 6px 10px;
+            font-size: 11px;
+            gap: 5px;
+        }
+
+        .back-btn i {
+            font-size: 12px;
+        }
+
+        .profile-avatar-compact {
+            width: 110px;
+            height: 110px;
+        }
+
+        .profile-name {
+            font-size: 18px;
+        }
+
+        .profile-tabs-section .nav-tabs {
+            gap: 2px;
+        }
+
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 6px 9px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-header-wrapper {
+            padding: 15px 12px;
+            position: relative;
+            border-radius: 12px;
+            overflow: visible;
+        }
+
+        .back-btn-wrapper {
+            position: static;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            padding-right: 0;
+            z-index: 10;
+        }
+
+        .back-btn {
+            padding: 5px 8px;
+            font-size: 10px;
+            gap: 4px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        .back-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .back-btn i {
+            font-size: 11px;
+        }
+
+        .profile-center-section {
+            margin-top: 0;
+            width: 100%;
+        }
+
+        .profile-avatar-compact {
+            width: 95px;
+            height: 95px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+        }
+
+        .profile-spec {
+            font-size: 12px;
+        }
+
+        .profile-tabs-section {
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .profile-tabs-section .nav-tabs {
+            gap: 1px;
+        }
+
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 5px 8px;
+            font-size: 10px;
+            margin: 0 0.5px;
+        }
     }
 
     /* الصورة والاسم والتخصص في النص */
@@ -26,11 +194,20 @@
         align-items: center;
         justify-content: center;
         gap: 15px;
+        flex: 1;
+        width: 100%;
+    }
+
+    .profile-center-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
     }
 
     .profile-avatar-compact {
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         border: 4px solid #0C4079;
         object-fit: cover;
@@ -65,6 +242,7 @@
         width: 100%;
         display: flex;
         justify-content: center;
+        margin-top: 10px;
     }
 
     .profile-tabs-section .nav-tabs {
@@ -288,7 +466,20 @@
 
     @media (max-width: 992px) {
         .profile-header-wrapper {
-            padding: 25px 15px;
+            padding: 50px 20px 25px 20px;
+        }
+
+        .back-btn-wrapper {
+            position: static;
+            margin-bottom: 0;
+            width: 100%;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+        .back-btn {
+            padding: 7px 12px;
+            font-size: 12px;
         }
 
         .profile-avatar-compact {
@@ -303,8 +494,26 @@
 
     @media (max-width: 768px) {
         .profile-header-wrapper {
-            padding: 20px;
-            gap: 15px;
+            padding: 50px 15px 20px 15px;
+            position: relative;
+        }
+
+        .back-btn-wrapper {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding-right: 0;
+            z-index: 10;
+        }
+
+        .back-btn {
+            padding: 6px 10px;
+            font-size: 11px;
+            gap: 5px;
+        }
+
+        .back-btn i {
+            font-size: 12px;
         }
 
         .profile-avatar-compact {
@@ -316,42 +525,58 @@
             font-size: 18px;
         }
 
-        .info-grid {
-            grid-template-columns: 1fr;
-        }
-
         .profile-tabs-section .nav-tabs {
-            gap: 6px;
+            gap: 2px;
         }
 
         .profile-tabs-section .nav-tabs .nav-link {
-            padding: 8px 12px;
-            font-size: 12px;
-        }
-
-        .content-area {
-            padding: 18px;
-            max-height: calc(100vh - 320px);
+            padding: 6px 9px;
+            font-size: 11px;
         }
     }
 
     @media (max-width: 576px) {
-        .profile-tabs-section .nav-tabs {
-            gap: 4px;
+        .profile-header-wrapper {
+            padding: 15px 12px;
+            position: relative;
+            border-radius: 12px;
+            overflow: visible;
         }
 
-        .profile-tabs-section .nav-tabs .nav-link {
-            padding: 7px 10px;
+        .back-btn-wrapper {
+            position: static;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            padding-right: 0;
+            z-index: 10;
+        }
+
+        .back-btn {
+            padding: 5px 8px;
+            font-size: 10px;
+            gap: 4px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        .back-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .back-btn i {
             font-size: 11px;
         }
 
-        .issues-table {
-            font-size: 12px;
+        .profile-center-section {
+            margin-top: 0;
+            width: 100%;
         }
 
-        .issues-table th,
-        .issues-table td {
-            padding: 8px 4px;
+        .profile-avatar-compact {
+            width: 95px;
+            height: 95px;
         }
 
         .profile-name {
@@ -359,7 +584,22 @@
         }
 
         .profile-spec {
-            font-size: 13px;
+            font-size: 12px;
+        }
+
+        .profile-tabs-section {
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .profile-tabs-section .nav-tabs {
+            gap: 1px;
+        }
+
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 5px 8px;
+            font-size: 10px;
+            margin: 0 0.5px;
         }
     }
 </style>
@@ -367,9 +607,7 @@
 
 @section('content')
 
-<a href="{{ route('engineers.index') }}" class="back-btn">
-    <i class="fas fa-arrow-right"></i> العودة إلى القائمة
-</a>
+
 
 @if (Session::has('success'))
 <script>
@@ -402,51 +640,60 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- PROFILE HEADER - CENTERED -->
 <div class="profile-header-wrapper" dir="rtl">
     
-    <!-- Center: Avatar + Name + Spec -->
-    <div class="profile-center-section">
-        @if($engineer->personal_image)
-            <img src="{{ asset('storage/' . $engineer->personal_image) }}" class="profile-avatar-compact" alt="صورة المهندس">
-        @else
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($engineer->full_name) }}&background=0C4079&color=fff&size=280" class="profile-avatar-compact" alt="صورة المهندس">
-        @endif
-
-        <div class="profile-info-compact">
-            <h1 class="profile-name">{{ $engineer->full_name }}</h1>
-            <div class="profile-spec">{{ $engineer->specialization ?? 'مهندس' }}</div>
-        </div>
+    <!-- Right: Back Button -->
+    <div class="back-btn-wrapper">
+        <a href="{{ route('engineers.index') }}" class="back-btn">
+            <i class="fas fa-arrow-right"></i> العودة إلى القائمة
+        </a>
     </div>
 
-    <!-- Horizontal Tabs Under Name -->
-    <div class="profile-tabs-section">
-        <ul class="nav nav-tabs" id="engineerTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">البيانات الشخصية</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">عنوان السكن</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="work-tab" data-bs-toggle="tab" data-bs-target="#work" type="button" role="tab">مكان العمل</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="job-tab" data-bs-toggle="tab" data-bs-target="#job" type="button" role="tab">الوظيفة</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="app-tab" data-bs-toggle="tab" data-bs-target="#app" type="button" role="tab">التطبيق</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">البنك</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments" type="button" role="tab">المرفقات</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="employee-attendance-tab" data-bs-toggle="tab" data-bs-target="#employee-attendance" type="button" role="tab">الدوام</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="employee-app-problems-tab" data-bs-toggle="tab" data-bs-target="#employee-app-problems" type="button" role="tab">المشاكل</button>
-            </li>
-        </ul>
+    <!-- Center: Avatar + Name + Spec + Tabs -->
+    <div class="profile-center-section">
+        <div class="profile-center-content">
+            @if($engineer->personal_image)
+                <img src="{{ asset('storage/' . $engineer->personal_image) }}" class="profile-avatar-compact" alt="صورة المهندس">
+            @else
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($engineer->full_name) }}&background=0C4079&color=fff&size=280" class="profile-avatar-compact" alt="صورة المهندس">
+            @endif
+
+            <div class="profile-info-compact">
+                <h1 class="profile-name">{{ $engineer->full_name }}</h1>
+                <div class="profile-spec">{{ $engineer->specialization ?? 'مهندس' }}</div>
+            </div>
+        </div>
+
+        <!-- Horizontal Tabs Under Name -->
+        <div class="profile-tabs-section">
+            <ul class="nav nav-tabs" id="engineerTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">البيانات الشخصية</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">عنوان السكن</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="work-tab" data-bs-toggle="tab" data-bs-target="#work" type="button" role="tab">مكان العمل</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="job-tab" data-bs-toggle="tab" data-bs-target="#job" type="button" role="tab">الوظيفة</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="app-tab" data-bs-toggle="tab" data-bs-target="#app" type="button" role="tab">التطبيق</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">البنك</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments" type="button" role="tab">المرفقات</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="employee-attendance-tab" data-bs-toggle="tab" data-bs-target="#employee-attendance" type="button" role="tab">الدوام</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="employee-app-problems-tab" data-bs-toggle="tab" data-bs-target="#employee-app-problems" type="button" role="tab">المشاكل</button>
+                </li>
+            </ul>
+        </div>
     </div>
 
 </div>
