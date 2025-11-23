@@ -58,6 +58,8 @@ class Engineer extends Model
         'salary_amount' => 'decimal:2',
     ];
 
+    protected $appends = ['full_name'];
+
     /**
      * Get all attachments for the engineer
      */
@@ -157,6 +159,11 @@ class Engineer extends Model
 public function engineer_specialization()
 {
     return $this->belongsTo(Constant::class, 'specialization_id');
+}
+
+public function teams()
+{
+    return $this->belongsToMany(Team::class, 'team_engineer');
 }
 
 

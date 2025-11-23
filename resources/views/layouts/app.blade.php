@@ -163,6 +163,14 @@
             </a>
             @endif
 
+            @if(user_can('teams.view'))
+            <a href="{{ route('teams.index') }}" class="nav-item {{ request()->routeIs('teams.*') ? 'active' : '' }}" style="text-decoration: none;">
+                <i class="fas fa-users-cog"></i>
+                <span>إدارة الفرق</span>
+            </a>
+            @endif
+
+
              @if(user_can('constants.view'))
             <a href="{{ route('constants.index') }}" class="nav-item {{ request()->routeIs('constants.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-sliders-h"></i>

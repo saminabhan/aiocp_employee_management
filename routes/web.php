@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EngineerIssueController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -92,6 +93,57 @@ Route::get('users/get-role-permissions/{roleId}', [UserController::class, 'getRo
 
     Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])
         ->name('profile.update-password');
+
+//     Route::middleware(['permission:teams.create'])->group(function () {
+//         Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
+//         Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+//     });
+// Route::get('/teams/get-engineers/{govId}', function($govId) {
+//     return \App\Models\Engineer::where('is_active', true)
+//             ->where('home_governorate_id', $govId)
+//             ->get();
+// })->middleware('auth');
+
+//     Route::middleware(['permission:teams.view'])->group(function () {
+//         Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+//         Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+//     });
+
+//     Route::middleware(['permission:teams.edit'])->group(function () {
+//         Route::get('/teams/{team}/edit', [TeamController::class, 'edit'])->name('teams.edit');
+//         Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+//         Route::patch('/teams/{team}/toggle', [TeamController::class, 'toggleStatus'])->name('teams.toggle');
+//     });
+
+//     Route::middleware(['permission:teams.delete'])->group(function () {
+//         Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+//     });
+
+    Route::get('/teams/get-engineers/{governorateId}', [TeamController::class, 'getEngineersByGovernorate'])
+         ->name('teams.get-engineers');
+
+        Route::middleware(['permission:teams.create'])->group(function () {
+        Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
+        Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+    });
+    
+    Route::middleware(['permission:teams.view'])->group(function () {
+        Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+        Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+    });
+
+
+
+    Route::middleware(['permission:teams.edit'])->group(function () {
+        Route::get('/teams/{team}/edit', [TeamController::class, 'edit'])->name('teams.edit');
+        Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+        Route::patch('/teams/{team}/toggle', [TeamController::class, 'toggleStatus'])->name('teams.toggle');
+    });
+
+    Route::middleware(['permission:teams.delete'])->group(function () {
+        Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    });
+
 
 });
 

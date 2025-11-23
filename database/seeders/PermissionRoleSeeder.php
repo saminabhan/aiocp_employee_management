@@ -42,6 +42,12 @@ class PermissionRoleSeeder extends Seeder
             ['name' => 'constants.view', 'display_name' => 'عرض الثوابت', 'category' => 'constants'],
             ['name' => 'constants.edit', 'display_name' => 'تعديل الثوابت', 'category' => 'constants'],
             ['name' => 'constants.delete', 'display_name' => 'حذف الثوابت', 'category' => 'constants'],
+
+            // Teams
+            ['name' => 'teams.view', 'display_name' => 'عرض الفرق', 'category' => 'teams'],
+            ['name' => 'teams.create', 'display_name' => 'إنشاء فريق جديد', 'category' => 'teams'],
+            ['name' => 'teams.edit', 'display_name' => 'تعديل فريق', 'category' => 'teams'],
+            ['name' => 'teams.delete', 'display_name' => 'حذف فريق', 'category' => 'teams'],
         ];
 
         foreach ($permissions as $perm) {
@@ -72,21 +78,25 @@ class PermissionRoleSeeder extends Seeder
         $adminUser->permissions()->sync(Permission::pluck('id'));
 
         $governorateManager = Role::firstOrCreate([
-    'name' => 'governorate_manager'
-],[
-    'display_name' => 'مدير المحافظة',
-    'description' => 'المسؤول عن إدارة محافظة'
-]);
+            'name' => 'governorate_manager'
+        ],[
+            'display_name' => 'مدير المحافظة',
+            'description' => 'المسؤول عن إدارة محافظة'
+        ]);
 
-// -------- Assign permissions to governorate manager --------
-$permissionsForGovernorate = Permission::whereIn('name', [
-    'engineers.view',
-    'engineers.create',
-    'engineers.edit',
-    'dashboard.view',
-])->pluck('id')->toArray();
+        // -------- Assign permissions to governorate manager --------
+        $permissionsForGovernorate = Permission::whereIn('name', [
+            'engineers.view',
+            'engineers.create',
+            'engineers.edit',
+            'dashboard.view',
+            'teams.view',
+            'teams.create',
+            'teams.edit',
 
-$governorateManager->permissions()->sync($permissionsForGovernorate);
+        ])->pluck('id')->toArray();
+
+        $governorateManager->permissions()->sync($permissionsForGovernorate);
 
 
     }

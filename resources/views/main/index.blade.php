@@ -16,15 +16,17 @@
         </div>
         @endif
 
+        @if(user_can('teams.view'))
          <div class="stat-card">
             <div class="stat-info">
                 <h3>عدد الفرق</h3>
-                <p>7 فرق</p>
+                <p>{{ $team_count }} فرق</p>
             </div>
-            <div class="stat-icon bg-blue">
-                <i class="fas fa-users"></i>
+            <div class="stat-icon bg-black">
+                <i class="fas fa-users-cog"></i>
             </div>
         </div>
+        @endif
 
         <div class="stat-card">
             <div class="stat-info">
