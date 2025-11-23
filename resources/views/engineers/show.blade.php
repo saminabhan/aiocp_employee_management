@@ -67,8 +67,8 @@
         }
 
         .profile-avatar-compact {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
         }
 
         .profile-name {
@@ -101,8 +101,8 @@
         }
 
         .profile-avatar-compact {
-            width: 110px;
-            height: 110px;
+            width: 100px;
+            height: 100px;
         }
 
         .profile-name {
@@ -206,8 +206,8 @@
     }
 
     .profile-avatar-compact {
-        width: 140px;
-        height: 140px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         border: 4px solid #0C4079;
         object-fit: cover;
@@ -224,7 +224,7 @@
     }
 
     .profile-name {
-        font-size: 22px;
+        font-size: 16px;
         font-weight: 800;
         color: #0C4079;
         margin: 0;
@@ -233,7 +233,7 @@
 
     .profile-spec {
         color: #666;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
     }
 
@@ -260,7 +260,7 @@
         border-radius: 6px;
         background: #f8f9fa;
         transition: all 0.2s;
-        font-size: 11px;
+        font-size: 13px;
         white-space: nowrap;
         margin: 0 1px;
     }
@@ -274,6 +274,21 @@
         background: #0C4079;
         color: white;
         border-color: #0C4079;
+    }
+
+    .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.30rem 0.30rem;
+    margin-bottom: 0.3rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #555;
+    font-size: 0.95rem;
+    position: relative;
+    white-space: nowrap;
     }
 
     /* ---------- CONTENT AREA ---------- */
@@ -365,7 +380,7 @@
         font-weight: 600;
         margin-bottom: 15px;
         transition: all 0.3s;
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .back-btn:hover {
@@ -483,8 +498,8 @@
         }
 
         .profile-avatar-compact {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
         }
 
         .profile-name {
@@ -517,8 +532,8 @@
         }
 
         .profile-avatar-compact {
-            width: 110px;
-            height: 110px;
+            width: 100px;
+            height: 100px;
         }
 
         .profile-name {
