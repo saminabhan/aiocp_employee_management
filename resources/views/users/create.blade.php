@@ -152,6 +152,7 @@
                                         'Users' => 'إدارة المستخدمين',
                                         'engineers' => 'إدارة المهندسين',
                                         'constants' => 'إدارة الثوابت',
+                                        'teams' => 'إدارة الفرق',
                                     ];
 
                                     $permissionsByCategory = $permissions->groupBy('category');
