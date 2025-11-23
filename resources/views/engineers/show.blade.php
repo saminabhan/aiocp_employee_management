@@ -30,11 +30,24 @@
         justify-content: center;
     }
 
+        .back-btn-wrapper-left {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     /* ---------- RESPONSIVE ---------- */
     @media (max-width: 1200px) {
         .back-btn-wrapper {
             top: 15px;
             right: 15px;
+        }
+        ..back-btn-wrapper-left{
+            top: 15px;
+            left: 15px;
         }
 
         .back-btn {
@@ -54,6 +67,14 @@
         }
 
         .back-btn-wrapper {
+            position: static;
+            margin-bottom: 0;
+            width: 100%;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+        
+        .back-btn-wrapper-left{
             position: static;
             margin-bottom: 0;
             width: 100%;
@@ -86,6 +107,14 @@
             position: absolute;
             top: 15px;
             right: 15px;
+            padding-right: 0;
+            z-index: 10;
+        }
+
+        ..back-btn-wrapper-left {
+            position: absolute;
+            top: 15px;
+            left: 15px;
             padding-right: 0;
             z-index: 10;
         }
@@ -132,6 +161,16 @@
             width: 100%;
             display: flex;
             justify-content: flex-end;
+            margin-bottom: 15px;
+            padding-right: 0;
+            z-index: 10;
+        }
+
+        .back-btn-wrapper-left {
+            position: static;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
             margin-bottom: 15px;
             padding-right: 0;
             z-index: 10;
@@ -276,7 +315,7 @@
         border-color: #0C4079;
     }
 
-    .nav-item {
+    .nav-items-custom {
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -368,6 +407,21 @@
     }
 
     /* ---------- BACK BUTTON ---------- */
+    .back-btn-blue {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #0C4079;
+        color: #ffff;
+        padding: 10px 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+        font-size: 12px;
+    }
+
     .back-btn {
         display: inline-flex;
         align-items: center;
@@ -661,6 +715,11 @@ document.addEventListener("DOMContentLoaded", function() {
             <i class="fas fa-arrow-right"></i> العودة إلى القائمة
         </a>
     </div>
+    <div class="back-btn-wrapper-left">
+         <a href="{{ route('engineers.edit', $engineer) }}" class="back-btn-blue" title="تعديل">
+                <i class="fas fa-edit"></i>
+            </a>
+    </div>
 
     <!-- Center: Avatar + Name + Spec + Tabs -->
     <div class="profile-center-section">
@@ -680,31 +739,31 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- Horizontal Tabs Under Name -->
         <div class="profile-tabs-section">
             <ul class="nav nav-tabs" id="engineerTabs" role="tablist">
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">البيانات الشخصية</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">عنوان السكن</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="work-tab" data-bs-toggle="tab" data-bs-target="#work" type="button" role="tab">مكان العمل</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="job-tab" data-bs-toggle="tab" data-bs-target="#job" type="button" role="tab">الوظيفة</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="app-tab" data-bs-toggle="tab" data-bs-target="#app" type="button" role="tab">التطبيق</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">البنك</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments" type="button" role="tab">المرفقات</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="employee-attendance-tab" data-bs-toggle="tab" data-bs-target="#employee-attendance" type="button" role="tab">الدوام</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="employee-app-problems-tab" data-bs-toggle="tab" data-bs-target="#employee-app-problems" type="button" role="tab">المشاكل</button>
                 </li>
             </ul>
