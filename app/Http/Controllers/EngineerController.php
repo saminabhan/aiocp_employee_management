@@ -376,8 +376,7 @@ $engineer->update($validated);
         }
     }
 
-    return redirect()->route('engineers.index')
-        ->with('success', 'تم تحديث بيانات المهندس بنجاح');
+return redirect()->back()->with('success', 'تم تحديث بيانات المهندس بنجاح');
 }
 
 public function deleteAttachment(EngineerAttachment $attachment)

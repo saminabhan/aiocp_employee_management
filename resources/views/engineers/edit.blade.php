@@ -470,6 +470,27 @@
 @endpush
 
 @section('content')
+
+@if (Session::has('success'))
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        toast: true,
+        position: 'bottom-start',
+        icon: 'success',
+        title: '{{ Session::get("success") }}',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: false,
+        customClass: {
+            popup: 'medium-small-toast'
+        }
+    });
+});
+</script>
+@endif
+
 <div class="wizard-container">
     <div class="wizard-header">
         <div class="wizard-step active" data-step="1" onclick="goToStep(1)">

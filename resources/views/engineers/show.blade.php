@@ -4,93 +4,95 @@
 
 @push('styles')
 <style>
-    /* ---------- COMPACT PROFILE ---------- */
-    .compact-profile-wrapper {
+    /* ---------- PROFILE HEADER - CENTERED LAYOUT ---------- */
+    .profile-header-wrapper {
         background: white;
         border-radius: 12px;
-        padding: 20px;
+        padding: 30px 20px;
         margin-bottom: 20px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 20px;
+        text-align: center;
     }
 
-    /* الصورة والاسم على اليمين */
-   .profile-right-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 15px; /* المسافة الطولية بين الصورة والاسم */
-    min-width: 190px;
-    text-align: center;
-}
+    /* الصورة والاسم والتخصص في النص */
+    .profile-center-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
 
-.profile-avatar-compact {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 3px solid #0C4079;
-    object-fit: cover;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    flex-shrink: 0;
-}
+    .profile-avatar-compact {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid #0C4079;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(12, 64, 121, 0.15);
+        flex-shrink: 0;
+    }
 
-.profile-info-compact {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    align-items: center;
-    text-align: center;
-}
-
+    .profile-info-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+        text-align: center;
+    }
 
     .profile-name {
-        font-size: 18px;
-        font-weight: 700;
+        font-size: 22px;
+        font-weight: 800;
         color: #0C4079;
         margin: 0;
-        line-height: 1.3;
+        line-height: 1.2;
     }
 
     .profile-spec {
         color: #666;
-        font-size: 13px;
+        font-size: 14px;
+        font-weight: 500;
     }
 
-    /* التابات على اليسار */
-    .profile-left-section {
-        flex: 1;
+    /* التابات الأفقية تحت الاسم */
+    .profile-tabs-section {
+        width: 100%;
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
     }
 
-    .profile-left-section .nav-tabs {
+    .profile-tabs-section .nav-tabs {
         border: none;
-        gap: 6px;
+        gap: 0px;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
-    .profile-left-section .nav-tabs .nav-link {
+    .profile-tabs-section .nav-tabs .nav-link {
         font-weight: 600;
-        padding: 8px 14px;
+        padding: 6px 10px;
         color: #0C4079;
         border: 1px solid #e0e0e0;
         border-radius: 6px;
         background: #f8f9fa;
         transition: all 0.2s;
-        font-size: 13px;
+        font-size: 11px;
         white-space: nowrap;
+        margin: 0 1px;
     }
-
-    .profile-left-section .nav-tabs .nav-link:hover {
+    .profile-tabs-section .nav-tabs .nav-link:hover {
         background: #e9ecef;
         border-color: #0C4079;
+        transform: translateY(-2px);
     }
 
-    .profile-left-section .nav-tabs .nav-link.active {
+    .profile-tabs-section .nav-tabs .nav-link.active {
         background: #0C4079;
         color: white;
         border-color: #0C4079;
@@ -102,7 +104,7 @@
         border-radius: 12px;
         padding: 25px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        max-height: calc(100vh - 250px);
+        max-height: calc(130vh - 350px);
         overflow-y: auto;
     }
 
@@ -278,82 +280,86 @@
 
     /* ---------- RESPONSIVE ---------- */
     @media (max-width: 1200px) {
-        .profile-left-section .nav-tabs .nav-link {
-            padding: 7px 12px;
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 9px 12px;
             font-size: 12px;
         }
     }
 
     @media (max-width: 992px) {
-        .compact-profile-wrapper {
-            flex-direction: column;
-            align-items: stretch;
+        .profile-header-wrapper {
+            padding: 25px 15px;
         }
 
-        .profile-right-section {
-            justify-content: center;
-            min-width: auto;
+        .profile-avatar-compact {
+            width: 120px;
+            height: 120px;
         }
 
-        .profile-left-section {
-            justify-content: center;
-        }
-
-        .content-area {
-            max-height: none;
+        .profile-name {
+            font-size: 20px;
         }
     }
 
     @media (max-width: 768px) {
-        .profile-right-section {
-            flex-direction: column;
-            text-align: center;
+        .profile-header-wrapper {
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .profile-avatar-compact {
+            width: 110px;
+            height: 110px;
+        }
+
+        .profile-name {
+            font-size: 18px;
         }
 
         .info-grid {
             grid-template-columns: 1fr;
         }
 
-        .profile-avatar-compact {
-            width: 65px;
-            height: 65px;
+        .profile-tabs-section .nav-tabs {
+            gap: 6px;
+        }
+
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .content-area {
+            padding: 18px;
+            max-height: calc(100vh - 320px);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-tabs-section .nav-tabs {
+            gap: 4px;
+        }
+
+        .profile-tabs-section .nav-tabs .nav-link {
+            padding: 7px 10px;
+            font-size: 11px;
+        }
+
+        .issues-table {
+            font-size: 12px;
+        }
+
+        .issues-table th,
+        .issues-table td {
+            padding: 8px 4px;
         }
 
         .profile-name {
             font-size: 16px;
         }
 
-        .compact-profile-wrapper {
-            padding: 15px;
-        }
-
-        .content-area {
-            padding: 20px;
-        }
-
-        .back-btn {
+        .profile-spec {
             font-size: 13px;
-            padding: 7px 14px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .profile-left-section .nav-tabs {
-            justify-content: center;
-        }
-
-        .profile-left-section .nav-tabs .nav-link {
-            font-size: 11px;
-            padding: 6px 10px;
-        }
-
-        .issues-table {
-            font-size: 11px;
-        }
-
-        .issues-table th,
-        .issues-table td {
-            padding: 8px 5px;
         }
     }
 </style>
@@ -362,8 +368,7 @@
 @section('content')
 
 <a href="{{ route('engineers.index') }}" class="back-btn">
-    <i class="fas fa-arrow-right"></i>
-    العودة إلى القائمة
+    <i class="fas fa-arrow-right"></i> العودة إلى القائمة
 </a>
 
 @if (Session::has('success'))
@@ -377,10 +382,7 @@ document.addEventListener("DOMContentLoaded", function() {
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        backdrop: false,
-        customClass: {
-            popup: 'medium-small-toast'
-        }
+        backdrop: false
     });
 });
 </script>
@@ -397,15 +399,15 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 @endif
 
-<!-- COMPACT PROFILE HEADER -->
-<div class="compact-profile-wrapper">
+<!-- PROFILE HEADER - CENTERED -->
+<div class="profile-header-wrapper" dir="rtl">
     
-    <!-- Right: Avatar + Name -->
-    <div class="profile-right-section">
+    <!-- Center: Avatar + Name + Spec -->
+    <div class="profile-center-section">
         @if($engineer->personal_image)
             <img src="{{ asset('storage/' . $engineer->personal_image) }}" class="profile-avatar-compact" alt="صورة المهندس">
         @else
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($engineer->full_name) }}&background=0C4079&color=fff&size=140" class="profile-avatar-compact" alt="صورة المهندس">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode($engineer->full_name) }}&background=0C4079&color=fff&size=280" class="profile-avatar-compact" alt="صورة المهندس">
         @endif
 
         <div class="profile-info-compact">
@@ -414,35 +416,35 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- Left: Tabs Navigation -->
-    <div class="profile-left-section">
+    <!-- Horizontal Tabs Under Name -->
+    <div class="profile-tabs-section">
         <ul class="nav nav-tabs" id="engineerTabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#personal">البيانات الشخصية</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">البيانات الشخصية</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#home">عنوان السكن</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">عنوان السكن</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#work">مكان العمل</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="work-tab" data-bs-toggle="tab" data-bs-target="#work" type="button" role="tab">مكان العمل</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#job">معلومات الوظيفة</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="job-tab" data-bs-toggle="tab" data-bs-target="#job" type="button" role="tab">الوظيفة</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#app">بيانات تطبيق الحصر</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="app-tab" data-bs-toggle="tab" data-bs-target="#app" type="button" role="tab">التطبيق</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#bank">البنك</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">البنك</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#attachments">المرفقات</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments" type="button" role="tab">المرفقات</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#employee-attendance">الدوام</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="employee-attendance-tab" data-bs-toggle="tab" data-bs-target="#employee-attendance" type="button" role="tab">الدوام</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#employee-app-problems">مشاكل تطبيق الحصر</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="employee-app-problems-tab" data-bs-toggle="tab" data-bs-target="#employee-app-problems" type="button" role="tab">المشاكل</button>
             </li>
         </ul>
     </div>
@@ -450,10 +452,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 <!-- TABS CONTENT -->
-<div class="tab-content content-area">
+<div class="tab-content content-area" id="engineerTabContent" dir="rtl">
 
     <!-- PERSONAL -->
-    <div class="tab-pane fade show active" id="personal">
+    <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
         <div class="section-title"><i class="fas fa-id-card"></i> البيانات الشخصية</div>
         <div class="info-grid">
             <div class="info-item">
@@ -491,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- HOME -->
-    <div class="tab-pane fade" id="home">
+    <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
         <div class="section-title"><i class="fas fa-home"></i> عنوان السكن</div>
         <div class="info-grid">
             <div class="info-item">
@@ -510,7 +512,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- WORK -->
-    <div class="tab-pane fade" id="work">
+    <div class="tab-pane fade" id="work" role="tabpanel" aria-labelledby="work-tab">
         <div class="section-title"><i class="fas fa-building"></i> مكان العمل</div>
         <div class="info-grid">
             <div class="info-item">
@@ -535,14 +537,12 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- JOB -->
-    <div class="tab-pane fade" id="job">
+    <div class="tab-pane fade" id="job" role="tabpanel" aria-labelledby="job-tab">
         <div class="section-title"><i class="fas fa-briefcase"></i> معلومات الوظيفة</div>
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">سنوات الخبرة</div>
-                <div class="info-value">
-                    <span class="badge-custom badge-success">{{ $engineer->experience_years }} سنة</span>
-                </div>
+                <div class="info-value"><span class="badge-custom badge-success">{{ $engineer->experience_years }} سنة</span></div>
             </div>
             <div class="info-item">
                 <div class="info-label">التخصص</div>
@@ -564,7 +564,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- APP INFO -->
-    <div class="tab-pane fade" id="app">
+    <div class="tab-pane fade" id="app" role="tabpanel" aria-labelledby="app-tab">
         <div class="section-title"><i class="fas fa-mobile-alt"></i> بيانات التطبيق</div>
         <div class="info-grid">
             <div class="info-item">
@@ -591,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- BANK -->
-    <div class="tab-pane fade" id="bank">
+    <div class="tab-pane fade" id="bank" role="tabpanel" aria-labelledby="bank-tab">
         <div class="section-title"><i class="fas fa-university"></i> معلومات الحساب البنكي</div>
         <div class="info-grid">
             <div class="info-item">
@@ -627,7 +627,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- ATTACHMENTS -->
-    <div class="tab-pane fade" id="attachments">
+    <div class="tab-pane fade" id="attachments" role="tabpanel" aria-labelledby="attachments-tab">
         <div class="section-title"><i class="fas fa-paperclip"></i> المرفقات</div>
         @if($engineer->attachments->count())
             <div class="info-grid">
@@ -655,10 +655,8 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- ATTENDANCE -->
-    <div class="tab-pane fade" id="employee-attendance">
-        <div class="section-title">
-            <i class="fas fa-user-clock"></i> جدول دوام الموظف
-        </div>
+    <div class="tab-pane fade" id="employee-attendance" role="tabpanel" aria-labelledby="employee-attendance-tab">
+        <div class="section-title"><i class="fas fa-user-clock"></i> جدول دوام الموظف</div>
         <div class="table-responsive mt-3">
             <table class="table table-bordered table-striped text-center">
                 <thead class="table-light">
@@ -694,19 +692,15 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
     <!-- PROBLEMS -->
-    <div class="tab-pane fade" id="employee-app-problems">
-        <div class="section-title">
-            <i class="fas fa-exclamation-triangle"></i> مشاكل تطبيق حصر الأضرار
-        </div>
+    <div class="tab-pane fade" id="employee-app-problems" role="tabpanel" aria-labelledby="employee-app-problems-tab">
+        <div class="section-title"><i class="fas fa-exclamation-triangle"></i> مشاكل التطبيق</div>
 
-        <!-- زر إضافة مشكلة -->
         <div class="mb-3">
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProblemModal">
                 <i class="fas fa-plus"></i> إضافة مشكلة جديدة
             </button>
         </div>
 
-        <!-- جدول المشاكل -->
         @if($engineer->issues->count())
             <div class="table-responsive">
                 <table class="issues-table">
@@ -745,127 +739,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                     </button>
                                 </td>
                             </tr>
-
-                            <!-- Modal عرض التفاصيل -->
-                            <div class="modal fade" id="showProblemModal-{{ $issue->id }}" tabindex="-1">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">
-                                                <i class="fas fa-bug text-primary"></i>
-                                                تفاصيل المشكلة
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <strong class="text-muted">نوع المشكلة:</strong>
-                                                    <p>{{ $issue->problem->name }}</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <strong class="text-muted">الحالة:</strong>
-                                                    <p>
-                                                        <span class="badge-custom 
-                                                            @if($issue->status=='open') badge-danger 
-                                                            @elseif($issue->status=='in_progress') badge-warning
-                                                            @else badge-success @endif">
-                                                            @if($issue->status=='open') مفتوحة
-                                                            @elseif($issue->status=='in_progress') قيد المعالجة
-                                                            @else مغلقة @endif
-                                                        </span>
-                                                    </p>
-                                                </div>
-                                                <div class="col-12">
-                                                    <strong class="text-muted">وصف المشكلة:</strong>
-                                                    <p>{{ $issue->description }}</p>
-                                                </div>
-                                                @if($issue->solution)
-                                                    <div class="col-12">
-                                                        <strong class="text-muted">رد الدعم الفني:</strong>
-                                                        <p class="p-3 bg-light border rounded">{{ $issue->solution }}</p>
-                                                    </div>
-                                                @endif
-                                                <div class="col-md-6">
-                                                    <strong class="text-muted">تاريخ الإنشاء:</strong>
-                                                    <p>{{ $issue->created_at->format('Y-m-d H:i A') }}</p>
-                                                </div>
-                                                @if($issue->updated_at != $issue->created_at)
-                                                    <div class="col-md-6">
-                                                        <strong class="text-muted">آخر تحديث:</strong>
-                                                        <p>{{ $issue->updated_at->format('Y-m-d H:i A') }}</p>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            @if($issue->status != 'closed')
-                                                <button type="button" class="btn btn-primary btn-sm" 
-                                                    data-bs-dismiss="modal"
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#statusModal-{{ $issue->id }}">
-                                                    <i class="fas fa-edit"></i> تحديث الحالة
-                                                </button>
-                                            @endif
-                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إغلاق</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Modal تحديث الحالة -->
-                            <div class="modal fade" id="statusModal-{{ $issue->id }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form action="{{ route('issues.updateStatus', $issue->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="active_tab" value="employee-app-problems">
-
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">تحديث حالة المشكلة</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label class="form-label">الحالة الجديدة:</label>
-                                                    <select name="status" id="statusSelect-{{ $issue->id }}" class="form-select">
-                                                        <option value="open" {{ $issue->status=='open' ? 'selected' : '' }}>مفتوحة</option>
-                                                        <option value="in_progress" {{ $issue->status=='in_progress' ? 'selected' : '' }}>قيد المعالجة</option>
-                                                        <option value="closed" {{ $issue->status=='closed' ? 'selected' : '' }}>مغلقة</option>
-                                                    </select>
-                                                </div>
-
-                                                <div id="solutionBox-{{ $issue->id }}" style="display:{{ $issue->status=='closed' ? 'block' : 'none' }};">
-                                                    <label class="form-label">وصف الحل:</label>
-                                                    <textarea name="solution" class="form-control" rows="3" 
-                                                        placeholder="اشرح كيف تم حل المشكلة">{{ $issue->solution }}</textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إلغاء</button>
-                                                <button type="submit" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-save"></i> حفظ التحديث
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <script>
-                                document.getElementById('statusSelect-{{ $issue->id }}').addEventListener('change', function () {
-                                    let box = document.getElementById('solutionBox-{{ $issue->id }}');
-                                    box.style.display = this.value === "closed" ? "block" : "none";
-                                });
-                            </script>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         @else
-            <p class="text-muted text-center">لا توجد مشاكل مسجلة لهذا المهندس.</p>
+            <p class="text-muted text-center">لا توجد مشاكل مسجلة</p>
         @endif
     </div>
 
@@ -878,47 +757,34 @@ document.addEventListener("DOMContentLoaded", function() {
             <form action="{{ route('engineers.issues.store', $engineer->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="active_tab" value="employee-app-problems">
-
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-plus-circle text-primary"></i>
-                        إضافة مشكلة جديدة
-                    </h5>
+                    <h5 class="modal-title"><i class="fas fa-plus-circle text-primary"></i> إضافة مشكلة جديدة</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-                <div class="modal-body">
+                <div class="modal-body" dir="rtl">
                     <div class="mb-3">
                         <label class="form-label">نوع المشكلة <span class="text-danger">*</span></label>
                         <select name="problem_type_id" class="form-select" required>
                             <option value="">-- اختر نوع المشكلة --</option>
-                            @foreach($problemTypes as $problem)
+                            @foreach($problemTypes ?? [] as $problem)
                                 <option value="{{ $problem->id }}">{{ $problem->name }}</option>
                             @endforeach
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">وصف المشكلة <span class="text-danger">*</span></label>
-                        <textarea class="form-control" name="description" rows="4" 
-                            placeholder="اكتب تفاصيل المشكلة بشكل واضح ودقيق..." required></textarea>
+                        <textarea class="form-control" name="description" rows="4" placeholder="اكتب تفاصيل المشكلة بشكل واضح..." required></textarea>
                     </div>
                 </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i> إلغاء
-                    </button>
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        <i class="fas fa-save"></i> حفظ المشكلة
-                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><i class="fas fa-times"></i> إلغاء</button>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> حفظ</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-{{-- Script لتفعيل نفس التاب عند العودة --}}
 @if(session('active_tab'))
 <script>
 document.addEventListener('DOMContentLoaded', function () {
