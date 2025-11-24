@@ -108,9 +108,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     {{-- === أزرار التحكم === --}}
     <div class="mt-4 text-end">
+        @if(user_can('profile.edit'))
         <a href="{{ route('profile.edit') }}" class="btn btn-warning">
             <i class="fas fa-edit"></i> تعديل البيانات
         </a>
+        @endif
+        
 
         <a href="{{ route('profile.change-password') }}" class="btn btn-secondary">
             <i class="fas fa-lock"></i> تغيير كلمة المرور

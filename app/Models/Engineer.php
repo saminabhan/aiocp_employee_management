@@ -48,7 +48,8 @@ class Engineer extends Model
         'account_owner_last',
         'account_owner_national_id',
         'account_owner_mobile',
-        'work_area_code',
+        'main_work_area_code',
+        'sub_work_area_code',
     ];
 
     protected $casts = [
@@ -166,5 +167,19 @@ public function teams()
     return $this->belongsToMany(Team::class, 'team_engineer');
 }
 
+public function user()
+{
+    return $this->hasOne(User::class, 'engineer_id');
+}
+
+    public function mainWorkAreaCode()
+    {
+        return $this->belongsTo(Constant::class, 'main_work_area_code');
+    }
+
+public function specialization()
+{
+    return $this->belongsTo(Constant::class, 'specialization_id');
+}
 
 }

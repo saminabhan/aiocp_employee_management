@@ -77,11 +77,35 @@
                 <i class="fas fa-chevron-down"></i>
             </div> -->
             <div class="profile-dropdown">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=0C4079&color=fff&size=76" 
-                alt="Profile" class="profile-avatar" id="profileBtn">
+@if(Auth::user()->engineer_id 
+    && Auth::user()->engineer 
+    && Auth::user()->engineer->personal_image)
+
+    {{-- لو المستخدم مهندس و عنده صورة شخصية --}}
+    <img src="{{ asset('storage/' . Auth::user()->engineer->personal_image) }}"
+         alt="Profile"
+         class="profile-avatar"
+         id="profileBtn">
+
+@else
+    {{-- باقي المستخدمين أو المهندس بدون صورة --}}
+    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=0C4079&color=fff&size=76"
+         alt="Profile"
+         class="profile-avatar"
+         id="profileBtn">
+@endif
                 <div class="dropdown-menu-custom" id="profileDropdown">
                     <div class="dropdown-header">
-                        <div class="dropdown-user-name">مرحبا, {{ Auth::user()->name }} !</div>
+                        @php
+                            $parts = explode(' ', trim(Auth::user()->name));
+                            $first = $parts[0];
+                            $last = count($parts) > 1 ? $parts[count($parts)-1] : '';
+                        @endphp
+
+                        <div class="dropdown-user-name">
+                            مرحبا, {{ $first }}{{ $last ? ' ' . $last : '' }}!
+                        </div>
+
                         <div class="dropdown-user-email">
                             @if (Auth::user()->role->name === 'governorate_manager')
                             مدير محافظة 
@@ -93,14 +117,28 @@
                             @endif
                         </div>
                     </div>
-                    <a href="{{ route('profile.index') }}" class="dropdown-item-custom">
+                    @if(Auth::user()->engineer_id && Auth::user()->engineer)
+                    <a href="{{ route('engineers.profile') }}" class="dropdown-item-custom">
                         <i class="fas fa-user"></i>
                         <span>الملف الشخصي</span>
                     </a>
-                    <a href="{{ route('profile.edit') }}" class="dropdown-item-custom">
+                    @else
+                     <a href="{{ route('profile.index') }}" class="dropdown-item-custom">
+                        <i class="fas fa-user"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                    @endif
+                   @php
+                        $profileRoute = auth()->user()->can('profile.edit')
+                            ? route('profile.edit')
+                            : route('profile.index'); 
+                    @endphp
+
+                    <a href="{{ $profileRoute }}" class="dropdown-item-custom">
                         <i class="fas fa-cog"></i>
                         <span>إعدادات الحساب</span>
                     </a>
+
                     <!-- <a href="#" class="dropdown-item-custom">
                         <i class="fas fa-question-circle"></i>
                         <span>المساعدة</span>
@@ -132,7 +170,15 @@
             <!-- <img src="https://ui-avatars.com/api/?name=sami+nabhan&background=047857&color=fff&size=110" 
                  alt="User" class="user-avatar"> -->
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 135px; height: auto;">
-            <div class="user-name">مرحبا, {{ Auth::user()->name }} !</div>
+            <div class="user-name">
+            @php
+                $parts = explode(' ', trim(Auth::user()->name));
+                $first = $parts[0];
+                $last = count($parts) > 1 ? $parts[count($parts)-1] : '';
+            @endphp
+
+                مرحبا, {{ $first }}{{ $last ? ' ' . $last : '' }}!
+            </div>
             <div class="user-email">
                 @if (Auth::user()->role->name === 'governorate_manager')
                 مدير محافظة 
@@ -156,6 +202,16 @@
             </a>
             @endif
 
+            @if(Auth::user()->engineer_id) 
+                <a href="{{ route('engineers.profile') }}" 
+                class="nav-item {{ request()->routeIs('engineers.profile') ? 'active' : '' }}"
+                style="text-decoration: none;">
+                    <i class="fas fa-id-card"></i>
+                    <span>الملف الشخصي</span>
+                </a>
+            @endif
+
+
              @if(user_can('engineers.view'))
             <a href="{{ route('engineers.index') }}" class="nav-item {{ request()->routeIs('engineers.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-users"></i>
@@ -178,6 +234,13 @@
             </a>
             @endif
 
+            @if(user_can('survey.supervisor.view'))
+                <a href="{{ route('governorate.supervisors.index') }}" class="nav-item {{ request()->routeIs('governorate.supervisors.*') ? 'active' : '' }}" style="text-decoration: none;">
+                    <i class="fas fa-user-tie"></i>
+                    <span>إدارة مشرفين الحصر</span>
+                </a>
+            @endif
+
             <div class="nav-item">
                 <i class="fas fa-chart-bar"></i>
                 <span>التقاربر</span>
@@ -187,6 +250,8 @@
                 <i class="fas fa-business-time"></i>
                 <span>الدوام اليومي</span>
             </div>
+
+            
 
             <!-- <div class="nav-item">
                 <i class="fas fa-users"></i>
@@ -199,6 +264,11 @@
 
             <div class="sidebar-divider"></div>
 
+            <a href="{{ route('issues.index') }}" class="nav-item {{ request()->routeIs('issues.*') ? 'active' : '' }}" style="text-decoration: none;">
+                <i class="fas fa-tools"></i>
+                <span>مشاكل تطبيق الحصر</span>
+            </a>
+
             @if(user_can('users.view'))
            <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" style="text-decoration: none;">
                 <i class="fas fa-user-shield"></i>
@@ -206,10 +276,19 @@
             </a>
             @endif
 
-             <a href="{{ route('profile.edit') }}" class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}" style="text-decoration: none;">
+            @php
+                $profileRoute = auth()->user()->can('profile.edit')
+                    ? route('profile.edit')
+                    : route('profile.index');
+            @endphp
+
+            <a href="{{ $profileRoute }}"
+            class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+            style="text-decoration: none;">
                 <i class="fas fa-cog"></i>
                 <span>إعدادات الحساب</span>
             </a>
+
 
             <!-- <div class="nav-item">
                 <i class="fas fa-question-circle"></i>

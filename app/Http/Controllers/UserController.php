@@ -18,69 +18,109 @@ class UserController extends Controller
     }
 
     public function create()
-    {
-        $roles = Role::all();
-        $permissions = Permission::all();
-        
-    $governorates     = Constant::childrenOfId(14)->get();
+{
+    $roles = Role::all();
+    $permissions = Permission::all();
 
-        $roles_permissions = [];
-        foreach ($roles as $role) {
-            $roles_permissions[$role->id] = $role->permissions->pluck('id')->toArray();
-        }
+    $governorates = Constant::childrenOfId(14)->get();
+    $cities = Constant::childrenOfId(55)->get();
+$usedAreas = User::whereNotNull('main_work_area_code')
+                ->pluck('main_work_area_code')
+                ->toArray();
 
-        return view('users.create', compact('roles', 'permissions', 'roles_permissions', 'governorates'));
+$mainWorkAreas = Constant::childrenOfId(55)
+                ->whereNotIn('id', $usedAreas)
+                ->get();
+
+    $roles_permissions = [];
+    foreach ($roles as $role) {
+        $roles_permissions[$role->id] = $role->permissions->pluck('id')->toArray();
     }
 
-    public function store(Request $req)
-    {
+    return view('users.create', compact('roles', 'permissions', 'roles_permissions', 'governorates', 'mainWorkAreas' ,'cities'));
+}
+public function getCities($governorateId)
+{
+    $cities = Constant::where('parent', $governorateId)->get();
+    return response()->json($cities);
+}
+
+
+
+public function store(Request $req)
+{
+    $req->validate([
+        'name' => 'required',
+        'username' => 'required|unique:users,username',
+        'password' => 'required',
+        'phone' => 'required|unique:users,phone',
+        'governorate_id' => 'nullable|exists:constants,id',
+        'city_id' => 'nullable|exists:constants,id',
+        'main_work_area_code' => 'nullable|exists:constants,id',
+    ],[
+        'name.required' => 'الرجاء إدخال اسم المستخدم',
+        'username.required' => 'الرجاء إدخال اسم الدخول',
+        'username.unique' => 'اسم الدخول مستخدم مسبقًا',
+        'password.required' => 'الرجاء إدخال كلمة المرور',
+        'phone.required' => 'الرجاء إدخال رقم الجوال',
+        'phone.unique' => 'رقم الجوال مستخدم مسبقًا',
+        'governorate_id.exists' => 'المحافظة المحددة غير موجودة',
+        'city_id.exists' => 'المدينة المحددة غير موجودة',
+        'main_work_area_code.exists' => 'منطقة العمل غير صحيحة',
+    ]);
+
+    // -------------------------------------------
+    // التحقق الخاص بدور مشرف الحصر فقط
+    // -------------------------------------------
+    $role = Role::find($req->role_id);
+
+    if ($role && $role->name === 'survey_supervisor') {
+
         $req->validate([
-            'name' => 'required',
-            'username' => 'required|unique:users,username',
-            'password' => 'required',
-            'phone' => 'required|unique:users,phone',
-            'governorate_id' => 'nullable|exists:constants,id',
+            'governorate_id' => 'required|exists:constants,id',
+            'city_id' => 'required|exists:constants,id',
+            'main_work_area_code' => 'required|exists:constants,id',
         ],[
-            'name.required' => 'الرجاء إدخال اسم المستخدم',
-            'username.required' => 'الرجاء إدخال اسم الدخول',
-            'username.unique' => 'اسم الدخول مستخدم مسبقًا',
-            'password.required' => 'الرجاء إدخال كلمة المرور',
-            'phone.required' => 'الرجاء إدخال رقم الجوال',
-            'phone.unique' => 'رقم الجوال مستخدم مسبقًا',
-            'governorate_id.exists' => 'المحافظة المحددة غير موجودة',
+            'governorate_id.required' => 'الرجاء اختيار المحافظة',
+            'city_id.required' => 'الرجاء اختيار المدينة',
+            'main_work_area_code.required' => 'الرجاء اختيار كود منطقة العمل الرئيسي',
         ]);
-
-        if ($req->role_id === "custom") {
-            $user = User::create([
-                'name' => $req->name,
-                'username' => $req->username,
-                'phone' => $req->phone,
-                'password' => bcrypt($req->password),
-                'role_id' => null,
-                'governorate_id' => $req->governorate_id,
-            ]);
-
-            if ($req->permissions) {
-                $user->permissions()->sync($req->permissions);
-            }
-        } else {
-            $user = User::create([
-                'name' => $req->name,
-                'username' => $req->username,
-                'phone' => $req->phone,
-                'password' => bcrypt($req->password),
-                'role_id' => $req->role_id,
-                'governorate_id' => $req->governorate_id,
-            ]);
-
-            if ($req->role_id) {
-                $role = Role::find($req->role_id);
-                $user->permissions()->sync($role->permissions->pluck('id')->toArray());
-            }
-        }
-
-        return redirect()->route('users.index')->with('success', 'تم إضافة المستخدم بنجاح');
     }
+
+    // -------------------------------------------
+    // إنشاء المستخدم
+    // -------------------------------------------
+
+    $data = [
+        'name' => $req->name,
+        'username' => $req->username,
+        'phone' => $req->phone,
+        'password' => bcrypt($req->password),
+        'role_id' => $req->role_id != "custom" ? $req->role_id : null,
+        'governorate_id' => $req->governorate_id,
+        'city_id' => $req->city_id,
+        'main_work_area_code' => $req->main_work_area_code,
+    ];
+
+    $user = User::create($data);
+
+    // -------------------------------------------
+    // حفظ الصلاحيات
+    // -------------------------------------------
+
+    if ($req->role_id === "custom") {
+        if ($req->permissions) {
+            $user->permissions()->sync($req->permissions);
+        }
+    } else {
+        if ($req->role_id) {
+            $role = Role::find($req->role_id);
+            $user->permissions()->sync($role->permissions->pluck('id')->toArray());
+        }
+    }
+
+    return redirect()->route('users.index')->with('success', 'تم إضافة المستخدم بنجاح');
+}
 
     public function edit($id)
     {

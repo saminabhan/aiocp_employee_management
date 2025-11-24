@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AppIssue;
 use App\Models\Engineer;
+use App\Models\Issue;
 use Illuminate\Http\Request;
 
 class EngineerIssueController extends Controller
@@ -16,7 +17,7 @@ class EngineerIssueController extends Controller
             'description'     => 'required|min:5',
         ]);
 
-        AppIssue::create([
+        Issue::create([
             'engineer_id'      => $engineer->id,
             'problem_type_id'  => $request->problem_type_id, // بدل title
             'description'      => $request->description,
@@ -30,7 +31,7 @@ class EngineerIssueController extends Controller
             ->with('success', 'تم إضافة المشكلة بنجاح');}
 
     // تعديل الحالة
-    public function updateStatus(Request $request, AppIssue $issue)
+    public function updateStatus(Request $request, Issue $issue)
     {
         $request->validate([
             'status' => 'required|in:open,in_progress,closed',

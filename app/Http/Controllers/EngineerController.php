@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Engineer;
 use App\Models\Constant;
 use App\Models\EngineerAttachment;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -37,10 +39,17 @@ public function index()
 
     switch ($user->role->name) {
 
+        // مدير المحافظة → يشوف المهندسين اللي نفس محافظته فقط
         case 'governorate_manager':
-            $query->where('home_governorate_id', $user->governorate_id);
+            $query->where('work_governorate_id', $user->governorate_id);
             break;
 
+        // مشرف الحصر → يشوف فقط المهندسين اللي لهم نفس كود منطقة العمل
+        case 'survey_supervisor':
+            $query->where('main_work_area_code', $user->main_work_area_code);
+            break;
+
+        // أدمن النظام → يشوف الكل
         case 'system_admin':
         default:
             break;
@@ -59,6 +68,7 @@ public function index()
         $governorates = Constant::childrenOfId(14)->get();
         $currencies = Constant::childrenOfId(36)->get();
         $specializations = Constant::childrenOfId(46)->get();
+        $mainWorkAreaCode = Constant::childrenOfId(55)->get();
 
         
         $attachmentTypes = Constant::childrenOfId(9)->get();
@@ -69,7 +79,8 @@ public function index()
             'governorates',
             'currencies',
             'attachmentTypes',
-            'specializations'
+            'specializations',
+            'mainWorkAreaCode'
         ));
     }
     public function getCities($governorateId)
@@ -126,7 +137,7 @@ public function index()
     'attachments.*.details' => 'nullable|string',
     'attachments.*.file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
 
-    'work_area_code' => 'nullable|string||max:255',
+    'main_work_area_code' => 'nullable|exists:constants,id',
 ], [
 
     'required' => 'حقل :attribute مطلوب.',
@@ -225,6 +236,7 @@ public function edit(Engineer $engineer)
     $governorates     = Constant::childrenOfId(14)->get();
     $currencies       = Constant::childrenOfId(36)->get();
     $specializations  = Constant::childrenOfId(46)->get();
+    $mainWorkAreaCode = Constant::childrenOfId(55)->get();
 
     $homeCities = Constant::childrenOfId($engineer->home_governorate_id)->get();
     $workCities = Constant::childrenOfId($engineer->work_governorate_id)->get();
@@ -240,7 +252,8 @@ public function edit(Engineer $engineer)
         'homeCities',
         'workCities',
         'attachmentTypes',
-        'specializations'
+        'specializations',
+        'mainWorkAreaCode'
     ));
 }
 
@@ -293,7 +306,7 @@ public function update(Request $request, Engineer $engineer)
         'new_attachments.*.details' => 'nullable|string',
         'new_attachments.*.file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',   
 
-        'work_area_code' => 'nullable|string||max:255',
+        'main_work_area_code' => 'nullable|exists:constants,id',
 
     ], [
         'required' => 'حقل :attribute مطلوب.',
@@ -410,4 +423,58 @@ public function destroy(Engineer $engineer)
     return redirect()->route('engineers.index')
         ->with('success', 'تم حذف المهندس بنجاح');
 }
+
+public function createEngineerAccount($engineerId)
+{
+    $engineer = Engineer::findOrFail($engineerId);
+
+    $username = $engineer->national_id;
+
+    $password = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
+User::create([
+    'username' => $engineer->national_id,
+    'password' => bcrypt($password),
+    'name' => $engineer->full_name,
+    'phone' => $engineer->mobile_1,
+        'role_id' => Role::where('name', 'field_engineer')->first()->id,
+    'engineer_id' => $engineer->id,
+]);
+
+
+
+    $message = "مرحبا {$engineer->name}، تم إنشاء حسابك.\n";
+    $message .= "اسم المستخدم: {$username}\n";
+    $message .= "كلمة المرور: {$password}\n";
+    $message .= "الدخول عبر الرابط: https://aiocp.infinet.ps";
+
+
+app(\App\Services\EngineerSmsService::class)
+    ->send($engineer->mobile_1, $message, $engineer->id, null);
+
+    return back()->with('success', 'تم إنشاء الحساب وإرسال البيانات عبر SMS');
+}
+
+public function myProfile()
+{
+    $user = auth()->user();
+
+    if (!$user->engineer_id) {
+        abort(403, "لا يوجد بيانات مهندس مرتبطة بهذا الحساب");
+    }
+
+    $engineer = Engineer::with([
+        'gender',
+        'maritalStatus',
+        'homeGovernorate',
+        'homeCity',
+        'workGovernorate',
+        'workCity',
+        'specialization'
+    ])->findOrFail($user->engineer_id);
+
+    return view('engineers.profile', compact('engineer'));
+}
+
+
 }

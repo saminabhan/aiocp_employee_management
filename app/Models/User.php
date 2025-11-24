@@ -19,6 +19,9 @@ class User extends Authenticatable
         'phone',
         'role_id',
         'governorate_id',
+        'engineer_id',
+        'city_id',
+        'main_work_area_code',
     ];
 
     protected $hidden = [
@@ -61,16 +64,31 @@ class User extends Authenticatable
     }
 
     // Check if user has a specific role
-    public function hasRole($role): bool
-    {
-        if ($this->isSuperAdmin()) return true;
+  public function hasRole($role): bool
+{
+    // في حال المستخدم ليس لديه دور
+    if (!$this->role) {
+        return false;
+    }
 
-        if (is_string($role)) {
-            return $this->role?->name === $role;
-        }
+    // لو استقبل string
+    if (is_string($role)) {
+        return $this->role->name === $role;
+    }
 
+    // لو استقبل array of roles
+    if (is_array($role)) {
+        return in_array($this->role->name, $role);
+    }
+
+    // لو استقبل Role Model
+    if ($role instanceof \App\Models\Role) {
         return $this->role_id === $role->id;
     }
+
+    return false;
+}
+
 
     // Check permission (direct + role)
     public function hasPermission($permission): bool
@@ -123,5 +141,20 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Constant::class, 'governorate_id');
     }
+
+    public function city()
+{
+    return $this->belongsTo(Constant::class, 'city_id');
+}
+
+public function mainWorkArea()
+{
+    return $this->belongsTo(Constant::class, 'main_work_area_code');
+}
+
+public function engineer()
+{
+    return $this->belongsTo(Engineer::class, 'engineer_id');
+}
 
 }

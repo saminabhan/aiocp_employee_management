@@ -6,14 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppIssue extends Model
 {
-    protected $fillable = [
-        'engineer_id',
-        'problem_type_id',
-        'description',
-        'status',
-        'priority',
-        'solution',
-    ];
+      protected $table = 'app_issues';
 
     public function problem()
     {

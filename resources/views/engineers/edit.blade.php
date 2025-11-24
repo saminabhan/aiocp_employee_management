@@ -765,10 +765,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 <div class="form-group">
                     <label>كود منطقة العمل</label>
-                    <input type="text" name="work_area_code" class="form-control @error('work_area_code') is-invalid @enderror" value="{{ old('work_area_code', $engineer->work_area_code) }}" required>
-                    @error('work_area_code')
+                    <select name="main_work_area_code" class="form-control @error('main_work_area_code') is-invalid @enderror">
+                        <option value="">اختر كود المنطقة</option>
+                        @foreach($mainWorkAreaCode as $code)
+                            <option value="{{ $code->id }}" {{ old('main_work_area_code', $engineer->main_work_area_code) == $code->id ? 'selected' : '' }}>
+                                {{ $code->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('main_work_area_code')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
+
+
                 </div>
             </div>
 

@@ -48,6 +48,22 @@ class PermissionRoleSeeder extends Seeder
             ['name' => 'teams.create', 'display_name' => 'إنشاء فريق جديد', 'category' => 'teams'],
             ['name' => 'teams.edit', 'display_name' => 'تعديل فريق', 'category' => 'teams'],
             ['name' => 'teams.delete', 'display_name' => 'حذف فريق', 'category' => 'teams'],
+
+            //issues
+            ['name' => 'issues.view', 'display_name' => 'عرض التذاكر', 'category' => 'issues'],
+            ['name' => 'issues.create', 'display_name' => 'إنشاء تذكرة جديدة', 'category' => 'issues'],
+            ['name' => 'issues.edit', 'display_name' => 'تعديل تذكرة', 'category' => 'issues'],
+            ['name' => 'issues.delete', 'display_name' => 'حذف تذكرة', 'category' => 'issues'],
+
+            //survey supervisors
+            ['name' => 'survey.supervisor.view', 'display_name' => 'عرض مشرفي الحصر', 'category' => 'survey supervisors'],
+            // ['name' => 'survey.supervisor.create', 'display_name' => 'إنشاء مشرفي حصر جدد', 'category' => 'survey supervisors'],
+            // ['name' => 'survey.supervisor.edit', 'display_name' => 'تعديل مشرفي الحصر', 'category' => 'survey supervisors'],
+            // ['name' => 'survey.supervisor.delete', 'display_name' => 'حذف مشرفي الحصر', 'category' => 'survey supervisors'],
+
+            // Profile
+            ['name' => 'profile.edit', 'display_name' => 'تعديل الملف الشخصي', 'category' => 'profile'],
+            ['name' => 'profile.view', 'display_name' => 'عرض الملف الشخصي', 'category' => 'profile'],
         ];
 
         foreach ($permissions as $perm) {
@@ -97,6 +113,116 @@ class PermissionRoleSeeder extends Seeder
         ])->pluck('id')->toArray();
 
         $governorateManager->permissions()->sync($permissionsForGovernorate);
+
+                // -------- New Roles (Hierarchy) --------
+        $fieldEngineer = Role::firstOrCreate([
+            'name' => 'field_engineer'
+        ],[
+            'display_name' => 'مهندس حصر (ميداني)',
+            'description' => 'مهندس ميداني يقوم بعمليات الحصر'
+        ]);
+
+        $surveySupervisor = Role::firstOrCreate([
+            'name' => 'survey_supervisor'
+        ],[
+            'display_name' => 'مشرف مهندسين الحصر',
+            'description' => 'مشرف على مهندسي الحصر الميدانيين'
+        ]);
+
+        $governorateManager = Role::firstOrCreate([
+            'name' => 'governorate_manager'
+        ],[
+            'display_name' => 'مدير المحافظة',
+            'description' => 'المسؤول عن إدارة محافظة'
+        ]);
+
+        $northSupport = Role::firstOrCreate([
+            'name' => 'north_support'
+        ],[
+            'display_name' => 'دعم فني شمال غزة',
+            'description' => 'الدعم الفني لشمال غزة وغزة'
+        ]);
+
+        $southSupport = Role::firstOrCreate([
+            'name' => 'south_support'
+        ],[
+            'display_name' => 'دعم فني جنوب غزة',
+            'description' => 'الدعم الفني لجنوب غزة والوسطى و خان يونس و رفح'
+        ]);
+
+
+        // Field Engineer permissions
+        $fieldEngineer->permissions()->sync([
+            Permission::where('name','issues.view')->first()->id,
+            Permission::where('name','issues.create')->first()->id,
+
+            Permission::where('name','dashboard.view')->first()->id,
+
+            Permission::where('name','profile.view')->first()->id,
+        ]);
+
+        // Supervisor permissions
+        $surveySupervisor->permissions()->sync([
+            Permission::where('name','engineers.view')->first()->id,
+            Permission::where('name','engineers.edit')->first()->id,
+
+            Permission::where('name','issues.view')->first()->id,
+            Permission::where('name','issues.create')->first()->id,
+
+            Permission::where('name','teams.view')->first()->id,
+            Permission::where('name','teams.create')->first()->id,
+            Permission::where('name','teams.edit')->first()->id,
+            
+            Permission::where('name','dashboard.view')->first()->id,
+        ]);
+
+        // Governorate Manager permissions
+        $governorateManager->permissions()->sync([
+            Permission::where('name','engineers.view')->first()->id,
+            Permission::where('name','engineers.edit')->first()->id,
+            Permission::where('name','engineers.create')->first()->id,
+
+            Permission::where('name','teams.view')->first()->id,
+            Permission::where('name','teams.edit')->first()->id,
+            Permission::where('name','teams.create')->first()->id,
+
+            Permission::where('name','issues.view')->first()->id,
+            Permission::where('name','issues.create')->first()->id,
+
+            Permission::where('name','dashboard.view')->first()->id,
+
+            Permission::where('name','survey.supervisor.view')->first()->id,
+        ]);
+
+// North Support permissions
+$northSupport->permissions()->sync([
+    Permission::where('name','dashboard.view')->first()->id,
+
+    // view permissions
+    Permission::where('name','users.view')->first()->id,
+    Permission::where('name','engineers.view')->first()->id,
+    Permission::where('name','teams.view')->first()->id,
+    Permission::where('name','constants.view')->first()->id,
+    Permission::where('name','issues.view')->first()->id,
+
+    // edit ticket only
+    Permission::where('name','issues.edit')->first()->id,
+]);
+
+// South Support permissions
+$southSupport->permissions()->sync([
+    Permission::where('name','dashboard.view')->first()->id,
+
+    // view permissions
+    Permission::where('name','users.view')->first()->id,
+    Permission::where('name','engineers.view')->first()->id,
+    Permission::where('name','teams.view')->first()->id,
+    Permission::where('name','constants.view')->first()->id,
+    Permission::where('name','issues.view')->first()->id,
+
+    // edit ticket only
+    Permission::where('name','issues.edit')->first()->id,
+]);
 
 
     }

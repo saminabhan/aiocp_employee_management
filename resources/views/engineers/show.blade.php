@@ -422,6 +422,21 @@
         font-size: 12px;
     }
 
+        .back-btn-blue-custom {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #0C4079;
+        color: #ffff;
+        padding: 10px 10px;
+        border-radius: 50%;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+        font-size: 12px;
+    }
+
     .back-btn {
         display: inline-flex;
         align-items: center;
@@ -716,7 +731,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </a>
     </div>
     <div class="back-btn-wrapper-left">
-         <a href="{{ route('engineers.edit', $engineer) }}" class="back-btn-blue" title="تعديل">
+         <a href="{{ route('engineers.edit', $engineer) }}" class="back-btn-blue-custom" title="تعديل">
                 <i class="fas fa-edit"></i>
             </a>
     </div>
@@ -734,6 +749,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h1 class="profile-name">{{ $engineer->full_name }}</h1>
                 <div class="profile-spec">{{ $engineer->specialization ?? 'مهندس' }}</div>
             </div>
+
+                @if(!$engineer->user)
+                <a href="{{ route('engineers.createAccount', $engineer->id) }}"
+                class="back-btn-blue mt-2"
+                onclick="return confirm('هل تريد إنشاء حساب لهذا المهندس؟')">
+                إنشاء حساب للمهندس على النظام
+                </a>
+                @else
+                <span class="badge-custom badge-success">المهندس يملك حساب على النظام</span>
+                @endif
+
         </div>
 
         <!-- Horizontal Tabs Under Name -->
@@ -847,7 +873,9 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="info-item">
                 <div class="info-label">كود منطقة العمل</div>
                 <div class="info-value">
-                    <span class="badge-custom badge-success">{{ $engineer->work_area_code ?? 'غير محدد' }}</span>
+                <span class="badge-custom badge-success">
+                    {{ $engineer->mainWorkAreaCode->name ?? 'غير محدد' }}
+                </span>
                 </div>
             </div>
             <div class="info-item" style="grid-column:1/-1;">

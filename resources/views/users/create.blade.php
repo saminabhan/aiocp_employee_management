@@ -3,21 +3,21 @@
 @section('title', 'إضافة مستخدم')
 
 @push('styles')
-    <style>
-        .form-check-input:checked {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-        .category-header { font-size: .9rem; font-weight: 600; }
-        .category-section { border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .category-section:last-child { border-bottom: 0; }
-        .form-control, .form-select { padding: .75rem; }
-        .form-check-input:checked {
-            background-color: #0C4079;
-            border-color: #0C4079;
-        }
-        .card:hover { transform: translateY(-2px); transition: .2s; }
-    </style>
+<style>
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    .category-header { font-size: .9rem; font-weight: 600; }
+    .category-section { border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .category-section:last-child { border-bottom: 0; }
+    .form-control, .form-select { padding: .75rem; }
+    .form-check-input:checked {
+        background-color: #0C4079;
+        border-color: #0C4079;
+    }
+    .card:hover { transform: translateY(-2px); transition: .2s; }
+</style>
 @endpush
 
 @section('content')
@@ -26,17 +26,17 @@
     <div class="row">
         <div class="col-12">
 
-         @if ($errors->any())
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-circle me-1"></i>
-        <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-            <!-- Header Card -->
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-1"></i>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <div>
@@ -57,7 +57,7 @@
 
                 <div class="row">
 
-                    <!-- Left: Basic info -->
+                    <!-- Left -->
                     <div class="col-lg-8">
 
                         <div class="card border-0 shadow-sm mb-4">
@@ -90,6 +90,7 @@
                                         <input type="password" name="password" class="form-control" required>
                                     </div>
 
+                                    <!-- اختيار الدور -->
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-medium">اختر الدور</label>
                                         <select id="role" name="role_id" class="form-select">
@@ -97,26 +98,42 @@
 
                                             @foreach($roles as $role)
                                                 <option value="{{ $role->id }}"
-                                                    data-permissions="{{ $role->permissions->pluck('id')->toJson() }}"
-                                                    data-requires-governorate="{{ $role->name === 'governorate_manager' ? '1' : '0' }}">
+                                                    data-name="{{ $role->name }}"
+                                                    data-permissions="{{ $role->permissions->pluck('id')->toJson() }}">
                                                     {{ $role->display_name }}
                                                 </option>
                                             @endforeach
 
-                                            <option value="custom" id="custom-role-option" style="display:none;">مخصص</option>
+                                            <option value="custom" style="display:none;">مخصص</option>
                                         </select>
                                     </div>
 
-                                    <!-- حقل المحافظة - يظهر فقط عند اختيار دور مدير محافظة -->
-                                    <div class="col-md-6 mb-3" id="governorate-field" style="display: none;">
-                                        <label class="form-label fw-medium">
-                                            اختر المحافظة
-                                            <span class="text-danger">*</span>
-                                        </label>
+                                    <!-- المحافظة -->
+                                    <div class="col-md-6 mb-3" id="field-governorate" style="display:none;">
+                                        <label class="form-label fw-medium">اختر المحافظة</label>
                                         <select name="governorate_id" id="governorate_id" class="form-select">
                                             <option value="">— اختر المحافظة —</option>
                                             @foreach($governorates as $gov)
                                                 <option value="{{ $gov->id }}">{{ $gov->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- المدينة -->
+                                    <div class="col-md-6 mb-3" id="field-city" style="display:none;">
+                                        <label class="form-label fw-medium">اختر المدينة</label>
+                                        <select name="city_id" id="city_id" class="form-select" disabled>
+                                            <option value="">— اختر المدينة —</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- كود منطقة العمل -->
+                                    <div class="col-md-6 mb-3" id="field-main-area" style="display:none;">
+                                        <label class="form-label fw-medium">اختر كود منطقة العمل الرئيسي</label>
+                                        <select name="main_work_area_code" id="main_work_area_code" class="form-select">
+                                            <option value="">— اختر كود منطقة العمل —</option>
+                                            @foreach($mainWorkAreas as $area)
+                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -127,7 +144,7 @@
 
                     </div>
 
-                    <!-- Right: Permissions -->
+                    <!-- Right Permissions -->
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm">
                             <div class="card-header bg-light">
@@ -139,7 +156,6 @@
 
                             <div class="card-body p-2" style="max-height: 550px; overflow-y: auto;">
 
-                                {{-- عرض الصلاحيات الخاصة بالدور أعلى --}}
                                 <div id="role-permissions" class="mb-3 px-2 py-2 bg-light rounded">
                                     <span class="text-muted">اختر دور لعرض صلاحياته</span>
                                 </div>
@@ -154,7 +170,6 @@
                                         'constants' => 'إدارة الثوابت',
                                         'teams' => 'إدارة الفرق',
                                     ];
-
                                     $permissionsByCategory = $permissions->groupBy('category');
                                 @endphp
 
@@ -170,10 +185,10 @@
                                                 <div class="col">
                                                     <div class="form-check form-switch">
                                                         <input type="checkbox"
-                                                               class="form-check-input perm-check"
-                                                               name="permissions[]"
-                                                               value="{{ $permission->id }}"
-                                                               style="cursor: pointer; transform: rotate(180deg);">
+                                                            class="form-check-input perm-check"
+                                                            name="permissions[]"
+                                                            value="{{ $permission->id }}"
+                                                            style="cursor:pointer; transform: rotate(180deg);">
                                                         <label class="form-check-label">
                                                             {{ $permission->display_name }}
                                                         </label>
@@ -214,20 +229,28 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const roleSelect = document.getElementById("role");
-    const roleDiv = document.getElementById("role-permissions");
-    const perms = document.querySelectorAll(".perm-check");
-    const governorateField = document.getElementById("governorate-field");
-    const governorateSelect = document.getElementById("governorate_id");
 
-    // صلاحيات الأدوار
+    const fieldGov = document.getElementById("field-governorate");
+    const fieldCity = document.getElementById("field-city");
+    const fieldArea = document.getElementById("field-main-area");
+
+    const governorateSelect = document.getElementById("governorate_id");
+    const citySelect = document.getElementById("city_id");
+
+    const perms = document.querySelectorAll(".perm-check");
+    const roleDiv = document.getElementById("role-permissions");
+
+    const permissionNames = @json($permissions->pluck('display_name', 'id'));
+
+    /*--------------------------
+     | تصنيف الصلاحيات حسب الدور
+     --------------------------*/
     const rolesData = {};
     Array.from(roleSelect.options).forEach(op => {
         if (op.value && op.value !== "custom") {
-            rolesData[op.value] = JSON.parse(op.getAttribute("data-permissions"));
+            rolesData[op.value] = JSON.parse(op.dataset.permissions);
         }
     });
-
-    const permissionNames = @json($permissions->pluck('display_name', 'id'));
 
     function showRolePermissions(ids) {
         if (!ids || ids.length === 0) {
@@ -241,65 +264,62 @@ document.addEventListener("DOMContentLoaded", () => {
         roleDiv.innerHTML = html;
     }
 
-    // عند اختيار دور
+    /*--------------------------
+     | 1) عند اختيار الدور
+     --------------------------*/
     roleSelect.addEventListener("change", () => {
-        let role = roleSelect.value;
-        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
-        const requiresGovernorate = selectedOption.getAttribute("data-requires-governorate") === "1";
 
-        // إظهار أو إخفاء حقل المحافظة
-        if (requiresGovernorate) {
-            governorateField.style.display = "block";
-            governorateSelect.required = true;
+        const selected = roleSelect.options[roleSelect.selectedIndex];
+        const roleName = selected.dataset.name;
+
+        // إظهار حقول حسب الدور
+        if (roleName === "survey_supervisor") {
+            fieldGov.style.display = "block";
+            fieldCity.style.display = "block";
+            fieldArea.style.display = "block";
+
+        } else if (roleName === "governorate_manager") {
+            fieldGov.style.display = "block";
+            fieldCity.style.display = "none";
+            fieldArea.style.display = "none";
+
         } else {
-            governorateField.style.display = "none";
-            governorateSelect.required = false;
-            governorateSelect.value = "";
+            fieldGov.style.display = "none";
+            fieldCity.style.display = "none";
+            fieldArea.style.display = "none";
         }
 
-        if (role === "custom" || role === "") {
-            perms.forEach(p => p.checked = false);
-            roleDiv.innerHTML = '<span class="text-muted">صلاحيات مخصصة</span>';
-            return;
-        }
+        let permissions = rolesData[selected.value] ?? [];
 
-        let allowed = rolesData[role] ?? [];
+        // علّم الصلاحيات
+        perms.forEach(p => p.checked = permissions.includes(parseInt(p.value)));
 
-        perms.forEach(p => p.checked = allowed.includes(parseInt(p.value)));
-        showRolePermissions(allowed);
+        // اعرض الصلاحيات في الأعلى
+        showRolePermissions(permissions);
     });
 
-    // عند تعديل الصلاحيات يدوياً → نصير "مخصص"
-    perms.forEach(p => {
-        p.addEventListener("change", () => {
+    /*--------------------------
+     | 2) عند اختيار المحافظة → تحميل المدن
+     --------------------------*/
+    governorateSelect.addEventListener("change", () => {
 
-            const selected = Array.from(perms)
-                .filter(x => x.checked)
-                .map(x => parseInt(x.value));
+    let govId = governorateSelect.value;
 
-            // هل يشبه أحد الأدوار؟
-            let matched = false;
+    citySelect.innerHTML = '<option value="">— اختر المدينة —</option>';
+    citySelect.disabled = true;
 
-            for (const [role, permsList] of Object.entries(rolesData)) {
-                if (permsList.length === selected.length &&
-                    permsList.every(p => selected.includes(p))) {
-                    matched = true;
-                    roleSelect.value = role;
-                    showRolePermissions(permsList);
-                    break;
-                }
-            }
+    if (govId === "") return;
 
-            // لم يطابق أي دور → مخصص
-            if (!matched) {
-                roleSelect.value = "custom";
-                showRolePermissions(selected);
-                // إخفاء حقل المحافظة عند التخصيص
-                governorateField.style.display = "none";
-                governorateSelect.required = false;
-            }
+    fetch(`/get-cities/${govId}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(city => {
+                citySelect.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+            });
+            citySelect.disabled = false;
         });
-    });
+});
+
 
 });
 </script>

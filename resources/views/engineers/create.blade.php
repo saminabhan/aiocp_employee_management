@@ -699,8 +699,15 @@
 
                 <div class="form-group">
                     <label>كود منطقة العمل</label>
-                    <input type="text" name="work_area_code" class="form-control @error('work_area_code') is-invalid @enderror" required>
-                        @error('work_area_code')
+                    <select name="main_work_area_code" class="form-control @error('main_work_area_code') is-invalid @enderror">
+                        <option value="">اختر كود منطقة العمل</option>
+                        @foreach($mainWorkAreaCode as $area)
+                            <option value="{{ $area->id }}" {{ old('main_work_area_code') == $area->id ? 'selected' : '' }}>
+                                {{ $area->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                        @error('main_work_area_code')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                 </div>

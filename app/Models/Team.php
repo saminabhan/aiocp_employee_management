@@ -15,6 +15,7 @@ class Team extends Model
         'governorate_id',
         'engineer_ids',
         'is_active',
+        'supervisor_id',
     ];
 
     protected $casts = [
@@ -99,5 +100,15 @@ class Team extends Model
             ->flatten()
             ->contains($engineerId);
     }
+
+    public function supervisor()
+{
+    return $this->belongsTo(User::class, 'supervisor_id');
+}
+public function members()
+{
+    return $this->hasMany(User::class, 'team_id');
+}
+
 
 }
