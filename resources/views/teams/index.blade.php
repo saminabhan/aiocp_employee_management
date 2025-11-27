@@ -215,7 +215,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 <th>المحافظة</th>
                 <th>عدد المهندسين</th>
                 <th>الحالة</th>
-                <th>تاريخ الإنشاء</th>
+                @php
+                    $role = Auth::user()->role;
+                    $roleName = $role->name ?? null;
+                @endphp
+                @if ($roleName !== 'survey_supervisor')
+                    <th>الكود الرئيسي</th>
+                @endif
+
+                <th>الكود الفرعي</th>
                 <th>الإجراءات</th>
             </tr>
         </thead>
@@ -249,8 +257,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     @endif
                 </td>
 
-                <td data-label="تاريخ الإنشاء">
-                    {{ $team->created_at->format('Y-m-d') }}
+                @php
+                    $role = Auth::user()->role;
+                    $roleName = $role->name ?? null;
+                @endphp
+                @if ($roleName !== 'survey_supervisor')
+
+                <td data-label="كود منطقة العمل الرئيسي" class="text-center">
+                    <span class="badge-status badge-active">{{ $team->mainWorkArea->name ?? 'غير محدد' }}</span>
+                </td>
+                @endif
+
+                <td data-label="كود منطقة العمل الفرعي" class="text-center">
+                    <span class="badge-status badge-active">{{ $team->subWorkArea->name ?? 'غير محدد' }}</span>
                 </td>
 
                 <td data-label="الإجراءات">
@@ -288,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             @empty
             <tr>
-                <td colspan="7" style="text-align:center; padding:40px; color:#999;">
+                <td colspan="10" style="text-align:center; padding:40px; color:#999;">
                     <i class="fas fa-users" style="font-size:48px; margin-bottom:15px"></i>
                     لا توجد فرق حالياً
                 </td>

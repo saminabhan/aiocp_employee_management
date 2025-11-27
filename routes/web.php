@@ -60,11 +60,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/get-cities/{id}', [UserController::class, 'getCities']);
 
-    // AJAX: role permissions
     Route::get('users/get-role-permissions/{roleId}', [UserController::class, 'getRolePermissions'])
         ->name('users.role.permissions')
         ->middleware('permission:users.create'); 
 
+    Route::get('/get-work-areas/{governorateId}', [UserController::class, 'getWorkAreas']);
 
     // -------- Engineers --------
     Route::prefix('engineers')->name('engineers.')->group(function () {
@@ -104,6 +104,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('engineers.createAccount')
         ->middleware('permission:engineers.edit');
 
+Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas']);
 
     // -------- Issues --------
     Route::post('/engineers/{engineer}/issues', [EngineerIssueController::class, 'store'])
@@ -156,6 +157,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
     });
 
+    Route::get('/teams/get-sub-codes/{mainId}', [TeamController::class, 'getSubCodes']);
+    Route::get('/teams/get-engineers-by-main-code/{mainCodeId}', [TeamController::class, 'getEngineersByMainCode'])->name('teams.getEngineersByMainCode');
+    Route::get('/teams/get-main-codes-by-gov/{govId}', [TeamController::class, 'getMainCodesByGovernorate']);
 
     // -------- Survey Supervisors (Governorate Manager View) --------
     Route::get('/governorate/supervisors', 
@@ -169,5 +173,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:survey.supervisor.view');
 
 });
+
 
 require __DIR__.'/auth.php';

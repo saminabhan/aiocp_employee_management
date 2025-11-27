@@ -13,7 +13,6 @@ class EngineerSmsService
 
     public function send($phone, $messageContent, $engineerId = null, $userId = null)
     {
-        // حفظ الرسالة قبل الإرسال
         $sms = SmsMessage::create([
             'phone' => $phone,
             'message' => $messageContent,
@@ -23,7 +22,6 @@ class EngineerSmsService
         ]);
 
         try {
-            // إرسال الرسالة
             $response = Http::get($this->apiUrl, [
                 'api_token' => $this->apiToken,
                 'sender'    => $this->sender,
@@ -34,7 +32,6 @@ class EngineerSmsService
 
             $apiResponse = $response->body();
 
-            // تحديث حالة الرسالة
             $sms->update([
                 'status' => $response->successful() ? 'sent' : 'failed',
                 'api_response' => $apiResponse
@@ -43,7 +40,6 @@ class EngineerSmsService
             return true;
 
         } catch (\Exception $e) {
-            // تحديث الحالة عند حدوث خطأ
             $sms->update([
                 'status' => 'failed',
                 'api_response' => $e->getMessage()

@@ -4,11 +4,19 @@
 
 @push('styles')
 <style>
+    .page-header {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
     .page-title {
-        font-weight: bold;
-        font-size: 26px;
-        color: #0c4079;
-        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #0C4079;
+        margin: 0;
     }
 
     .form-card {
@@ -71,29 +79,23 @@
         padding: 12px;
         border: 1px solid #e0e6ed;
     }
-    
      .form-check-input:checked {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-        .category-header { font-size: .9rem; font-weight: 600; }
-        .category-section { border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .category-section:last-child { border-bottom: 0; }
-        .form-control, .form-select { padding: .75rem; }
-        .form-check-input:checked {
-            background-color: #0C4079;
-            border-color: #0C4079;
-        }
+        background-color: #0C4079;
+        border-color: #0C4079;
+    }
 </style>
 @endpush
 
 @section('content')
 <div class="container">
 
-    <h3 class="page-title">
+<div class="page-header">
+    <h1 class="page-title">
         <i class="fas fa-edit me-2"></i>
         تعديل الفريق: {{ $team->name }}
-    </h3>
+    </h1>
+</div>
+
 
     @if ($errors->any())
     <div class="alert alert-danger">
@@ -107,7 +109,7 @@
     @endif
 
     <div class="form-card">
-        <form action="{{ route('teams.update', $team) }}" method="POST">
+        <form action="{{ route('teams.update', $team->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -116,32 +118,86 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">اسم الفريق <span class="text-danger">*</span></label>
                     <input type="text" name="name"
-                           class="form-control"
+                           class="form-control @error('name') is-invalid @enderror"
                            value="{{ old('name', $team->name) }}"
-                           required>
+                           placeholder="أدخل اسم الفريق" required>
+                    @error('name')
+                        <span class="text-danger small">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">المحافظة</label>
 
-                    @if($user->role->name === 'admin')
+                    @php
+                        $user = Auth::user();
+                        $roleName = $user->role->name ?? null;
+                        $canManageTeams = $user->hasPermission('teams.edit');
+                        $isAdminOrManager = $roleName === 'admin' || ($roleName === null && $user->hasPermission('teams.create'));
+
+                    @endphp
+
+                    @if ($isAdminOrManager)
                         <select id="governorate" name="governorate_id" class="form-select">
                             <option value="">اختر المحافظة</option>
                             @foreach($governorates as $gov)
-                                <option value="{{ $gov->id }}"
+                                <option value="{{ $gov->id }}" 
                                     {{ old('governorate_id', $team->governorate_id) == $gov->id ? 'selected' : '' }}>
                                     {{ $gov->name }}
                                 </option>
                             @endforeach
                         </select>
                     @else
-                        <input type="hidden" name="governorate_id" value="{{ $user->governorate_id }}">
-                        <input type="text" class="form-control" value="{{ $user->governorate->name }}" disabled>
+                        <input type="hidden" name="governorate_id" value="{{ $team->governorate_id }}">
+                        <input type="text" class="form-control" value="{{ $team->governorate->name ?? 'غير محدد' }}" disabled>
                     @endif
                 </div>
             </div>
 
-            {{-- المهندسين --}}
+            <div class="mb-3">
+                <label class="form-label">كود منطقة العمل الرئيسي <span class="text-danger">*</span></label>
+
+                @php
+                    $isSupervisor = in_array($roleName, ['survey_supervisor', 'field_supervisor']);
+                    $isGovernorateManager = $roleName === 'governorate_manager';
+                @endphp
+
+                @if ($isSupervisor)
+                    <input type="hidden" id="main_work_area_code" name="main_work_area_code"
+                           value="{{ $team->main_work_area_code }}">
+                    <input type="text" class="form-control" value="{{ $team->mainWorkArea->name ?? 'غير محدد' }}" disabled>
+                
+                @elseif ($isGovernorateManager)
+                    <select id="main_work_area_code" name="main_work_area_code" class="form-select" required>
+                        <option value="">اختر الكود الرئيسي</option>
+                        @foreach($mainCodes as $code)
+                            <option value="{{ $code->id }}" 
+                                {{ old('main_work_area_code', $team->main_work_area_code) == $code->id ? 'selected' : '' }}>
+                                {{ $code->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                
+                @else
+                    <select id="main_work_area_code" name="main_work_area_code" class="form-select" required>
+                        <option value="">اختر المحافظة أولاً</option>
+                    </select>
+                @endif
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">كود منطقة العمل الفرعي <span class="text-danger">*</span></label>
+                <select id="sub_work_area_code" name="sub_work_area_code" class="form-select" required>
+                    <option value="">اختر الكود الفرعي</option>
+                    @foreach($subCodes as $code)
+                        <option value="{{ $code->id }}" 
+                            {{ old('sub_work_area_code', $team->sub_work_area_code) == $code->id ? 'selected' : '' }}>
+                            {{ $code->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="mb-4">
                 <label class="form-label">المهندسين</label>
 
@@ -158,11 +214,11 @@
                 <div id="engineersInputs"></div>
             </div>
 
-            {{-- حالة الفريق --}}
             <div class="form-check form-switch mb-4">
                 <input class="form-check-input" type="checkbox"
-                       name="is_active" value="1"
-                       {{ old('is_active', $team->is_active) ? 'checked' : '' }}>
+                       name="is_active" value="1" 
+                       {{ old('is_active', $team->is_active) ? 'checked' : '' }}
+                       style="transform: scale(1.2);">
                 <label class="form-check-label fw-bold ms-2">الفريق مفعل</label>
             </div>
 
@@ -186,63 +242,210 @@
 
 @push('scripts')
 <script>
-// تحميل المهندسين المختارين - تحويل الكل لأرقام وإزالة التكرار
-let initialEngineers = @json(old('engineer_ids', $team->engineer_ids ?? []));
-let selectedEngineers = [...new Set(initialEngineers.map(id => parseInt(id)).filter(id => !isNaN(id)))];
+let selectedEngineers = @json(old('engineer_ids', $team->engineer_ids ?? []));
+const usedSubCodes = @json($usedSubCodes ?? []);
+const currentTeamId = @json($team->id);
 
-console.log('Initial engineers:', selectedEngineers);
+@php
+    $roleName = Auth::user()->role->name ?? null;
+    $isSupervisor = in_array($roleName, ['survey_supervisor', 'field_supervisor']);
+    $isGovernorateManager = $roleName === 'governorate_manager';
+    $canManageTeams = Auth::user()->hasPermission('teams.edit');
+    $isAdminOrManager = in_array($roleName, ['admin', 'system_admin']) || $canManageTeams;
+@endphp
 
-// تحديث hidden inputs
+const isSupervisor = @json($isSupervisor);
+const isGovernorateManager = @json($isGovernorateManager);
+const isAdminOrManager = @json($isAdminOrManager);
+
+const TEAM_MAIN_ID = {!! json_encode($team->main_work_area_code ?? null) !!};
+const TEAM_SUB_ID  = {!! json_encode($team->sub_work_area_code ?? null) !!};
+
 function updateEngineerInputs() {
-    // إزالة التكرار والقيم غير الصحيحة
-    selectedEngineers = [...new Set(selectedEngineers.filter(id => id && !isNaN(id)))];
-    
     let container = document.getElementById('engineersInputs');
+    if (!container) return;
     container.innerHTML = "";
-    
-    console.log('Updating inputs with:', selectedEngineers);
-    
-    // إذا كانت القائمة فارغة، لا نضيف أي input
-    // Laravel سيتعامل مع هذا كـ array فارغ
     selectedEngineers.forEach(id => {
-        let input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'engineer_ids[]';
-        input.value = id;
-        container.appendChild(input);
+        container.insertAdjacentHTML('beforeend', `<input type="hidden" name="engineer_ids[]" value="${id}">`);
     });
 }
 
-// ربط حدث الضغط على المهندس
 function bindEngineerButtons() {
     document.querySelectorAll('.engineer-btn').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault(); // منع أي سلوك افتراضي
-            
-            let id = parseInt(this.dataset.id);
-            console.log('Button clicked, engineer ID:', id);
-            console.log('Before:', selectedEngineers);
-            
-            if (selectedEngineers.includes(id)) {
-                // إزالة المهندس
-                selectedEngineers = selectedEngineers.filter(x => x !== id);
-                this.classList.remove('active');
-                console.log('Removed engineer:', id);
-            } else {
-                // إضافة المهندس
-                selectedEngineers.push(id);
-                this.classList.add('active');
-                console.log('Added engineer:', id);
-            }
-            
-            console.log('After:', selectedEngineers);
-            updateEngineerInputs();
-        });
+        btn.removeEventListener && btn.removeEventListener('click', engineerBtnHandler);
+        btn.addEventListener('click', engineerBtnHandler);
     });
 }
 
-// تهيئة الأزرار والمدخلات
-bindEngineerButtons();
-updateEngineerInputs();
+function engineerBtnHandler(e) {
+    const btn = e.currentTarget;
+    let id = parseInt(btn.dataset.id);
+    if (!id) return;
+
+    if (selectedEngineers.includes(id)) {
+        selectedEngineers = selectedEngineers.filter(x => x !== id);
+        btn.classList.remove('active');
+    } else {
+        selectedEngineers.push(id);
+        btn.classList.add('active');
+    }
+
+    updateEngineerInputs();
+}
+
+function loadSubCodes(mainId) {
+    const subSelect = document.getElementById('sub_work_area_code');
+    if(!subSelect) return;
+
+    subSelect.innerHTML = `<option value="">جاري التحميل...</option>`;
+
+    if (!mainId) {
+        subSelect.innerHTML = `<option value="">اختر الكود الفرعي</option>`;
+        return;
+    }
+
+    fetch(`/teams/get-sub-codes/${mainId}`)
+        .then(res => res.json())
+        .then(data => {
+            subSelect.innerHTML = `<option value="">اختر الكود الفرعي</option>`;
+            data.forEach(c => {
+                if (!usedSubCodes.includes(c.id) || c.id == TEAM_SUB_ID) {
+                    let selected = (c.id == TEAM_SUB_ID) ? 'selected' : '';
+                    subSelect.insertAdjacentHTML('beforeend', `<option value="${c.id}" ${selected}>${c.name}</option>`);
+                }
+            });
+        })
+        .catch(err => {
+            console.error('Error loading sub codes:', err);
+            subSelect.innerHTML = `<option value="">حدث خطأ في التحميل</option>`;
+        });
+}
+
+function loadEngineers(mainCodeId) {
+    const box = document.getElementById('engineersBox');
+    if (!box) return;
+
+    const previouslySelected = [...selectedEngineers];
+
+    box.innerHTML = `<div class="w-100 text-center py-2">
+                        <span class="spinner-border text-primary"></span>
+                        <p class="mt-2">جاري تحميل المهندسين...</p>
+                     </div>`;
+
+    fetch(`/teams/get-engineers-by-main-code/${mainCodeId}?team_id=${currentTeamId}`)
+        .then(res => res.json())
+        .then(data => {
+            box.innerHTML = "";
+
+            if (!Array.isArray(data) || data.length === 0) {
+                box.innerHTML = `<div class="w-100 text-center text-muted py-3">
+                                    <i class="fas fa-user-slash fa-2x mb-2"></i>
+                                    <p>لا يوجد مهندسين متاحين لهذا الكود</p>
+                                 </div>`;
+                return;
+            }
+
+            data.forEach(e => {
+                let isActive = previouslySelected.includes(e.id) ? 'active' : '';
+                box.insertAdjacentHTML('beforeend', `
+                    <button type="button" class="engineer-btn ${isActive}" data-id="${e.id}">
+                        <i class="fas fa-user ms-1"></i> ${e.first_name} ${e.second_name} ${e.third_name} ${e.last_name}
+                    </button>
+                `);
+            });
+
+            bindEngineerButtons();
+            updateEngineerInputs();
+        })
+        .catch(err => {
+            console.error('Error loading engineers:', err);
+            box.innerHTML = `<div class="alert alert-danger">حدث خطأ في تحميل المهندسين</div>`;
+        });
+}
+
+document.getElementById('governorate')?.addEventListener('change', function () {
+    const govId = this.value;
+    const mainSelect = document.getElementById('main_work_area_code');
+    const subSelect  = document.getElementById('sub_work_area_code');
+
+    if (!mainSelect) return;
+
+    mainSelect.innerHTML = `<option value="">جاري التحميل...</option>`;
+    if (subSelect) subSelect.innerHTML = `<option value="">اختر الكود الفرعي</option>`;
+
+    if (!govId) {
+        mainSelect.innerHTML = `<option value="">اختر المحافظة أولاً</option>`;
+        return;
+    }
+
+    fetch(`/teams/get-main-codes-by-gov/${govId}`)
+        .then(res => res.json())
+        .then(data => {
+            mainSelect.innerHTML = `<option value="">اختر الكود الرئيسي</option>`;
+            data.forEach(c => {
+                mainSelect.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
+            });
+
+            if (TEAM_MAIN_ID) {
+                mainSelect.value = TEAM_MAIN_ID;
+                loadSubCodes(TEAM_MAIN_ID);
+            } else {
+                mainSelect.value = "";
+            }
+        })
+        .catch(err => {
+            console.error('Error loading main codes:', err);
+            mainSelect.innerHTML = `<option value="">حدث خطأ أثناء التحميل</option>`;
+        });
+});
+
+function onMainCodeChangedByUser() {
+    const mainSelect = document.getElementById('main_work_area_code');
+    if (!mainSelect) return;
+
+    mainSelect.addEventListener('change', function () {
+        const mainId = this.value;
+
+        loadSubCodes(mainId);
+
+        if (isAdminOrManager || isGovernorateManager) {
+            if (mainId) {
+                loadEngineers(mainId);
+            } else {
+                document.getElementById('engineersBox').innerHTML = `
+                    <div class="w-100 text-center text-muted py-3">
+                        <i class="fas fa-info-circle fa-2x mb-2"></i>
+                        <p>اختر كود منطقة العمل الرئيسي أولاً لعرض المهندسين</p>
+                    </div>`;
+                selectedEngineers = [];
+                updateEngineerInputs();
+            }
+        }
+    });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+    onMainCodeChangedByUser();
+    bindEngineerButtons();
+    updateEngineerInputs();
+
+    if (isGovernorateManager && TEAM_MAIN_ID) {
+        const mainSelect = document.getElementById('main_work_area_code');
+        if (mainSelect && mainSelect.value) {
+            loadSubCodes(TEAM_MAIN_ID);
+        }
+    }
+
+    const gov = document.getElementById('governorate')?.value;
+    if (gov && !isGovernorateManager) {
+        document.getElementById('governorate').dispatchEvent(new Event('change'));
+    } else if (!gov && TEAM_MAIN_ID && !isGovernorateManager) {
+        const mainSelect = document.getElementById('main_work_area_code');
+        if (mainSelect) {
+            mainSelect.value = TEAM_MAIN_ID;
+            loadSubCodes(TEAM_MAIN_ID);
+        }
+    }
+});
 </script>
 @endpush

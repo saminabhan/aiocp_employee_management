@@ -28,7 +28,7 @@
         </div>
         @endif
 
-        <div class="stat-card">
+        <!-- <div class="stat-card">
             <div class="stat-info">
                 <h3>سجلات الدوام اليومي</h3>
                 <p>37 مهندس/ة</p>
@@ -36,7 +36,7 @@
             <div class="stat-icon bg-green">
                 <i class="fas fa-business-time"></i>
             </div>
-        </div>
+        </div> -->
 
     </div>
 @endsection

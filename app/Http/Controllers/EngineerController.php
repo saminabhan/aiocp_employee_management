@@ -14,16 +14,30 @@ use Illuminate\Support\Facades\Hash;
 class EngineerController extends Controller
 {
 
-    private function authorizeEngineer(Engineer $engineer)
+private function authorizeEngineer(Engineer $engineer)
 {
     $user = auth()->user();
 
-    if ($user->role->name === 'governorate_manager' &&
-        $engineer->home_governorate_id != $user->governorate_id) 
-    {
-        abort(403, 'غير مصرح لك بالوصول إلى هذا المهندس.');
+        switch ($user->role->name ?? '') {
+
+        case 'governorate_manager':
+            if ($engineer->work_governorate_id != $user->governorate_id) {
+                abort(403, 'غير مسموح لك بعرض هذا المهندس');
+            }
+            break;
+
+        case 'survey_supervisor':
+            if ($engineer->main_work_area_code != $user->main_work_area_code) {
+                abort(403, 'غير مسموح لك بعرض هذا المهندس');
+            }
+            break;
+
+        case 'system_admin':
+        default:
+            break;
     }
 }
+
 
 
 public function index()
@@ -37,19 +51,16 @@ public function index()
         'workGovernorate'
     ]);
 
-    switch ($user->role->name) {
+        switch ($user->role->name ?? '') {
 
-        // مدير المحافظة → يشوف المهندسين اللي نفس محافظته فقط
         case 'governorate_manager':
             $query->where('work_governorate_id', $user->governorate_id);
             break;
 
-        // مشرف الحصر → يشوف فقط المهندسين اللي لهم نفس كود منطقة العمل
         case 'survey_supervisor':
             $query->where('main_work_area_code', $user->main_work_area_code);
             break;
 
-        // أدمن النظام → يشوف الكل
         case 'system_admin':
         default:
             break;
@@ -88,6 +99,14 @@ public function index()
     $cities = Constant::where('parent', $governorateId)->get();
 
     return response()->json($cities);
+}
+public function getWorkAreas($gov_id)
+{
+    $areas = Constant::where('parent', 55)
+                     ->where('governorate_id', $gov_id)
+                     ->get();
+
+    return response()->json($areas);
 }
 
 
@@ -238,6 +257,9 @@ public function edit(Engineer $engineer)
     $specializations  = Constant::childrenOfId(46)->get();
     $mainWorkAreaCode = Constant::childrenOfId(55)->get();
 
+    $selectedWorkArea = $engineer->main_work_area_code;
+
+
     $homeCities = Constant::childrenOfId($engineer->home_governorate_id)->get();
     $workCities = Constant::childrenOfId($engineer->work_governorate_id)->get();
 
@@ -253,7 +275,8 @@ public function edit(Engineer $engineer)
         'workCities',
         'attachmentTypes',
         'specializations',
-        'mainWorkAreaCode'
+        'mainWorkAreaCode',
+        'selectedWorkArea'
     ));
 }
 
@@ -335,8 +358,6 @@ public function update(Request $request, Engineer $engineer)
         'new_attachments.*.file.max' => 'حجم الملف يجب ألا يتجاوز 5 ميجابايت.',
     ]);
 
-    // Handle personal image update
-// Handle personal image update
 if ($request->filled('personal_image')) {
 
     $imageData = $request->personal_image;
@@ -349,7 +370,6 @@ if ($request->filled('personal_image')) {
     $imageName = 'engineer_' . time() . '_' . uniqid() . '.jpg';
     $path = 'engineers/' . $imageName;
 
-    // Delete old image if exists
     if ($engineer->personal_image) {
         Storage::disk('public')->delete($engineer->personal_image);
     }
@@ -358,11 +378,9 @@ if ($request->filled('personal_image')) {
     $validated['personal_image'] = $path;
 
 } else {
-    // مهم جداً — لا تحدث الصورة لو ما دخل صورة جديدة
     unset($validated['personal_image']);
 }
 
-// Don't update password if empty
 if (empty($request->app_password)) {
     unset($validated['app_password']);
 }
@@ -370,7 +388,6 @@ if (empty($request->app_password)) {
 $engineer->update($validated);
 
 
-    // Handle new attachments
     if ($request->has('new_attachments')) {
         foreach ($request->new_attachments as $attachment) {
             if (isset($attachment['file'])) {

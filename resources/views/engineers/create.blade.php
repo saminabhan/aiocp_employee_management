@@ -202,7 +202,6 @@
         background: #059669;
     }
 
-    /* Image Upload & Crop Styles */
     .image-upload-wrapper {
         text-align: center;
         margin-bottom: 30px;
@@ -242,7 +241,6 @@
         display: block;
     }
 
-    /* Cropper Modal */
     .cropper-modal {
         display: none;
         position: fixed;
@@ -281,7 +279,6 @@
         max-height: 70vh;
     }
 
-    /* Attachments Styles */
     .attachments-container {
         border: 1px solid #e8e8e8;
         border-radius: 8px;
@@ -699,18 +696,15 @@
 
                 <div class="form-group">
                     <label>كود منطقة العمل</label>
-                    <select name="main_work_area_code" class="form-control @error('main_work_area_code') is-invalid @enderror">
+                    <select name="main_work_area_code" id="main_work_area_code"
+                            class="form-control @error('main_work_area_code') is-invalid @enderror">
                         <option value="">اختر كود منطقة العمل</option>
-                        @foreach($mainWorkAreaCode as $area)
-                            <option value="{{ $area->id }}" {{ old('main_work_area_code') == $area->id ? 'selected' : '' }}>
-                                {{ $area->name }}
-                            </option>
-                        @endforeach
                     </select>
-                        @error('main_work_area_code')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
+                    @error('main_work_area_code')
+                        <span class="invalid-feedback">{{ $message }}</span>
+                    @enderror
                 </div>
+
 
             </div>
 
@@ -1276,4 +1270,30 @@ document.getElementById('wizardForm').addEventListener('submit', function(e) {
     }
 });
 </script>
+<script>
+document.getElementById('work_governorate_id').addEventListener('change', function () {
+
+    let govId = this.value;
+    let areaSelect = document.getElementById('main_work_area_code');
+
+    areaSelect.innerHTML = '<option value="">تحميل...</option>';
+
+    if (govId) {
+        fetch('/get-work-areas/' + govId)
+            .then(res => res.json())
+            .then(data => {
+                areaSelect.innerHTML = '<option value="">اختر كود منطقة العمل</option>';
+
+                data.forEach(function(area) {
+                    areaSelect.innerHTML +=
+                        `<option value="${area.id}">${area.name}</option>`;
+                });
+            });
+    } else {
+        areaSelect.innerHTML = '<option value="">اختر كود منطقة العمل</option>';
+    }
+
+});
+</script>
+
 @endpush

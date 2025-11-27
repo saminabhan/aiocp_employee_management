@@ -12,7 +12,6 @@ class GovernorateSupervisorController extends Controller
 {
     $user = auth()->user();
 
-    // الاستعلام الأساسي
     $query = User::where('role_id', function($q) {
         $q->select('id')
           ->from('roles')
@@ -20,13 +19,9 @@ class GovernorateSupervisorController extends Controller
     })
     ->with(['city', 'mainWorkArea']);
 
-    // إذا كان مدير محافظة → فلترة فقط نفس المحافظة
     if ($user->role->name === 'governorate_manager') {
         $query->where('governorate_id', $user->governorate_id);
     }
-
-    // المدير العام يشوف الكل بدون فلتر
-    // لذلك لا نضيف أي شرط إضافي للأدمين
 
     $supervisors = $query->get();
 
@@ -37,17 +32,15 @@ class GovernorateSupervisorController extends Controller
 
 public function show($id)
 {
-    $user = auth()->user(); // مدير المحافظة الحالي
+    $user = auth()->user();
 
-    // المشرف المطلوب
     $supervisor = User::where('id', $id)
         ->where('role_id', function($q) {
             $q->select('id')->from('roles')->where('name', 'survey_supervisor');
         })
-        ->where('governorate_id', $user->governorate_id) // يجب أن يكون من نفس المحافظة
-        ->firstOrFail(); // يمنع الدخول لغير المسموح
+        ->where('governorate_id', $user->governorate_id)
+        ->firstOrFail();
 
-    // الفرق التابعة لهذا المشرف
     $teams = Team::where('supervisor_id', $supervisor->id)
         ->with('members')
         ->get();

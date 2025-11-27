@@ -13,7 +13,6 @@ class AppIssue extends Model
         return $this->belongsTo(Constant::class, 'problem_type_id');
     }
 
-    // علاقة المهندس
     public function engineer()
     {
         return $this->belongsTo(Engineer::class, 'engineer_id');

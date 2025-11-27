@@ -25,24 +25,34 @@ class ConstantController extends Controller
         $parentName = $parent ? $parent->name : null;
     }
 
-    return view('constants.create', compact('parentName'));
+        $governorates = Constant::childrenOfId(14)->get();
+
+return view('constants.create', compact('parentName', 'governorates'));
 }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'parent' => 'nullable|integer|exists:constants,id',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'parent' => 'nullable|integer|exists:constants,id',
+        'governorate_id' => 'nullable|integer|exists:constants,id',
+    ]);
 
-        Constant::create([
-            'name' => $request->name,
-            'parent' => $request->parent,
-        ]);
+    if (Constant::where('name', $request->name)->exists()) {
+        return back()
+            ->withErrors(['name' => 'اسم الثابت موجود بالفعل'])
+            ->withInput();
+    }
+
+    Constant::create([
+        'name' => $request->name,
+        'parent' => $request->parent,
+        'governorate_id' => $request->governorate_id,
+    ]);
 
     return redirect()->route('constants.index')
         ->with('success', 'تم إضافة الثابت "' . $request->name . '" بنجاح!');
-        }
+}
 
     public function edit($id)
     {
@@ -50,26 +60,40 @@ class ConstantController extends Controller
 
         $parents = Constant::whereNull('parent')->get();
 
-        return view('constants.edit', compact('constant', 'parents'));
+        $governorates = Constant::childrenOfId(14)->get();
+
+        return view('constants.edit', compact('constant', 'parents', 'governorates'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $constant = Constant::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $constant = Constant::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required',
-            'parent' => 'nullable|integer|exists:constants,id',
-        ]);
+    $request->validate([
+        'name' => 'required',
+        'parent' => 'nullable|integer|exists:constants,id',
+        'governorate_id' => 'nullable|integer|exists:constants,id',
+    ]);
 
-        $constant->update([
-            'name' => $request->name,
-            'parent' => $request->parent,
-        ]);
+    $exists = Constant::where('name', $request->name)
+                      ->where('id', '!=', $id)
+                      ->exists();
 
-        return redirect()->route('constants.index')
-            ->with('success', 'تم التعديل بنجاح');
+    if ($exists) {
+        return back()
+            ->withErrors(['name' => 'اسم الثابت موجود مسبقًا'])
+            ->withInput();
     }
+
+    $constant->update([
+        'name' => $request->name,
+        'parent' => $request->parent,
+        'governorate_id' => $request->governorate_id,
+    ]);
+
+    return redirect()->route('constants.index')
+        ->with('success', 'تم التعديل بنجاح');
+}
 
     public function destroy($id)
     {

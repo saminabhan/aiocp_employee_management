@@ -7,6 +7,16 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
+            
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <form action="{{ route('constants.store') }}" method="POST">
                 @csrf
@@ -16,7 +26,18 @@
                     <input type="text" name="name" class="form-control" required>
                 </div>
 
-                <!-- إذا فيه parent معّدل -->
+                @if(request('parent') == 55)
+                    <div class="mb-3 mt-3">
+                        <label class="form-label fw-bold">اختر المحافظة</label>
+                        <select name="governorate_id" class="form-select" required>
+                            <option value="">اختر المحافظة</option>
+                            @foreach($governorates as $gov)
+                                <option value="{{ $gov->id }}">{{ $gov->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
                 @if(request()->has('parent'))
                     <input type="hidden" name="parent" value="{{ request('parent') }}">
 

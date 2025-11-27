@@ -177,7 +177,6 @@
 @section('content')
 <div class="container" dir="rtl">
 
-    <!-- Page Header -->
     <div class="page-header">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h1 class="page-title">
@@ -211,7 +210,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 @endif
 
-    <!-- Statistics Cards -->
     <div class="stats-cards">
         <div class="stat-card">
             <div class="stat-icon total">
@@ -254,7 +252,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- Filters -->
     <div class="filters-card">
         <form action="{{ route('issues.index') }}" method="GET">
             <div class="row g-3 align-items-end">
@@ -293,7 +290,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </form>
     </div>
 
-    <!-- Issues Table -->
     <div class="issues-card">
         @if($issues->count())
             <div class="table-responsive">

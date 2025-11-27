@@ -54,7 +54,6 @@
                        value="{{ old('phone', $user->phone) }}">
             </div>
 
-            {{-- الدور فقط للعرض وليس التعديل --}}
             <div class="col-md-6">
                 <label class="form-label fw-bold">الدور</label>
                 <input type="text" class="form-control bg-light"

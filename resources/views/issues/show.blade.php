@@ -190,7 +190,6 @@
 @section('content')
 <div class="container" dir="rtl">
 
-    <!-- Page Header -->
     <div class="page-header">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h1 class="page-title">
@@ -224,10 +223,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 @endif
 
-    <!-- Details Card -->
     <div class="details-card">
         
-        <!-- Basic Info -->
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">نوع المشكلة</div>
@@ -277,7 +274,6 @@ document.addEventListener("DOMContentLoaded", function() {
             @endif
         </div>
 
-        <!-- Description -->
         <div class="section-title">
             <i class="fas fa-align-right"></i>
             وصف المشكلة
@@ -285,7 +281,6 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="description-box">
             {{ $issue->description }}
         </div>
-{{-- استبدل قسم المرفقات في ملف show.blade.php بهذا الكود --}}
 
 @if($issue->attachments && $issue->attachments->count() > 0)
 <div class="section-title mt-4">
@@ -311,11 +306,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
 
-                {{-- Body: معاينة الملف --}}
                 <div class="card-body p-0">
                     <div class="attachment-preview" style="height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
                         
-                        {{-- صورة --}}
                         @if(str_starts_with($attachment->mime_type, 'image/'))
                             <a href="{{ asset('storage/' . $attachment->file_path) }}" 
                                target="_blank" 
@@ -327,7 +320,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                      loading="lazy">
                             </a>
 
-                        {{-- فيديو --}}
                         @elseif(str_starts_with($attachment->mime_type, 'video/'))
                             <video controls 
                                    class="w-100 h-100" 
@@ -338,7 +330,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                 متصفحك لا يدعم تشغيل الفيديو
                             </video>
 
-                        {{-- PDF --}}
                         @elseif($attachment->mime_type === 'application/pdf')
                             <div class="text-center py-4">
                                 <i class="fas fa-file-pdf fa-5x text-danger mb-3"></i>
@@ -346,7 +337,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <p class="text-muted small mb-0">{{ $attachment->file_name }}</p>
                             </div>
 
-                        {{-- ملفات أخرى --}}
                         @else
                             <div class="text-center py-4">
                                 <i class="fas fa-file fa-5x text-secondary mb-3"></i>
@@ -358,10 +348,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>
 
-                {{-- Footer: الأزرار --}}
                 <div class="card-footer bg-white border-top">
                     <div class="d-grid gap-2">
-                        {{-- زر المعاينة للصور والـ PDF --}}
                         @if(str_starts_with($attachment->mime_type, 'image/') || $attachment->mime_type === 'application/pdf')
                             <a href="{{ asset('storage/' . $attachment->file_path) }}" 
                                target="_blank" 
@@ -371,7 +359,6 @@ document.addEventListener("DOMContentLoaded", function() {
                             </a>
                         @endif
 
-                        {{-- زر التحميل --}}
                         <a href="{{ asset('storage/' . $attachment->file_path) }}" 
                            download="{{ $attachment->file_name }}"
                            class="badge-custom badge-success btn btn-sm ">
@@ -387,18 +374,17 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 @endif
 
-        <!-- Solution (if exists) -->
+<br>
         @if($issue->solution)
             <div class="section-title">
                 <i class="fas fa-check-circle"></i>
-                الحل
+                رد الدعم الفني:
             </div>
             <div class="solution-box">
                 {{ $issue->solution }}
             </div>
         @endif
 
-        <!-- Actions -->
         <hr class="my-4">
         <div class="d-flex justify-content-between gap-3 flex-wrap">
             <div class="d-flex gap-2">
@@ -426,7 +412,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </div>
 
-<!-- Modal تحديث الحالة -->
 @if(auth()->user()->hasRole(['admin', 'support']))
 <div class="modal fade" id="updateStatusModal" tabindex="-1">
     <div class="modal-dialog">
@@ -473,7 +458,6 @@ document.getElementById('statusSelect').addEventListener('change', function() {
 </script>
 @endif
 
-<!-- Modal الحذف -->
 @if(auth()->user()->hasRole('admin'))
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">

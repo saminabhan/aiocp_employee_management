@@ -765,20 +765,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 <div class="form-group">
                     <label>كود منطقة العمل</label>
-                    <select name="main_work_area_code" class="form-control @error('main_work_area_code') is-invalid @enderror">
+                    <select name="main_work_area_code" id="main_work_area_code"
+                            class="form-control @error('main_work_area_code') is-invalid @enderror">
                         <option value="">اختر كود المنطقة</option>
-                        @foreach($mainWorkAreaCode as $code)
-                            <option value="{{ $code->id }}" {{ old('main_work_area_code', $engineer->main_work_area_code) == $code->id ? 'selected' : '' }}>
-                                {{ $code->name }}
-                            </option>
-                        @endforeach
                     </select>
                     @error('main_work_area_code')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
-
-
                 </div>
+
             </div>
 
             <!-- Step 3: Job Info -->
@@ -1383,11 +1378,14 @@ function validateStep(step) {
         } else {
             input.classList.remove('is-invalid');
             const errorMsg = input.nextElementSibling;
-            if (errorMsg && errorMsg.classList.contains('invalid-feedback') && !errorMsg.textContent.includes('{{')) {
+
+            if (errorMsg instanceof HTMLElement &&
+                errorMsg.classList.contains('invalid-feedback')) {
                 errorMsg.remove();
             }
-        }
-    });
+                    }
+                });
+
     
     if (!isValid) {
         Swal.fire({
@@ -1406,9 +1404,9 @@ document.querySelectorAll('.form-control').forEach(input => {
     input.addEventListener('input', function() {
         this.classList.remove('is-invalid');
         const errorMsg = this.nextElementSibling;
-        if (errorMsg && errorMsg.classList.contains('invalid-feedback') && !errorMsg.textContent.includes('{{')) {
-            errorMsg.remove();
-        }
+if (errorMsg && errorMsg.classList.contains('invalid-feedback')) {
+    errorMsg.remove();
+}
     });
 });
 
@@ -1449,4 +1447,38 @@ document.getElementById('quickSaveBtn').addEventListener('click', function() {
     });
 });
 </script>
+<script>
+function loadWorkAreas(governorateId, selectedId = null) {
+    let areaSelect = document.getElementById('main_work_area_code');
+
+    areaSelect.innerHTML = '<option value="">تحميل...</option>';
+
+    fetch('/get-work-areas/' + governorateId)
+        .then(res => res.json())
+        .then(data => {
+            areaSelect.innerHTML = '<option value="">اختر كود المنطقة</option>';
+
+            data.forEach(function(area) {
+                areaSelect.innerHTML += `
+                    <option value="${area.id}" ${selectedId == area.id ? 'selected' : ''}>
+                        ${area.name}
+                    </option>`;
+            });
+        });
+}
+
+document.getElementById('work_governorate_id').addEventListener('change', function () {
+    loadWorkAreas(this.value);
+});
+
+window.onload = function() {
+    let govId = document.getElementById('work_governorate_id').value;
+    let selectedArea = "{{ $selectedWorkArea }}";
+
+    if (govId) {
+        loadWorkAreas(govId, selectedArea);
+    }
+}
+</script>
+
 @endpush

@@ -16,99 +16,92 @@ class Team extends Model
         'engineer_ids',
         'is_active',
         'supervisor_id',
+        'main_work_area_code',
+        'sub_work_area_code',
     ];
 
     protected $casts = [
-        'engineer_ids' => 'array',  // هذا مهم جداً
+        'engineer_ids' => 'array',
         'is_active' => 'boolean',
     ];
 
 
-    /**
-     * العلاقة مع المحافظة (من جدول الثوابت)
-     */
-    public function governorate()
+    public function getEngineerIdsAttribute($value)
     {
-        return $this->belongsTo(Constant::class, 'governorate_id');
+        if (empty($value)) return [];
+
+        $decoded = is_string($value) ? json_decode($value, true) : $value;
+
+        if (is_string($decoded)) {
+            $decoded = json_decode($decoded, true);
+        }
+
+        return is_array($decoded) ? $decoded : [];
     }
 
-    /**
-     * الحصول على المهندسين المرتبطين بالفريق
-     */
     public function engineers()
     {
-        if (empty($this->engineer_ids)) {
-            return collect([]);
-        }
-        
         return Engineer::whereIn('id', $this->engineer_ids)->get();
     }
 
-    /**
-     * إضافة مهندس للفريق
-     */
+    public function getEngineersCountAttribute()
+    {
+        return count($this->engineer_ids ?? []);
+    }
+
     public function addEngineer($engineerId)
     {
-        $engineers = $this->engineer_ids ?? [];
-        
-        if (!in_array($engineerId, $engineers)) {
-            $engineers[] = $engineerId;
-            $this->engineer_ids = $engineers;
-            $this->save();
+        $ids = $this->engineer_ids ?? [];
+        if (!in_array($engineerId, $ids)) {
+            $ids[] = $engineerId;
+            $this->update(['engineer_ids' => $ids]);
         }
     }
 
-    /**
-     * إزالة مهندس من الفريق
-     */
     public function removeEngineer($engineerId)
     {
-        $engineers = $this->engineer_ids ?? [];
-        
-        $engineers = array_diff($engineers, [$engineerId]);
-        $this->engineer_ids = array_values($engineers);
-        $this->save();
+        $ids = array_values(array_diff($this->engineer_ids ?? [], [$engineerId]));
+        $this->update(['engineer_ids' => $ids]);
     }
 
-    /**
-     * التحقق من وجود مهندس في الفريق
-     */
     public function hasEngineer($engineerId)
     {
         return in_array($engineerId, $this->engineer_ids ?? []);
     }
 
-    /**
-     * الحصول على عدد المهندسين
-     */
-    public function getEngineersCountAttribute()
+    public function governorate()
     {
-        return count($this->engineer_ids);
+        return $this->belongsTo(Constant::class, 'governorate_id');
     }
 
-    /**
-     * التحقق من أن المهندس متاح (ليس في فريق آخر)
-     */
+    public function supervisor()
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
+    }
+
+    public function members()
+    {
+        return $this->hasMany(User::class, 'team_id');
+    }
+
     public static function isEngineerAvailable($engineerId, $governorateId, $excludeTeamId = null)
     {
         return !self::where('governorate_id', $governorateId)
-            ->when($excludeTeamId, function($query) use ($excludeTeamId) {
-                $query->where('id', '!=', $excludeTeamId);
-            })
+            ->when($excludeTeamId, fn ($q) => $q->where('id', '!=', $excludeTeamId))
             ->get()
             ->pluck('engineer_ids')
             ->flatten()
             ->contains($engineerId);
     }
 
-    public function supervisor()
-{
-    return $this->belongsTo(User::class, 'supervisor_id');
-}
-public function members()
-{
-    return $this->hasMany(User::class, 'team_id');
-}
+    public function mainWorkArea()
+    {
+        return $this->belongsTo(Constant::class, 'main_work_area_code');
+    }
 
+    public function subWorkArea()
+    {
+        return $this->belongsTo(Constant::class, 'sub_work_area_code');
+    }
 
 }

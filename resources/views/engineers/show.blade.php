@@ -730,12 +730,13 @@ document.addEventListener("DOMContentLoaded", function() {
             <i class="fas fa-arrow-right"></i> العودة إلى القائمة
         </a>
     </div>
+    @if(user_can('engineers.edit'))
     <div class="back-btn-wrapper-left">
          <a href="{{ route('engineers.edit', $engineer) }}" class="back-btn-blue-custom" title="تعديل">
                 <i class="fas fa-edit"></i>
             </a>
     </div>
-
+    @endif
     <!-- Center: Avatar + Name + Spec + Tabs -->
     <div class="profile-center-section">
         <div class="profile-center-content">

@@ -37,51 +37,35 @@ class User extends Authenticatable
         ];
     }
 
-    /** ----------------------------------------------------
-     * RELATIONS
-     * ----------------------------------------------------*/
-
-    // User has one role (via role_id)
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
-    // Direct user permissions (optional)
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'user_permission');
     }
 
-    /** ----------------------------------------------------
-     * CHECKS
-     * ----------------------------------------------------*/
-
-    // super admin id = 1
     public function isSuperAdmin()
     {
         return $this->id === 1;
     }
 
-    // Check if user has a specific role
   public function hasRole($role): bool
 {
-    // في حال المستخدم ليس لديه دور
     if (!$this->role) {
         return false;
     }
 
-    // لو استقبل string
     if (is_string($role)) {
         return $this->role->name === $role;
     }
 
-    // لو استقبل array of roles
     if (is_array($role)) {
         return in_array($this->role->name, $role);
     }
 
-    // لو استقبل Role Model
     if ($role instanceof \App\Models\Role) {
         return $this->role_id === $role->id;
     }
@@ -90,12 +74,10 @@ class User extends Authenticatable
 }
 
 
-    // Check permission (direct + role)
     public function hasPermission($permission): bool
     {
         if ($this->isSuperAdmin()) return true;
 
-        // direct
         if (is_string($permission)) {
             if ($this->permissions()->where('name', $permission)->exists()) {
                 return true;
@@ -106,7 +88,6 @@ class User extends Authenticatable
             }
         }
 
-        // from role
         if ($this->role && $this->role->hasPermission($permission)) {
             return true;
         }
@@ -156,5 +137,6 @@ public function engineer()
 {
     return $this->belongsTo(Engineer::class, 'engineer_id');
 }
+
 
 }

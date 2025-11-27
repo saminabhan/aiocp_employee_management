@@ -50,6 +50,7 @@ class Engineer extends Model
         'account_owner_mobile',
         'main_work_area_code',
         'sub_work_area_code',
+        'team_id',
     ];
 
     protected $casts = [
@@ -61,88 +62,63 @@ class Engineer extends Model
 
     protected $appends = ['full_name'];
 
-    /**
-     * Get all attachments for the engineer
-     */
     public function attachments()
     {
         return $this->hasMany(EngineerAttachment::class);
     }
 
-    /**
-     * Get gender constant
-     */
     public function gender()
     {
         return $this->belongsTo(Constant::class, 'gender_id');
     }
 
-    /**
-     * Get marital status constant
-     */
     public function maritalStatus()
     {
         return $this->belongsTo(Constant::class, 'marital_status_id');
     }
 
-    /**
-     * Get home governorate
-     */
+   
     public function homeGovernorate()
     {
         return $this->belongsTo(Constant::class, 'home_governorate_id');
     }
 
-    /**
-     * Get home city
-     */
+
     public function homeCity()
     {
         return $this->belongsTo(Constant::class, 'home_city_id');
     }
 
-    /**
-     * Get work governorate
-     */
+
     public function workGovernorate()
     {
         return $this->belongsTo(Constant::class, 'work_governorate_id');
     }
 
-    /**
-     * Get work city
-     */
+
     public function workCity()
     {
         return $this->belongsTo(Constant::class, 'work_city_id');
     }
 
-    /**
-     * Get salary currency
-     */
+
     public function salaryCurrency()
     {
         return $this->belongsTo(Constant::class, 'salary_currency_id');
     }
 
-    /**
-     * Get full name
-     */
+
     public function getFullNameAttribute()
     {
         return "{$this->first_name} {$this->second_name} {$this->third_name} {$this->last_name}";
     }
 
-    /**
-     * Get personal image URL
-     */
+
     public function getPersonalImageUrlAttribute()
     {
         return $this->personal_image ? asset('storage/' . $this->personal_image) : asset('images/default-avatar.png');
     }
-    /**
-     * Get age attribute
-     */
+
     public function getAgeAttribute()
     {
     if (!$this->birth_date) {

@@ -19,17 +19,11 @@ class EngineerAttachment extends Model
         'details',
     ];
 
-    /**
-     * العلاقة مع المهندس
-     */
     public function engineer()
     {
         return $this->belongsTo(Engineer::class);
     }
 
-    /**
-     * علاقة نوع المرفق مع الثوابت
-     */
     public function attachmentType()
     {
         return $this->belongsTo(Constant::class, 'attachment_type_id');

@@ -5,17 +5,13 @@
 @push('styles')
 <style>
     .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
+        background-color: #0C4079;
+        border-color: #0C4079;
     }
     .category-header { font-size: .9rem; font-weight: 600; }
     .category-section { border-bottom: 1px solid #eee; padding-bottom: 10px; }
     .category-section:last-child { border-bottom: 0; }
     .form-control, .form-select { padding: .75rem; }
-    .form-check-input:checked {
-        background-color: #0C4079;
-        border-color: #0C4079;
-    }
     .card:hover { transform: translateY(-2px); transition: .2s; }
 </style>
 @endpush
@@ -57,7 +53,6 @@
 
                 <div class="row">
 
-                    <!-- Left -->
                     <div class="col-lg-8">
 
                         <div class="card border-0 shadow-sm mb-4">
@@ -90,7 +85,6 @@
                                         <input type="password" name="password" class="form-control" required>
                                     </div>
 
-                                    <!-- اختيار الدور -->
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-medium">اختر الدور</label>
                                         <select id="role" name="role_id" class="form-select">
@@ -108,7 +102,6 @@
                                         </select>
                                     </div>
 
-                                    <!-- المحافظة -->
                                     <div class="col-md-6 mb-3" id="field-governorate" style="display:none;">
                                         <label class="form-label fw-medium">اختر المحافظة</label>
                                         <select name="governorate_id" id="governorate_id" class="form-select">
@@ -119,7 +112,6 @@
                                         </select>
                                     </div>
 
-                                    <!-- المدينة -->
                                     <div class="col-md-6 mb-3" id="field-city" style="display:none;">
                                         <label class="form-label fw-medium">اختر المدينة</label>
                                         <select name="city_id" id="city_id" class="form-select" disabled>
@@ -127,14 +119,10 @@
                                         </select>
                                     </div>
 
-                                    <!-- كود منطقة العمل -->
                                     <div class="col-md-6 mb-3" id="field-main-area" style="display:none;">
                                         <label class="form-label fw-medium">اختر كود منطقة العمل الرئيسي</label>
                                         <select name="main_work_area_code" id="main_work_area_code" class="form-select">
                                             <option value="">— اختر كود منطقة العمل —</option>
-                                            @foreach($mainWorkAreas as $area)
-                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
-                                            @endforeach
                                         </select>
                                     </div>
 
@@ -144,7 +132,6 @@
 
                     </div>
 
-                    <!-- Right Permissions -->
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm">
                             <div class="card-header bg-light">
@@ -236,15 +223,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const governorateSelect = document.getElementById("governorate_id");
     const citySelect = document.getElementById("city_id");
+    const areaSelect = document.getElementById("main_work_area_code");
 
     const perms = document.querySelectorAll(".perm-check");
     const roleDiv = document.getElementById("role-permissions");
 
     const permissionNames = @json($permissions->pluck('display_name', 'id'));
 
-    /*--------------------------
-     | تصنيف الصلاحيات حسب الدور
-     --------------------------*/
     const rolesData = {};
     Array.from(roleSelect.options).forEach(op => {
         if (op.value && op.value !== "custom") {
@@ -264,15 +249,11 @@ document.addEventListener("DOMContentLoaded", () => {
         roleDiv.innerHTML = html;
     }
 
-    /*--------------------------
-     | 1) عند اختيار الدور
-     --------------------------*/
     roleSelect.addEventListener("change", () => {
 
         const selected = roleSelect.options[roleSelect.selectedIndex];
         const roleName = selected.dataset.name;
 
-        // إظهار حقول حسب الدور
         if (roleName === "survey_supervisor") {
             fieldGov.style.display = "block";
             fieldCity.style.display = "block";
@@ -290,36 +271,36 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let permissions = rolesData[selected.value] ?? [];
-
-        // علّم الصلاحيات
         perms.forEach(p => p.checked = permissions.includes(parseInt(p.value)));
 
-        // اعرض الصلاحيات في الأعلى
         showRolePermissions(permissions);
     });
 
-    /*--------------------------
-     | 2) عند اختيار المحافظة → تحميل المدن
-     --------------------------*/
     governorateSelect.addEventListener("change", () => {
 
-    let govId = governorateSelect.value;
+        let govId = governorateSelect.value;
 
-    citySelect.innerHTML = '<option value="">— اختر المدينة —</option>';
-    citySelect.disabled = true;
+        citySelect.innerHTML = '<option value="">— اختر المدينة —</option>';
+        citySelect.disabled = true;
 
-    if (govId === "") return;
+        areaSelect.innerHTML = '<option value="">— اختر كود منطقة العمل —</option>';
 
-    fetch(`/get-cities/${govId}`)
-        .then(res => res.json())
-        .then(data => {
-            data.forEach(city => {
-                citySelect.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+        if (!govId) return;
+
+        fetch(`/get-cities/${govId}`)
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(c => citySelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+                citySelect.disabled = false;
             });
-            citySelect.disabled = false;
-        });
-});
 
+        fetch(`/get-work-areas/${govId}`)
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(a => areaSelect.innerHTML += `<option value="${a.id}">${a.name}</option>`);
+            });
+
+    });
 
 });
 </script>

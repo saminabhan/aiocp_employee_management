@@ -5,8 +5,6 @@
 @push('styles')
 <style>
 
-    /* ====== Layout ====== */
-
     .page-header {
         background: white;
         padding: 25px;
@@ -22,219 +20,238 @@
         margin: 0;
     }
 
-    .page-grid {
-        display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
-        gap: 20px;
-        margin-top: 10px;
+    .layout-wrapper {
+        display: flex;
+        gap: 25px;
     }
 
     @media(max-width: 992px) {
-        .page-grid {
-            grid-template-columns: 1fr;
+        .layout-wrapper {
+            flex-direction: column;
         }
     }
 
-    /* ====== Card ====== */
-    .details-card {
+    /* ====== CARDS ====== */
+    .card-modern {
         background: #fff;
-        border-radius: 12px;
-        border: 1px solid #e6e6e6;
-        padding: 18px 20px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        border-radius: 14px;
+        padding: 22px;
+        flex: 1;
+        border: 1px solid #e8e8e8;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.06);
     }
 
-    .card-title {
-        font-size: 17px;
+    .section-title {
+        font-size: 18px;
         font-weight: 700;
         color: #0C4079;
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-bottom: 16px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
     }
 
-    /* ====== Team Info ====== */
-    .detail-row {
+    /* ====== TEAM INFO LINES ====== */
+    .info-item {
         display: flex;
-        padding: 6px 0;
-        font-size: 14px;
-        border-bottom: 1px dashed #f0f0f0;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 15px;
+        border-bottom: 1px dashed #f1f1f1;
     }
 
-    .detail-row:last-child {
+    .info-item:last-child {
         border-bottom: none;
     }
 
-    .detail-label {
-        width: 130px;
+    .info-label {
         font-weight: 600;
         color: #0C4079;
     }
 
-    .detail-value {
+    .info-value {
         font-weight: 500;
+        text-align: left;
     }
 
-    .badge-active {
-        background: #e8f5e9;
-        color: #388e3c;
-        padding: 4px 10px;
+    /* ====== BADGES ====== */
+    .badge-pill {
+        padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
+        font-weight: 600;
     }
 
-    .badge-inactive {
+    .badge-green {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .badge-red {
         background: #ffebee;
         color: #c62828;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
     }
 
-    /* ====== Engineers List ====== */
-    .engineer-item {
+    .badge-blue {
+        background: #e3f2fd;
+        color: #0d47a1;
+    }
+
+    /* ====== ENGINEER ITEM ====== */
+    .engineer-card {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 14px 16px;
+        padding: 14px;
+        margin-bottom: 8px;
         border: 1px solid #e8e8e8;
-        border-radius: 10px;
-        background: #fafafa;
+        border-radius: 12px;
+        background: #fafbfd;
+        text-decoration: none;
         transition: .2s;
-        margin-bottom: 10px;
-        text-decoration: none !important;
     }
 
-    .engineer-item:hover {
-        background: #eef3ff;
-        border-color: #d0d8ff;
+    .engineer-card:hover {
+        background: #eef4ff;
         transform: translateX(-4px);
+        border-color: #c4d7ff;
     }
 
-    .engineer-info {
-        font-size: 14px;
-        color: #333;
-    }
-
-    .engineer-info strong {
+    .eng-name {
         font-size: 15px;
+        font-weight: 600;
         color: #0C4079;
     }
 
-    .engineer-info small {
-        color: #777;
+    .btn-modern {
+        padding: 7px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
     }
 
-    /* ===== Buttons ===== */
-    .btn-sm-custom {
-        padding: 6px 13px;
-        font-size: 13px;
-        border-radius: 8px;
-    }
 </style>
 @endpush
 
 @section('content')
+
 <div class="page-header">
     <h1 class="page-title">
         <i class="fas fa-users-cog"></i>
-        إدارة الفرق
+        تفاصيل الفريق
     </h1>
 </div>
 
-<div class="page-grid">
+<div class="layout-wrapper">
 
-    {{-- RIGHT SIDE — TEAM DETAILS --}}
-    <div class="details-card">
+    <div class="card-modern">
 
-        <h4 class="card-title">
+        <h4 class="section-title">
             <i class="fas fa-info-circle"></i>
             معلومات الفريق
         </h4>
 
-        <div class="detail-row">
-            <div class="detail-label">اسم الفريق:</div>
-            <div class="detail-value">{{ $team->name }}</div>
+        <div class="info-item">
+            <div class="info-label">اسم الفريق:</div>
+            <div class="info-value">{{ $team->name }}</div>
         </div>
 
-        <div class="detail-row">
-            <div class="detail-label">المحافظة:</div>
-            <div class="detail-value">
-                <span class="badge-active">
+        <div class="info-item">
+            <div class="info-label">المحافظة:</div>
+            <div class="info-value">
+                <span class="badge-pill badge-blue">
                     {{ $team->governorate->name ?? 'غير محدد' }}
                 </span>
             </div>
         </div>
 
-        <div class="detail-row">
-            <div class="detail-label">الحالة:</div>
-            <div class="detail-value">
+        <div class="info-item">
+            <div class="info-label">الحالة:</div>
+            <div class="info-value">
                 @if($team->is_active)
-                    <span class="badge-active">مفعل</span>
+                    <span class="badge-pill badge-green">مفعل</span>
                 @else
-                    <span class="badge-inactive">معطل</span>
+                    <span class="badge-pill badge-red">معطل</span>
                 @endif
             </div>
         </div>
 
-        <div class="detail-row">
-            <div class="detail-label">تاريخ الإنشاء:</div>
-            <div class="detail-value">{{ $team->created_at->format('Y-m-d H:i') }}</div>
+        <div class="info-item">
+            <div class="info-label">كود العمل الرئيسي:</div>
+            <div class="info-value">
+                @if($team->main_work_area_code)
+                    <span class="badge-pill badge-blue">{{ $team->mainWorkArea->name }}</span>
+                @else
+                    <span class="badge-pill badge-red">غير موجود</span>
+                @endif
+            </div>
         </div>
 
-        <div class="detail-row">
-            <div class="detail-label">آخر تحديث:</div>
-            <div class="detail-value">{{ $team->updated_at->format('Y-m-d H:i') }}</div>
+        <div class="info-item">
+            <div class="info-label">كود العمل الفرعي:</div>
+            <div class="info-value">
+                @if($team->sub_work_area_code)
+                    <span class="badge-pill badge-blue">{{ $team->subWorkArea->name }}</span>
+                @else
+                    <span class="badge-pill badge-red">غير موجود</span>
+                @endif
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">تاريخ الإنشاء:</div>
+            <div class="info-value">{{ $team->created_at->format('Y-m-d H:i') }}</div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">آخر تحديث:</div>
+            <div class="info-value">{{ $team->updated_at->format('Y-m-d H:i') }}</div>
         </div>
 
         <div class="mt-3 d-flex gap-2">
+
             @if(user_can('teams.edit'))
-            <a href="{{ route('teams.edit', $team) }}" class="btn btn-warning btn-sm-custom">
+            <a href="{{ route('teams.edit', $team) }}" class="btn btn-warning btn-modern">
                 <i class="fas fa-edit"></i> تعديل
             </a>
             @endif
 
-            <a href="{{ route('teams.index') }}" class="btn btn-primary btn-sm-custom">
+            <a href="{{ route('teams.index') }}" class="btn btn-primary btn-modern">
                 <i class="fas fa-arrow-right"></i> رجوع
             </a>
         </div>
 
     </div>
 
+    <div class="card-modern">
 
-    {{-- LEFT SIDE — ENGINEERS --}}
-    <div class="details-card">
-
-        <h4 class="card-title">
+        <h4 class="section-title">
             <i class="fas fa-users"></i>
             المهندسين في الفريق
-            <span class="badge-active">{{ $engineers->count() }}</span>
+            <span class="badge-pill badge-blue">{{ $engineers->count() }}</span>
         </h4>
 
         @if($engineers->count() > 0)
-            @foreach($engineers as $engineer)
-                <a href="{{ route('engineers.show', $engineer) }}" class="engineer-item">
-                    <div class="engineer-info">
-                        <strong>
-                            <i class="fas fa-user-tie text-primary"></i>
-                            {{ $engineer->full_name }}
-                        </strong><br>
-                        <small><i class="fas fa-envelope"></i> {{ $engineer->email }}</small>
-                    </div>
 
-                    <span class="badge-active">مهندس</span>
+            @foreach($engineers as $engineer)
+                <a href="{{ route('engineers.show', $engineer) }}" class="engineer-card">
+                    <span class="eng-name">
+                        <i class="fas fa-user-tie"></i>
+                        {{ $engineer->full_name }}
+                    </span>
+                    <span class="badge-pill badge-green">مهندس</span>
                 </a>
             @endforeach
+
         @else
-            <div class="text-center py-3">
+            <div class="text-center py-4">
                 <i class="fas fa-user-slash fa-2x text-muted"></i>
-                <p class="text-muted mt-2">لا يوجد مهندسين في هذا الفريق</p>
+                <div class="mt-2 text-muted">لا يوجد مهندسين في هذا الفريق</div>
 
                 @if(user_can('teams.edit'))
-                <a href="{{ route('teams.edit', $team) }}" class="btn btn-primary btn-sm-custom">
+                <a href="{{ route('teams.edit', $team) }}" class="btn btn-primary btn-modern mt-2">
                     <i class="fas fa-plus"></i> إضافة مهندس
                 </a>
                 @endif

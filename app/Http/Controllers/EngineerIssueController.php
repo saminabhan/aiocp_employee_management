@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class EngineerIssueController extends Controller
 {
-    // تخزين المشكلة
     public function store(Request $request, Engineer $engineer)
     {
         $request->validate([
@@ -19,7 +18,7 @@ class EngineerIssueController extends Controller
 
         Issue::create([
             'engineer_id'      => $engineer->id,
-            'problem_type_id'  => $request->problem_type_id, // بدل title
+            'problem_type_id'  => $request->problem_type_id,
             'description'      => $request->description,
             'status'           => 'open',
             'priority'         => 'medium',
@@ -30,7 +29,6 @@ class EngineerIssueController extends Controller
             ->with('active_tab', $request->active_tab)
             ->with('success', 'تم إضافة المشكلة بنجاح');}
 
-    // تعديل الحالة
     public function updateStatus(Request $request, Issue $issue)
     {
         $request->validate([

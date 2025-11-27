@@ -19,7 +19,7 @@ class UserController extends Controller
 
     public function create()
 {
-    $roles = Role::all();
+$roles = Role::where('name', '!=', 'field_engineer')->get();
     $permissions = Permission::all();
 
     $governorates = Constant::childrenOfId(14)->get();
@@ -44,8 +44,25 @@ public function getCities($governorateId)
     $cities = Constant::where('parent', $governorateId)->get();
     return response()->json($cities);
 }
+public function getWorkAreas($govId)
+{
+    $userId = request()->query('user_id');
+    
+    $usedAreas = User::whereNotNull('main_work_area_code')
+                     ->when($userId, function($query) use ($userId) {
+                         $query->where('id', '!=', $userId);
+                     })
+                     ->pluck('main_work_area_code')
+                     ->filter()
+                     ->unique()
+                     ->toArray();
 
+    $areas = Constant::where('governorate_id', $govId)
+                     ->whereNotIn('id', $usedAreas)
+                     ->get(['id', 'name']);
 
+    return response()->json($areas);
+}
 
 public function store(Request $req)
 {
@@ -69,9 +86,6 @@ public function store(Request $req)
         'main_work_area_code.exists' => 'منطقة العمل غير صحيحة',
     ]);
 
-    // -------------------------------------------
-    // التحقق الخاص بدور مشرف الحصر فقط
-    // -------------------------------------------
     $role = Role::find($req->role_id);
 
     if ($role && $role->name === 'survey_supervisor') {
@@ -87,10 +101,6 @@ public function store(Request $req)
         ]);
     }
 
-    // -------------------------------------------
-    // إنشاء المستخدم
-    // -------------------------------------------
-
     $data = [
         'name' => $req->name,
         'username' => $req->username,
@@ -103,10 +113,6 @@ public function store(Request $req)
     ];
 
     $user = User::create($data);
-
-    // -------------------------------------------
-    // حفظ الصلاحيات
-    // -------------------------------------------
 
     if ($req->role_id === "custom") {
         if ($req->permissions) {
@@ -122,48 +128,79 @@ public function store(Request $req)
     return redirect()->route('users.index')->with('success', 'تم إضافة المستخدم بنجاح');
 }
 
-    public function edit($id)
-    {
-        $user = User::with('permissions')->findOrFail($id);
-        $roles = Role::all();
-        $permissions = Permission::orderBy('category')->get();
-        $governorates = Constant::childrenOfId(14)->get();
+public function edit($id)
+{
+    $user = User::with('permissions')->findOrFail($id);
 
-        return view('users.edit', compact('user', 'roles', 'permissions', 'governorates'));
-    }
+    $roles = Role::where('name', '!=', 'field_engineer')->get();
+    $permissions = Permission::orderBy('category')->get();
 
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
+    $governorates = Constant::childrenOfId(14)->get();
 
-        $request->validate([
-            'name' => 'required',
-            'username' => 'required|unique:users,username,' . $user->id,
-            'role_id' => 'nullable',
-            'governorate_id' => 'nullable|exists:constants,id',
-        ]);
+    $cities = Constant::childrenOfId(55)->get();
 
-        $roleId = ($request->role_id === "custom" || $request->role_id === null)
-            ? null
-            : intval($request->role_id);
+    $usedAreas = User::whereNotNull('main_work_area_code')
+        ->where('id', '!=', $user->id)
+        ->pluck('main_work_area_code')
+        ->toArray();
 
+    $work_areas = Constant::childrenOfId(55)
+        ->where(function ($q) use ($usedAreas, $user) {
+            $q->whereNotIn('id', $usedAreas)
+              ->orWhere('id', $user->main_work_area_code);
+        })
+        ->get();
+
+    $userPermissions = $user->permissions->pluck('id')->toArray();
+
+    return view('users.edit', compact(
+        'user',
+        'roles',
+        'permissions',
+        'governorates',
+        'cities',
+        'work_areas',
+        'userPermissions'
+    ));
+}
+
+  public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+
+    $request->validate([
+        'name' => 'required',
+        'username' => 'required|unique:users,username,' . $user->id,
+        'role_id' => 'nullable',
+        'governorate_id' => 'nullable|exists:constants,id',
+        'city_id' => 'nullable|exists:constants,id',
+        'main_work_area_code' => 'nullable|exists:constants,id',
+    ]);
+
+    $roleId = ($request->role_id === "custom" || $request->role_id === null)
+        ? null
+        : intval($request->role_id);
+
+    $user->update([
+        'name' => $request->name,
+        'username' => $request->username,
+        'role_id' => $roleId,
+        'governorate_id' => $request->governorate_id,
+        'city_id' => $request->city_id,
+        'main_work_area_code' => $request->main_work_area_code,
+    ]);
+
+    if ($request->password) {
         $user->update([
-            'name' => $request->name,
-            'username' => $request->username,
-            'role_id' => $roleId,
-            'governorate_id' => $request->governorate_id,
+            'password' => Hash::make($request->password)
         ]);
-
-        if ($request->password) {
-            $user->update([
-                'password' => Hash::make($request->password)
-            ]);
-        }
-
-        $user->permissions()->sync($request->permissions ?? []);
-
-        return redirect()->route('users.index')->with('success', 'تم تحديث المستخدم بنجاح');
     }
+
+    $user->permissions()->sync($request->permissions ?? []);
+
+    return redirect()->route('users.index')->with('success', 'تم تحديث المستخدم بنجاح');
+}
+
 
     public function destroy($id)
     {

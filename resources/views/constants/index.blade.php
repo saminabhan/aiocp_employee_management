@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showCancelButton: true,
                 confirmButtonText: 'نعم، حذف',
                 cancelButtonText: 'إلغاء',
-                reverseButtons: true, // عشان RTL
+                reverseButtons: true,
                 buttonsStyling: false,
                 customClass: {
                     popup: 'animated fadeInDown',

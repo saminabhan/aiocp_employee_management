@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Constant extends Model
 {
-    protected $fillable = ['name', 'parent'];
+    protected $fillable = ['name', 'parent', 'governorate_id'];
 
     public function parentConst()
     {

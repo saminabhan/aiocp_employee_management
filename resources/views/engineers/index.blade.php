@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </td>
                 <td data-label="رقم الهوية">{{ $engineer->national_id }}</td>
                 <td data-label="الجوال">{{ $engineer->mobile_1 }}</td>
-                <td data-label="المحافظة">{{ $engineer->homeGovernorate->name ?? 'غير محدد' }}</td>
+                <td data-label="المحافظة">{{ $engineer->workGovernorate->name ?? 'غير محدد' }}</td>
                 <td data-label="التخصص">{{ $engineer->engineer_specialization?->name ?? 'غير محدد' }}</td>
                 <td data-label="سنوات الخبرة">
                     <span class="badge-status badge-active">

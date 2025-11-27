@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 @endif
 
-    {{-- === Header === --}}
     <div class="engineer-header">
         <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=0C4079&color=fff&size=100" 
              class="engineer-avatar">
@@ -79,7 +78,6 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
 
-    {{-- === بيانات المستخدم === --}}
     <h5 class="section-title">بيانات المستخدم</h5>
     
     <div class="row mt-3">
@@ -106,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 
 
-    {{-- === أزرار التحكم === --}}
     <div class="mt-4 text-end">
         @if(user_can('profile.edit'))
         <a href="{{ route('profile.edit') }}" class="btn btn-warning">
