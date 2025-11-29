@@ -721,10 +721,8 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 @endif
 
-<!-- PROFILE HEADER - CENTERED -->
 <div class="profile-header-wrapper" dir="rtl">
     
-    <!-- Right: Back Button -->
     <div class="back-btn-wrapper">
         <a href="{{ route('engineers.index') }}" class="back-btn">
             <i class="fas fa-arrow-right"></i> العودة إلى القائمة
@@ -737,7 +735,6 @@ document.addEventListener("DOMContentLoaded", function() {
             </a>
     </div>
     @endif
-    <!-- Center: Avatar + Name + Spec + Tabs -->
     <div class="profile-center-section">
         <div class="profile-center-content">
             @if($engineer->personal_image)
@@ -763,7 +760,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         </div>
 
-        <!-- Horizontal Tabs Under Name -->
         <div class="profile-tabs-section">
             <ul class="nav nav-tabs" id="engineerTabs" role="tablist">
                 <li class="nav-items-custom" role="presentation">
@@ -799,10 +795,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </div>
 
-<!-- TABS CONTENT -->
 <div class="tab-content content-area" id="engineerTabContent" dir="rtl">
 
-    <!-- PERSONAL -->
     <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
         <div class="section-title"><i class="fas fa-id-card"></i> البيانات الشخصية</div>
         <div class="info-grid">
@@ -840,7 +834,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- HOME -->
     <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
         <div class="section-title"><i class="fas fa-home"></i> عنوان السكن</div>
         <div class="info-grid">
@@ -859,7 +852,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- WORK -->
     <div class="tab-pane fade" id="work" role="tabpanel" aria-labelledby="work-tab">
         <div class="section-title"><i class="fas fa-building"></i> مكان العمل</div>
         <div class="info-grid">
@@ -886,7 +878,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- JOB -->
     <div class="tab-pane fade" id="job" role="tabpanel" aria-labelledby="job-tab">
         <div class="section-title"><i class="fas fa-briefcase"></i> معلومات الوظيفة</div>
         <div class="info-grid">
@@ -913,7 +904,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- APP INFO -->
     <div class="tab-pane fade" id="app" role="tabpanel" aria-labelledby="app-tab">
         <div class="section-title"><i class="fas fa-mobile-alt"></i> بيانات التطبيق</div>
         <div class="info-grid">
@@ -940,7 +930,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- BANK -->
     <div class="tab-pane fade" id="bank" role="tabpanel" aria-labelledby="bank-tab">
         <div class="section-title"><i class="fas fa-university"></i> معلومات الحساب البنكي</div>
         <div class="info-grid">
@@ -976,7 +965,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- ATTACHMENTS -->
     <div class="tab-pane fade" id="attachments" role="tabpanel" aria-labelledby="attachments-tab">
         <div class="section-title"><i class="fas fa-paperclip"></i> المرفقات</div>
         @if($engineer->attachments->count())
@@ -1004,7 +992,6 @@ document.addEventListener("DOMContentLoaded", function() {
         @endif
     </div>
 
-    <!-- ATTENDANCE -->
     <div class="tab-pane fade" id="employee-attendance" role="tabpanel" aria-labelledby="employee-attendance-tab">
         <div class="section-title"><i class="fas fa-user-clock"></i> جدول دوام الموظف</div>
         <div class="table-responsive mt-3">
@@ -1041,7 +1028,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- PROBLEMS -->
     <div class="tab-pane fade" id="employee-app-problems" role="tabpanel" aria-labelledby="employee-app-problems-tab">
         <div class="section-title"><i class="fas fa-exclamation-triangle"></i> مشاكل التطبيق</div>
 
@@ -1100,7 +1086,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </div>
 
-<!-- Modal إضافة مشكلة جديدة -->
 <div class="modal fade" id="addProblemModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

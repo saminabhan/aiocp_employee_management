@@ -17,7 +17,7 @@ public function index(Request $request)
 
     $query = Issue::with(['engineer', 'user', 'problem']);
 
-    switch ($user->role->name) {
+    switch ($user->role->name ?? '') {
 
         case 'engineer':
             $query->where(function ($q) use ($user) {
@@ -44,10 +44,61 @@ public function index(Request $request)
             });
             break;
 
-        case 'system_admin':
-        case 'support':
-        default:
-            break;
+            case 'north_support':
+                $query->where(function ($q) {
+                    $q->whereHas('engineer', function ($eng) {
+                        $eng->whereIn('work_governorate_id', [17, 18]);
+                    });
+                })
+                ->orWhere(function ($q) {
+                    $q->whereHas('user.role', function ($role) {
+                        $role->whereIn('name', [
+                            'governorate_manager',
+                            'survey_supervisor'
+                        ]);
+                    })
+                    ->whereHas('user', function ($u) {
+                        $u->whereIn('governorate_id', [17, 18]);
+                    });
+                })
+                ->orWhereHas('user.role', function ($role) {
+                    $role->whereIn('name', ['manager', 'admin']);
+                });
+                break;
+
+            case 'south_support':
+                $query->where(function ($q) {
+                    $q->whereHas('engineer', function ($eng) {
+                        $eng->whereIn('work_governorate_id', [15, 16]);
+                    });
+                })
+                ->orWhere(function ($q) {
+                    $q->whereHas('user.role', function ($role) {
+                        $role->whereIn('name', [
+                            'governorate_manager',
+                            'survey_supervisor'
+                        ]);
+                    })
+                    ->whereHas('user', function ($u) {
+                        $u->whereIn('governorate_id', [15, 16]);
+                    });
+                })
+                ->orWhereHas('user.role', function ($role) {
+                    $role->whereIn('name', ['manager', 'admin']);
+                });
+                break;
+
+
+            case 'admin':
+            case 'manager':
+                break;
+
+            default:
+                if (!$user->hasPermission('issues.view')) {
+                    abort(403, 'غير مصرح لك بعرض التذاكر');
+                }
+                break;
+
     }
 
     if ($request->filled('status')) {
@@ -72,7 +123,7 @@ public function index(Request $request)
 
     $statsQuery = Issue::query();
 
-    switch ($user->role->name) {
+    switch ($user->role->name ?? '') {
 
         case 'engineer':
             $statsQuery->where(function ($q) use ($user) {
@@ -99,10 +150,68 @@ public function index(Request $request)
             });
             break;
 
-        case 'system_admin':
-        case 'support':
-        default:
+        case 'north_support':
+            $statsQuery->where(function ($q) {
+                $q->whereHas('engineer', function ($eng) {
+                    $eng->whereIn('work_governorate_id', [17, 18]);
+                });
+            })
+            ->orWhere(function ($q) {
+                $q->whereHas('user', function ($u) {
+                    $u->whereIn('main_work_area_code', [17, 18]);
+                })
+                ->whereHas('user.role', function ($r) {
+                    $r->where('name', 'survey_supervisor');
+                });
+            })
+            ->orWhere(function ($q) {
+                $q->whereHas('user', function ($u) {
+                    $u->whereIn('governorate_id', [17, 18]);
+                })
+                ->whereHas('user.role', function ($r) {
+                    $r->where('name', 'governorate_manager');
+                });
+            })
+            ->orWhereHas('user.role', function ($r) {
+                $r->whereIn('name', ['manager', 'admin', 'system_admin']);
+            });
             break;
+
+        case 'south_support':
+            $statsQuery->where(function ($q) {
+                $q->whereHas('engineer', function ($eng) {
+                    $eng->whereIn('work_governorate_id', [15, 16]);
+                });
+            })
+            ->orWhere(function ($q) {
+                $q->whereHas('user', function ($u) {
+                    $u->whereIn('main_work_area_code', [15, 16]);
+                })
+                ->whereHas('user.role', function ($r) {
+                    $r->where('name', 'survey_supervisor');
+                });
+            })
+            ->orWhere(function ($q) {
+                $q->whereHas('user', function ($u) {
+                    $u->whereIn('governorate_id', [15, 16]);
+                })
+                ->whereHas('user.role', function ($r) {
+                    $r->where('name', 'governorate_manager');
+                });
+            })
+            ->orWhereHas('user.role', function ($r) {
+                $r->whereIn('name', ['manager', 'admin', 'system_admin']);
+            });
+            break;
+
+            case 'admin':
+            case 'manager':
+                break;
+            default:
+                if (!$user->hasPermission('issues.view')) {
+                    abort(403, 'غير مصرح لك بعرض التذاكر');
+                }
+                break;
     }
 
     $stats = [
@@ -125,7 +234,7 @@ public function create()
     $user = auth()->user();
     $eng = [];
 
-    switch ($user->role->name) {
+    switch ($user->role->name ?? '') {
 
         case 'system_admin':
             $eng = Engineer::where('is_active', true)->get();
@@ -148,7 +257,10 @@ public function create()
             break;
 
         default:
-            $eng = [];
+            $eng = Engineer::where('is_active', true)->get();
+            if (!$user->hasPermission('issues.create')) {
+                abort(403, 'غير مصرح لك بإنشاء تذكرة');
+            }
             break;
     }
 
@@ -174,7 +286,7 @@ public function store(Request $request)
     ]);
 
 
-    switch ($user->role->name) {
+    switch ($user->role->name ?? '') {
 
         case 'system_admin':
             $validated['user_id'] = $user->id;
@@ -207,8 +319,11 @@ public function store(Request $request)
             $validated['user_id'] = null;
             break;
 
+    
         default:
-            $validated['engineer_id'] = null;
+            if (!$user->hasPermission('issues.create')) {
+                abort(403, 'غير مصرح لك بإنشاء تذكرة');
+            }
             $validated['user_id'] = $user->id;
             break;
     }
@@ -245,7 +360,7 @@ public function show(Issue $issue)
         return view('issues.show', compact('issue'));
     }
 
-    switch ($user->role->name) {
+    switch ($user->role->name   ?? '') {
 
         case 'admin':
         case 'support':
@@ -270,7 +385,10 @@ public function show(Issue $issue)
             break;
 
         default:
-            abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+            if (!$user->hasPermission('issues.view')) {
+                abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+            }
+            break;
     }
 
     $issue->load(['engineer', 'user', 'problem', 'attachments']);
@@ -302,9 +420,14 @@ private function authorizeEngineer(Engineer $engineer)
     {
         $user = auth()->user();
 
-        if (!$user->hasRole(['admin', 'support'])) {
-            abort(403);
-        }
+$allowedRoles = ['admin', 'north_support', 'south_support'];
+
+$hasAllowedRole = $user->hasRole($allowedRoles);
+$hasPermissionButNoRole = ($user->role_id === null && $user->hasPermission('issues.edit'));
+
+if (!$hasAllowedRole && !$hasPermissionButNoRole) {
+    abort(403);
+}
 
         $validated = $request->validate([
             'status' => 'required|in:open,in_progress,closed',

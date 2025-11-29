@@ -51,12 +51,10 @@
     </div>
 @endif
 
-    {{-- عنوان الصفحة --}}
     <h5 class="section-title">
         <i class="fas fa-key"></i> تغيير كلمة المرور
     </h5>
 
-    {{-- فورم تغيير كلمة المرور --}}
     <form action="{{ route('profile.update-password') }}" method="POST">
         @csrf
         @method('PUT')

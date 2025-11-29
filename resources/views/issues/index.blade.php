@@ -183,10 +183,12 @@
                 <i class="fas fa-tools"></i>
                 مشاكل تطبيق الحصر
             </h1>
+            @if(user_can('issues.create'))
             <a href="{{ route('issues.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>
                 إضافة تذكرة جديدة
             </a>
+            @endif
         </div>
     </div>
 

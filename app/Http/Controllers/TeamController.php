@@ -41,6 +41,14 @@ class TeamController extends Controller
                 }
                 break;
 
+            case 'north_support':
+                $query->whereIn('governorate_id', [17, 18]);
+                break;
+
+            case 'south_support':
+                $query->whereIn('governorate_id', [15, 16]);
+                break;
+
             default:
                 if (!$user->hasPermission('teams.view')) {
                     abort(403, 'غير مصرح لك بعرض الفرق.');
@@ -230,6 +238,18 @@ public function store(Request $request)
                 $teamHasEngineer = !empty(array_intersect($team->engineer_ids, $engineerIds));
 
                 if (!$teamHasEngineer) {
+                    abort(403, 'غير مصرح لك بعرض هذا الفريق');
+                }
+                break;
+
+                case 'north_support':
+                if (!in_array($team->governorate_id, [17, 18])) {
+                    abort(403, 'غير مصرح لك بعرض هذا الفريق');
+                }
+                break;
+
+            case 'south_support':
+                if (!in_array($team->governorate_id, [15, 16])) {
                     abort(403, 'غير مصرح لك بعرض هذا الفريق');
                 }
                 break;

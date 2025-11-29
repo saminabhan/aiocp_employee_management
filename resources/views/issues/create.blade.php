@@ -134,7 +134,6 @@
 @section('content')
 <div class="container" dir="rtl">
 
-    <!-- Page Header -->
     <div class="page-header">
         <h1 class="page-title">
             <i class="fas fa-plus-circle"></i>
@@ -153,19 +152,18 @@
         </div>
     @endif
 
-    <!-- Form Card -->
     <div class="form-card">
-<form action="{{ route('issues.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+        <form action="{{ route('issues.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
             {{-- المهندس (للأدمن فقط) --}}
-@if(count($engineers) > 0)
+                @if(count($engineers) > 0)
                 <div class="mb-4">
                     <label class="form-label">
                         اختر المهندس <small class="text-muted">(اختياري - اتركه فارغاً لتذكرة شخصية)</small>
                     </label>
                     <select name="engineer_id" class="form-select">
-<option value="">تذكرة شخصية</option>
+                            <option value="">تذكرة شخصية</option>
                         @foreach($engineers as $engineer)
                             <option value="{{ $engineer->id }}" {{ old('engineer_id') == $engineer->id ? 'selected' : '' }}>
                                 {{ $engineer->full_name }}
@@ -175,7 +173,6 @@
                 </div>
             @endif
 
-            {{-- نوع المشكلة --}}
             <div class="mb-4">
                 <label class="form-label">
                     نوع المشكلة <span class="required-star">*</span>
@@ -190,7 +187,6 @@
                 </select>
             </div>
 
-            {{-- الأولوية --}}
             <div class="mb-4">
                 <label class="form-label">
                     الأولوية <span class="required-star">*</span>
@@ -222,7 +218,6 @@
                 </div>
             </div>
 
-            {{-- وصف المشكلة --}}
             <div class="mb-4">
                 <label class="form-label">
                     وصف المشكلة <span class="required-star">*</span>
@@ -241,7 +236,6 @@
     <div class="attachment-item border p-3 rounded mb-3">
         <div class="row">
 
-            {{-- نوع المرفق --}}
             <div class="col-md-4">
                 <label class="form-label">نوع المرفق</label>
                 <select name="attachments[0][attachment_type_id]" class="form-select" required>
@@ -252,14 +246,12 @@
                 </select>
             </div>
 
-            {{-- الملف --}}
             <div class="col-md-6">
                 <label class="form-label">الملف</label>
                 <input type="file" name="attachments[0][file]" class="form-control" 
                        accept="image/*,application/pdf,video/mp4" required>
             </div>
 
-            {{-- حذف --}}
             <div class="col-md-2 d-flex align-items-end">
                 <button type="button" class="btn btn-danger w-100 remove-attachment">
                     <i class="fas fa-trash"></i>
@@ -275,7 +267,6 @@
     <i class="fas fa-plus-circle me-1"></i> إضافة مرفق آخر
 </button>
 
-            {{-- Buttons --}}
             <div class="d-flex justify-content-between gap-3">
                 <a href="{{ route('issues.index') }}" class="btn btn-back">
                     <i class="fas fa-arrow-right me-2"></i>
@@ -295,15 +286,12 @@
 
 <script>
 function selectPriority(priority) {
-    // إزالة selected من الكل
     document.querySelectorAll('.priority-card').forEach(card => {
         card.classList.remove('selected');
     });
     
-    // إضافة selected للمختار
     document.querySelector('.priority-card.' + priority).classList.add('selected');
     
-    // تحديد الـ radio button
     document.getElementById('priority_' + priority).checked = true;
 }
 </script>
@@ -349,7 +337,6 @@ document.getElementById('addAttachment').addEventListener('click', function () {
     attachmentIndex++;
 });
 
-// حذف المرفق
 document.addEventListener('click', function (e) {
     if (e.target.closest('.remove-attachment')) {
         e.target.closest('.attachment-item').remove();

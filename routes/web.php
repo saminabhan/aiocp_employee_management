@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SmsPasswordResetController;
 use App\Http\Controllers\ConstantController;
 use App\Http\Controllers\EngineerController;
 use App\Http\Controllers\HomeController;
@@ -21,6 +22,12 @@ Route::get('/login', function () {
     }
     return view('auth.login');
 })->name('login');
+
+// AJAX routes for password reset
+Route::post('/password/send-code-ajax', [SmsPasswordResetController::class, 'sendCodeAjax'])->name('password.send.code.ajax');
+Route::post('/password/verify-code-ajax', [SmsPasswordResetController::class, 'verifyCodeAjax'])->name('password.verify.code.ajax');
+Route::post('/password/resend-code-ajax', [SmsPasswordResetController::class, 'resendCodeAjax'])->name('password.resend.code.ajax');
+Route::post('/password/reset-ajax', [SmsPasswordResetController::class, 'resetPasswordAjax'])->name('password.reset.ajax');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

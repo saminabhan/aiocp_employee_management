@@ -1064,7 +1064,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <i class="fas fa-save"></i>
 </button>
 
-<!-- Image Cropper Modal -->
 <div class="cropper-modal" id="cropperModal">
     <div class="cropper-container-wrapper">
         <h3 style="margin-bottom: 20px; text-align: center;">قص الصورة</h3>

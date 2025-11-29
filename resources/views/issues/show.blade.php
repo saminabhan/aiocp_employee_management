@@ -223,6 +223,17 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 @endif
 
+@php
+    $user = auth()->user();
+    $allowedRoles = ['admin', 'north_support', 'south_support'];
+
+    $hasAllowedRole = $user->hasRole($allowedRoles);
+    $hasPermissionButNoRole = ($user->role_id === null && $user->hasPermission('issues.edit'));
+    
+    // يمكن تعديل الحالة إذا كان لديه رول مسموح أو صلاحية بدون رول
+    $canUpdateStatus = ($hasAllowedRole || $hasPermissionButNoRole) && $issue->status != 'closed';
+@endphp
+
     <div class="details-card">
         
         <div class="info-grid">
@@ -388,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <hr class="my-4">
         <div class="d-flex justify-content-between gap-3 flex-wrap">
             <div class="d-flex gap-2">
-                @if(auth()->user()->hasRole(['admin', 'support']) && $issue->status != 'closed')
+                @if($canUpdateStatus)
                     <button type="button" class="btn btn-primary btn-update-status" 
                             data-bs-toggle="modal" 
                             data-bs-target="#updateStatusModal">
@@ -412,7 +423,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </div>
 
-@if(auth()->user()->hasRole(['admin', 'support']))
+{{-- Modal تحديث الحالة --}}
+@if($canUpdateStatus)
 <div class="modal fade" id="updateStatusModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -458,6 +470,7 @@ document.getElementById('statusSelect').addEventListener('change', function() {
 </script>
 @endif
 
+{{-- Modal حذف التذكرة --}}
 @if(auth()->user()->hasRole('admin'))
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">

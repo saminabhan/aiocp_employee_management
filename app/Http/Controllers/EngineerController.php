@@ -32,6 +32,18 @@ private function authorizeEngineer(Engineer $engineer)
             }
             break;
 
+        case 'north_support':
+            if (!in_array($engineer->work_governorate_id, [17 , 18])) {
+                abort(403, 'غير مسموح لك بعرض هذا المهندس');
+            }
+            break;
+
+        case 'south_support':
+            if (!in_array($engineer->work_governorate_id, [15,16])) {
+                abort(403, 'غير مسموح لك بعرض هذا المهندس');
+            }
+            break;
+
         case 'system_admin':
         default:
             break;
@@ -60,6 +72,13 @@ public function index()
         case 'survey_supervisor':
             $query->where('main_work_area_code', $user->main_work_area_code);
             break;
+        case 'north_support':
+            $query->whereIn('work_governorate_id', [17 , 18]);
+            break;
+        case 'south_support':
+            $query->whereIn('work_governorate_id', [15,16]);
+            break;
+       
 
         case 'system_admin':
         default:

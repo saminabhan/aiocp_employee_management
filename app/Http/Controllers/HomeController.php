@@ -48,6 +48,16 @@ public function index()
             $team_count     = Team::count();
             break;
 
+            case 'north_support':
+            $engineer_count = Engineer::whereIn('work_governorate_id', [17 , 18])->count();
+            $team_count     = Team::whereIn('governorate_id', [17 , 18])->count();
+            break;
+
+        case 'south_support':
+            $engineer_count = Engineer::whereIn('work_governorate_id', [15,16])->count();
+            $team_count     = Team::whereIn('governorate_id', [15,16])->count();
+            break;
+
         default:
             break;
     }
