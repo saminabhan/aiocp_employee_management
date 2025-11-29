@@ -597,6 +597,25 @@
         border-radius: 8px !important;
         min-width: 220px !important;
     }
+    .login-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 0.68rem;
+        color: #666;
+        direction: rtl;
+        background-color: transparent;
+      }
+
+      @media (max-width: 850px) {
+        .login-footer {
+          position: static;
+          margin-top: 1.5rem;
+          border-top: none;
+        }
+      }  
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -656,6 +675,7 @@
           });
           </script>
           @endif
+          
             <div class="actual-form">
               <div class="input-wrap">
                 <input
@@ -787,6 +807,7 @@
                 <h2>كلمة المرور الجديدة</h2>
                 <h6>أدخل كلمة المرور الجديدة</h6>
               </div>
+              
 
               <div class="actual-form">
                 <div class="input-wrap">
@@ -835,7 +856,7 @@
                 <h2>منصة متقدمة لحصر الأضرار وتحديد مواقعها</h2>
               </div>
             </div>
-
+            
             <div class="bullets">
               <span class="active" data-value="1"></span>
               <span data-value="2"></span>
@@ -843,8 +864,12 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>   
+          <footer class="login-footer">
+              © 2025 جميع الحقوق محفوظة – الهيئة العربية الدولية للإعمار في فلسطين
+          </footer>
     </div>
+
   </main>
 
 <script>
