@@ -238,7 +238,7 @@
 
             <div class="col-md-4">
                 <label class="form-label">نوع المرفق</label>
-                <select name="attachments[0][attachment_type_id]" class="form-select" required>
+                <select name="attachments[0][attachment_type_id]" class="form-select">
                     <option value="">اختر النوع</option>
                     @foreach($attachmentTypes as $att)
                         <option value="{{ $att->id }}">{{ $att->name }}</option>
@@ -246,11 +246,20 @@
                 </select>
             </div>
 
-            <div class="col-md-6">
-                <label class="form-label">الملف</label>
-                <input type="file" name="attachments[0][file]" class="form-control" 
-                       accept="image/*,application/pdf,video/mp4" required>
-            </div>
+          <div class="col-md-6">
+    <label class="form-label">الملف</label>
+    <input type="file" 
+           name="attachments[0][file]" 
+           class="form-control"
+           accept="image/*,application/pdf,video/*">
+    <small class="text-muted">
+        الصور: JPG, PNG, WebP, GIF, SVG, HEIC | 
+        الفيديوهات: MP4, MOV, AVI وغيرها | 
+        المستندات: PDF
+        (الحد الأقصى: 20 ميجابايت)
+    </small>
+</div>
+
 
             <div class="col-md-2 d-flex align-items-end">
                 <button type="button" class="btn btn-danger w-100 remove-attachment">

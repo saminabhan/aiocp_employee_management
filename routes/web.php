@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EngineerIssueController;
 use App\Http\Controllers\GovernorateSupervisorController;
 use App\Http\Controllers\IssueController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
@@ -178,6 +179,14 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
         [GovernorateSupervisorController::class, 'show'])
         ->name('governorate.supervisors.show')
         ->middleware('permission:survey.supervisor.view');
+
+            Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/fetch', [NotificationController::class, 'fetch'])->name('fetch');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('readAll');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
 
 });
 

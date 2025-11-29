@@ -70,8 +70,195 @@
                 font-size: 15px;
                 color: #666;
             }
+/* Notification Icon */
+.notification-icon {
+    position: relative;
+    cursor: pointer;
+}
 
-    </style>
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* Notification Dropdown */
+/* Notification Dropdown */
+.notification-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    width: 380px;
+    max-height: 500px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+}
+
+.notification-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.notification-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+}
+.notification-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notification-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-header h6 {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.mark-all-read-btn {
+    background: none;
+    border: none;
+    color: #0C4079;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.mark-all-read-btn:hover {
+    background: #f0f0f0;
+}
+
+.notification-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.notification-item:hover {
+    background: #f9f9f9;
+}
+
+.notification-item.unread {
+    background: #f0f7ff;
+}
+
+.notification-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #0C4079;
+    border-radius: 50%;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.notification-message {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.notification-time {
+    font-size: 11px;
+    color: #999;
+}
+
+.notification-footer {
+    padding: 12px 15px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.notification-footer a {
+    color: #0C4079;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.notification-footer a:hover {
+    text-decoration: underline;
+}
+
+.empty-notifications {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-notifications i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+/* للشاشات الصغيرة */
+/* للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .notification-dropdown {
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        width: calc(100vw - 20px);
+        max-width: 380px;
+    }
+    
+    .notification-dropdown.show {
+        transform: translateX(-50%) translateY(0);
+    }
+}    </style>
 </head>
 <body>
     <nav class="top-navbar">
@@ -97,9 +284,36 @@
                 <i class="fas fa-search"></i>
             </div>
 
-            <div class="nav-icon">
-                <i class="fas fa-bell"></i>
+          <div style="position: relative;">
+    <div class="nav-icon notification-icon" id="notificationBtn">
+        <i class="fas fa-bell"></i>
+        @if(auth()->user()->unreadNotificationsCount() > 0)
+        <span class="notification-badge">{{ auth()->user()->unreadNotificationsCount() }}</span>
+        @endif
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-header">
+            <h6>الإشعارات</h6>
+            <button class="mark-all-read-btn" id="markAllReadBtn">
+                <i class="fas fa-check-double"></i> تحديد الكل كمقروء
+            </button>
+        </div>
+        
+        <div class="notification-list" id="notificationList">
+            <div class="text-center py-3">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">جاري التحميل...</span>
+                </div>
             </div>
+        </div>
+        
+        <div class="notification-footer">
+            <a href="{{ route('notifications.index') }}">عرض جميع الإشعارات</a>
+        </div>
+    </div>
+</div>
             <!-- <div class="date-selector">
                 <span>آخر 30 يوماً</span>
                 <i class="fas fa-chevron-down"></i>
@@ -375,6 +589,173 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Notifications System
+const notificationBtn = document.getElementById('notificationBtn');
+const notificationDropdown = document.getElementById('notificationDropdown');
+const notificationList = document.getElementById('notificationList');
+const markAllReadBtn = document.getElementById('markAllReadBtn');
 
+// Toggle notification dropdown
+if (notificationBtn) {
+    notificationBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationDropdown.classList.toggle('show');
+        
+        if (notificationDropdown.classList.contains('show')) {
+            loadNotifications();
+        }
+    });
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+        notificationDropdown.classList.remove('show');
+    }
+});
+
+// Load notifications via AJAX
+function loadNotifications() {
+    fetch('{{ route("notifications.fetch") }}')
+        .then(response => response.json())
+        .then(data => {
+            renderNotifications(data.notifications, data.unread_count);
+            updateBadge(data.unread_count);
+        })
+        .catch(error => {
+            console.error('Error loading notifications:', error);
+            notificationList.innerHTML = '<div class="empty-notifications">حدث خطأ في تحميل الإشعارات</div>';
+        });
+}
+
+// Render notifications
+function renderNotifications(notifications, unreadCount) {
+    if (notifications.length === 0) {
+        notificationList.innerHTML = `
+            <div class="empty-notifications">
+                <i class="fas fa-bell-slash"></i>
+                <p>لا توجد إشعارات</p>
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+    notifications.forEach(notification => {
+        const unreadClass = !notification.is_read ? 'unread' : '';
+        const timeAgo = getTimeAgo(notification.created_at);
+        const issueLink = notification.issue_id ? `{{ url('issues') }}/${notification.issue_id}` : '#';
+        
+        html += `
+            <div class="notification-item ${unreadClass}" 
+                 data-id="${notification.id}"
+                 data-issue-link="${issueLink}"
+                 onclick="handleNotificationClick(${notification.id}, '${issueLink}')">
+                <div class="notification-title">${notification.title}</div>
+                <div class="notification-message">${notification.message}</div>
+                <div class="notification-time">
+                    <i class="fas fa-clock"></i> ${timeAgo}
+                </div>
+            </div>
+        `;
+    });
+
+    notificationList.innerHTML = html;
+}
+
+// Handle notification click
+function handleNotificationClick(notificationId, link) {
+    // Mark as read
+    fetch(`/notifications/${notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    }).then(() => {
+        // Redirect to issue
+        if (link !== '#') {
+            window.location.href = link;
+        }
+    });
+}
+
+// Mark all as read
+if (markAllReadBtn) {
+    markAllReadBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        fetch('{{ route("notifications.readAll") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadNotifications();
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom-start',
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 2000,
+                            customClass: {
+            popup: 'medium-small-toast'
+        }
+
+                });
+            }
+        });
+    });
+}
+
+// Update notification badge
+function updateBadge(count) {
+    const badge = document.querySelector('.notification-badge');
+    if (count > 0) {
+        if (badge) {
+            badge.textContent = count;
+        } else {
+            notificationBtn.insertAdjacentHTML('beforeend', 
+                `<span class="notification-badge">${count}</span>`
+            );
+        }
+    } else {
+        if (badge) {
+            badge.remove();
+        }
+    }
+}
+
+// Get time ago
+function getTimeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    if (seconds < 60) return 'الآن';
+    if (seconds < 3600) return `منذ ${Math.floor(seconds / 60)} دقيقة`;
+    if (seconds < 86400) return `منذ ${Math.floor(seconds / 3600)} ساعة`;
+    if (seconds < 604800) return `منذ ${Math.floor(seconds / 86400)} يوم`;
+    return date.toLocaleDateString('ar-EG');
+}
+
+// Auto refresh notifications every 30 seconds
+setInterval(() => {
+    if (notificationDropdown.classList.contains('show')) {
+        loadNotifications();
+    } else {
+        // Just update badge
+        fetch('{{ route("notifications.fetch") }}')
+            .then(response => response.json())
+            .then(data => updateBadge(data.unread_count));
+    }
+}, 30000);
+</script>
 </body>
 </html>

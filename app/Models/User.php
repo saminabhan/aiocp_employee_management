@@ -138,5 +138,19 @@ public function engineer()
     return $this->belongsTo(Engineer::class, 'engineer_id');
 }
 
+public function notifications()
+{
+    return $this->hasMany(Notification::class)->latest();
+}
+
+public function unreadNotifications()
+{
+    return $this->hasMany(Notification::class)->unread();
+}
+
+public function unreadNotificationsCount()
+{
+    return $this->unreadNotifications()->count();
+}
 
 }

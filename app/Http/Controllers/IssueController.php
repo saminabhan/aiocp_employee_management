@@ -6,7 +6,11 @@ use App\Models\Constant;
 use App\Models\Engineer;
 use App\Models\Issue;
 use App\Models\IssueAttachment;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class IssueController extends Controller
 {
@@ -88,6 +92,9 @@ public function index(Request $request)
                 });
                 break;
 
+                case 'field_engineer':
+                    $query->where('engineer_id', $user->engineer_id);
+                    break;
 
             case 'admin':
             case 'manager':
@@ -204,6 +211,10 @@ public function index(Request $request)
             });
             break;
 
+            case 'field_engineer':
+                $statsQuery->where('engineer_id', $user->engineer_id);
+                break;
+
             case 'admin':
             case 'manager':
                 break;
@@ -252,7 +263,7 @@ public function create()
                            ->get();
             break;
 
-        case 'engineer':
+        case 'field_engineer':
             $eng = [];
             break;
 
@@ -281,8 +292,21 @@ public function store(Request $request)
         'description' => 'required|string|max:5000',
         'priority' => 'required|in:low,medium,high',
 
-        'attachments.*.attachment_type_id' => 'required|exists:constants,id',
-        'attachments.*.file' => 'required|file|mimes:jpg,jpeg,png,pdf,mp4|max:20480',
+'attachments.*.attachment_type_id' => 'nullable|exists:constants,id|required_with:attachments.*.file',
+
+'attachments.*.file' => [
+    'nullable',
+    'file',
+    'max:20480',
+    'required_with:attachments.*.attachment_type_id',
+    'mimetypes:' .
+        'image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/heic,image/heif,' .
+        'application/pdf,' .
+        'video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,' .
+        'video/x-ms-wmv,video/webm,video/3gpp,video/3gpp2,' .
+        'video/x-m4v,video/mpeg,video/x-flv,' .
+        'application/octet-stream'
+],
     ]);
 
 
@@ -314,12 +338,11 @@ public function store(Request $request)
             $validated['user_id'] = $user->id;
             break;
 
-        case 'engineer':
+        case 'field_engineer':
             $validated['engineer_id'] = $user->engineer_id;
-            $validated['user_id'] = null;
+            $validated['user_id'] = $user->id;
             break;
 
-    
         default:
             if (!$user->hasPermission('issues.create')) {
                 abort(403, 'غير مصرح لك بإنشاء تذكرة');
@@ -331,26 +354,90 @@ public function store(Request $request)
 
     $issue = Issue::create($validated);
 
-    if ($request->has('attachments')) {
-        foreach ($request->attachments as $att) {
-            $file = $att['file'];
-            $path = $file->store('issue_attachments', 'public');
+if ($request->has('attachments')) {
+    foreach ($request->attachments as $att) {
 
-            IssueAttachment::create([
-                'issue_id' => $issue->id,
-                'attachment_type_id' => $att['attachment_type_id'],
-                'file_path' => $path,
-                'file_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'file_size' => $file->getSize(),
-            ]);
+        if (!isset($att['file'])) {
+            continue;
         }
+
+        $file = $att['file'];
+        $path = $file->store('issue_attachments', 'public');
+
+        IssueAttachment::create([
+            'issue_id' => $issue->id,
+            'attachment_type_id' => $att['attachment_type_id'],
+            'file_path' => $path,
+            'file_name' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'file_size' => $file->getSize(),
+        ]);
     }
+}
+
+
+    $this->sendNotificationToSupport($issue, $user);
 
     return redirect()->route('issues.index')
         ->with('success', 'تم إنشاء التذكرة بنجاح');
 }
 
+
+private function sendNotificationToSupport($issue, $creatorUser)
+{
+    $engineer = $issue->engineer_id ? Engineer::find($issue->engineer_id) : null;
+
+    $govId = null;
+
+    if ($engineer && $engineer->work_governorate_id) {
+        $govId = $engineer->work_governorate_id;
+    } else {
+        $govId = $creatorUser->governorate_id;
+    }
+
+    $supportRole = null;
+
+    $northGovIds = [17, 18];
+    $southGovIds = [15, 16];
+
+    if (in_array($govId, $northGovIds)) {
+        $supportRole = 'north_support';
+    } elseif (in_array($govId, $southGovIds)) {
+        $supportRole = 'south_support';
+    }
+
+    $receivers = collect();
+
+    if ($supportRole) {
+        $receivers = User::whereHas('role', function ($q) use ($supportRole) {
+            $q->where('name', $supportRole);
+        })->get();
+    }
+
+    if ($receivers->isEmpty()) {
+        return;
+    }
+
+    $priorityLabels = [
+        'low'    => 'منخفضة',
+        'medium' => 'متوسطة',
+        'high'   => 'عالية',
+    ];
+
+    $priorityLabel = $priorityLabels[$issue->priority] ?? $issue->priority;
+
+    foreach ($receivers as $user) {
+        Notification::create([
+            'user_id'     => $user->id,
+            'issue_id'    => $issue->id,
+            'engineer_id' => $engineer?->id,
+            'type'        => 'issue',
+            'title'       => 'تذكرة دعم فني جديدة',
+            'message'     => "تم إنشاء تذكرة جديدة بأولوية {$priorityLabel}"
+                            . ($engineer ? " للمهندس {$engineer->full_name}" : ''),
+        ]);
+    }
+}
 public function show(Issue $issue)
 {
     $user = auth()->user();
@@ -383,7 +470,53 @@ public function show(Issue $issue)
                 abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
             }
             break;
+            case 'north_support':
 
+                    if ($issue->user->role->name === 'admin') {
+                            break;
+                        }
+
+                if (!$issue->engineer) {
+                    $creatorGov = $issue->user->governorate_id;
+
+                    if (!in_array($creatorGov, [17, 18])) {
+                        abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+                    }
+
+                    break;
+                }
+
+                if (!in_array($issue->engineer->work_governorate_id, [17, 18])) {
+                    abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+                }
+                break;
+
+            case 'south_support':
+
+                    if ($issue->user->role->name === 'admin') {
+                            break;
+                        }
+
+                if (!$issue->engineer) {
+                    $creatorGov = $issue->user->governorate_id;
+
+                    if (!in_array($creatorGov, [15, 16])) {
+                        abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+                    }
+
+                    break;
+                }
+
+                if (!in_array($issue->engineer->work_governorate_id, [15, 16])) {
+                    abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+                }
+                break;
+
+            case 'field_engineer':
+                if ($issue->engineer_id != $user->engineer_id) {
+                    abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
+                }
+                break;
         default:
             if (!$user->hasPermission('issues.view')) {
                 abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
@@ -416,29 +549,92 @@ private function authorizeEngineer(Engineer $engineer)
     abort(403, 'ليس لديك صلاحية لعرض هذا المهندس.');
 }
 
-    public function updateStatus(Request $request, Issue $issue)
-    {
-        $user = auth()->user();
+public function updateStatus(Request $request, Issue $issue)
+{
+    $user = auth()->user();
 
-$allowedRoles = ['admin', 'north_support', 'south_support'];
+    $allowedRoles = ['admin', 'north_support', 'south_support'];
 
-$hasAllowedRole = $user->hasRole($allowedRoles);
-$hasPermissionButNoRole = ($user->role_id === null && $user->hasPermission('issues.edit'));
+    $hasAllowedRole = $user->hasRole($allowedRoles);
+    $hasPermissionButNoRole = ($user->role_id === null && $user->hasPermission('issues.edit'));
 
-if (!$hasAllowedRole && !$hasPermissionButNoRole) {
-    abort(403);
-}
-
-        $validated = $request->validate([
-            'status' => 'required|in:open,in_progress,closed',
-            'solution' => 'nullable|string|max:5000',
-        ]);
-
-        $issue->update($validated);
-
-        return redirect()->back()->with('success', 'تم تحديث حالة التذكرة بنجاح');
+    if (!$hasAllowedRole && !$hasPermissionButNoRole) {
+        abort(403);
     }
 
+    $validated = $request->validate([
+        'status' => 'required|in:open,in_progress,closed',
+        'solution' => 'nullable|string|max:5000',
+    ]);
+
+    $oldStatus = $issue->status;
+    
+    $issue->update($validated);
+
+    $this->notifyIssueOwner($issue, $oldStatus, $user);
+
+    return redirect()->back()->with('success', 'تم تحديث حالة التذكرة بنجاح');
+}
+
+private function notifyIssueOwner($issue, $oldStatus, $updatedBy)
+{
+    Log::info('notifyIssueOwner called', [
+        'issue_id' => $issue->id,
+        'issue_owner_id' => $issue->user_id,
+        'updatedBy_id' => $updatedBy->id,
+        'old_status' => $oldStatus,
+        'new_status' => $issue->status
+    ]);
+
+    $issueOwner = $issue->user;
+    
+    if (!$issueOwner) {
+        Log::warning('Issue owner not found', ['issue_id' => $issue->id]);
+        return;
+    }
+
+    if ($issueOwner->id === $updatedBy->id) {
+        Log::info('Skipping notification - owner is updater');
+        return;
+    }
+
+    $statusLabels = [
+        'open' => 'مفتوحة',
+        'in_progress' => 'قيد المعالجة',
+        'closed' => 'مغلقة'
+    ];
+
+    $newStatusLabel = $statusLabels[$issue->status] ?? $issue->status;
+
+    $title = 'تحديث حالة التذكرة';
+    $message = "تم تحديث حالة تذكرتك إلى: {$newStatusLabel}";
+
+    if ($issue->status === 'closed' && $issue->solution) {
+        $title = 'تم إغلاق التذكرة';
+        $solution = mb_strlen($issue->solution) > 100 
+            ? mb_substr($issue->solution, 0, 100) . '...' 
+            : $issue->solution;
+        $message = "تم حل المشكلة وإغلاق التذكرة\n\nالحل: {$solution}";
+    }
+
+    try {
+        $notification = Notification::create([
+            'user_id' => $issueOwner->id,
+            'issue_id' => $issue->id,
+            'engineer_id' => $issue->engineer_id,
+            'type' => 'issue_status_update',
+            'title' => $title,
+            'message' => $message,
+        ]);
+        
+        Log::info('Notification created successfully', ['notification_id' => $notification->id]);
+    } catch (\Exception $e) {
+        Log::error('Failed to create notification', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+}
     public function destroy(Issue $issue)
     {
         $user = auth()->user();
