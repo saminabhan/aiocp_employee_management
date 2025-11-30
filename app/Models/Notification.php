@@ -27,6 +27,12 @@ class Notification extends Model
         return $this->belongsTo(User::class);
     }
 
+        public function engineer()
+    {
+        return $this->belongsTo(Engineer::class);
+    }
+
+
     public function issue()
     {
         return $this->belongsTo(Issue::class);

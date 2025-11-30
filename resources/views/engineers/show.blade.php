@@ -686,6 +686,31 @@
             margin: 0 0.5px;
         }
     }
+    .equal-columns th,
+.equal-columns td {
+    width: 33.33%;
+    text-align: center;
+}
+
+.btn-view {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+  .btn-action {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+س
+      .btn-action:hover {
+        transform: translateY(-2px);
+    }
 </style>
 @endpush
 
@@ -992,41 +1017,55 @@ document.addEventListener("DOMContentLoaded", function() {
         @endif
     </div>
 
-    <div class="tab-pane fade" id="employee-attendance" role="tabpanel" aria-labelledby="employee-attendance-tab">
-        <div class="section-title"><i class="fas fa-user-clock"></i> جدول دوام الموظف</div>
-        <div class="table-responsive mt-3">
-            <table class="table table-bordered table-striped text-center">
-                <thead class="table-light">
-                    <tr>
-                        <th>التاريخ</th>
-                        <th>اليوم</th>
-                        <th>الدوام</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2025-06-22</td>
-                        <td>الأحد</td>
-                        <td>8:00 - 4:00</td>
-                        <td><span class="badge-custom badge-success">حاضر</span></td>
-                    </tr>
-                    <tr>
-                        <td>2025-06-23</td>
-                        <td>الاثنين</td>
-                        <td>8:00 - 4:00</td>
-                        <td><span class="badge-custom badge-warning text-dark">متأخر</span></td>
-                    </tr>
-                    <tr>
-                        <td>2025-06-24</td>
-                        <td>الثلاثاء</td>
-                        <td>8:00 - 4:00</td>
-                        <td><span class="badge-custom badge-danger">غائب</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="tab-pane fade" id="employee-attendance" role="tabpanel" aria-labelledby="employee-attendance-tab">
+    <div class="section-title"><i class="fas fa-user-clock"></i> جدول دوام الموظف</div>
+
+    <div class="table-responsive mt-3">
+      <table class="table table-bordered table-striped text-center table-fixed equal-columns">
+    <thead class="table-light">
+        <tr>
+            <th>التاريخ</th>
+            <th>اليوم</th>
+            <th>الحالة</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @forelse($engineer->attendances as $attendance)
+        <tr>
+            <td>{{ \Carbon\Carbon::parse($attendance->attendance_date)->format('Y-m-d') }}</td>
+            <td>{{ \Carbon\Carbon::parse($attendance->attendance_date)->locale('ar')->dayName }}</td>
+            <td>
+                @php
+                    $class = match($attendance->status) {
+                        'present' => 'badge-success',
+                        'absent' => 'badge-danger',
+                        'leave' => 'badge-info',
+                        'weekend' => 'badge-secondary',
+                        default => 'badge-warning'
+                    };
+                    $label = match($attendance->status) {
+                        'present' => 'حاضر',
+                        'absent' => 'غائب',
+                        'leave' => 'إجازة',
+                        'weekend' => 'عطلة',
+                        default => 'غير معروف'
+                    };
+                @endphp
+                <span class="badge-custom {{ $class }}">{{ $label }}</span>
+            </td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="3">لا يوجد بيانات دوام</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
+
     </div>
+</div>
+
 
     <div class="tab-pane fade" id="employee-app-problems" role="tabpanel" aria-labelledby="employee-app-problems-tab">
         <div class="section-title"><i class="fas fa-exclamation-triangle"></i> مشاكل التطبيق</div>
@@ -1068,11 +1107,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </td>
                                 <td>{{ $issue->created_at->format('Y-m-d') }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#showProblemModal-{{ $issue->id }}">
-                                        <i class="fas fa-eye"></i> عرض
-                                    </button>
+                                  <a href="{{ route('issues.show', $issue->id) }}" 
+                                    class="btn-action btn-view">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
                                 </td>
                             </tr>
                         @endforeach

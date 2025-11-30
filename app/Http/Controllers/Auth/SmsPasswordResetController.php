@@ -56,7 +56,6 @@ class SmsPasswordResetController extends Controller
             'expires_at' => now()->addMinutes($this->codeValidityMinutes)
         ]);
 
-        // تعديل رقم الهاتف
         $mobile = $request->phone;
         if (substr($mobile, 0, 1) === '0') {
             $mobile = '972' . substr($mobile, 1);

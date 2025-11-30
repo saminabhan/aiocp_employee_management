@@ -153,9 +153,14 @@ public function user()
         return $this->belongsTo(Constant::class, 'main_work_area_code');
     }
 
-public function specialization()
-{
-    return $this->belongsTo(Constant::class, 'specialization_id');
-}
+    public function specialization()
+    {
+        return $this->belongsTo(Constant::class, 'specialization_id');
+    }
+    
+    public function attendances()
+    {
+        return $this->hasMany(DailyAttendance::class, 'engineer_id');
+    }
 
 }

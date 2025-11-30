@@ -181,6 +181,11 @@
                                         'engineers' => 'إدارة المهندسين',
                                         'constants' => 'إدارة الثوابت',
                                         'teams' => 'إدارة الفرق',
+                                        'issues' => 'إدارة مشاكل تطبيق الحصر',
+                                        'survey supervisors' => 'إدارة مشرفين الحصر',
+                                        'profile' => 'إدارة الملف الشخصي',
+                                        'attendance' => 'إدارة الدوام اليومي',
+
                                     ];
                                     $permissionsByCategory = $permissions->groupBy('category');
                                 @endphp

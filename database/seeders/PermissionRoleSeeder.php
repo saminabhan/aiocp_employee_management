@@ -64,6 +64,14 @@ class PermissionRoleSeeder extends Seeder
             // Profile
             ['name' => 'profile.edit', 'display_name' => 'تعديل الملف الشخصي', 'category' => 'profile'],
             ['name' => 'profile.view', 'display_name' => 'عرض الملف الشخصي', 'category' => 'profile'],
+
+            //Attendance
+            ['name' => 'attendance.view', 'display_name' => 'عرض سجل الدوام اليومي', 'category' => 'attendance'],
+            ['name' => 'attendance.create', 'display_name' => 'اضافة دوام اليومي', 'category' => 'attendance'],
+            ['name' => 'attendance.edit', 'display_name' => 'تعديل دوام اليومي', 'category' => 'attendance'],
+            ['name' => 'attendance.delete', 'display_name' => 'حذف دوام اليومي', 'category' => 'attendance'],
+            
+
         ];
 
         foreach ($permissions as $perm) {
@@ -109,6 +117,10 @@ class PermissionRoleSeeder extends Seeder
             'teams.view',
             'teams.create',
             'teams.edit',
+            'attendance.view',
+            'attendance.create',
+            'attendance.edit',
+            'attendance.delete'
 
         ])->pluck('id')->toArray();
 
@@ -192,37 +204,43 @@ class PermissionRoleSeeder extends Seeder
             Permission::where('name','dashboard.view')->first()->id,
 
             Permission::where('name','survey.supervisor.view')->first()->id,
+
+            Permission::where('name','attendance.view')->first()->id,
+            Permission::where('name','attendance.create')->first()->id,
+            Permission::where('name','attendance.edit')->first()->id,
+            Permission::where('name','attendance.delete')->first()->id,
+
         ]);
 
-// North Support permissions
-$northSupport->permissions()->sync([
-    Permission::where('name','dashboard.view')->first()->id,
+        // North Support permissions
+        $northSupport->permissions()->sync([
+            Permission::where('name','dashboard.view')->first()->id,
 
-    // view permissions
-    Permission::where('name','users.view')->first()->id,
-    Permission::where('name','engineers.view')->first()->id,
-    Permission::where('name','teams.view')->first()->id,
-    Permission::where('name','constants.view')->first()->id,
-    Permission::where('name','issues.view')->first()->id,
+            // view permissions
+            Permission::where('name','users.view')->first()->id,
+            Permission::where('name','engineers.view')->first()->id,
+            Permission::where('name','teams.view')->first()->id,
+            Permission::where('name','constants.view')->first()->id,
+            Permission::where('name','issues.view')->first()->id,
 
-    // edit ticket only
-    Permission::where('name','issues.edit')->first()->id,
-]);
+            // edit ticket only
+            Permission::where('name','issues.edit')->first()->id,
+        ]);
 
-// South Support permissions
-$southSupport->permissions()->sync([
-    Permission::where('name','dashboard.view')->first()->id,
+        // South Support permissions
+        $southSupport->permissions()->sync([
+            Permission::where('name','dashboard.view')->first()->id,
 
-    // view permissions
-    Permission::where('name','users.view')->first()->id,
-    Permission::where('name','engineers.view')->first()->id,
-    Permission::where('name','teams.view')->first()->id,
-    Permission::where('name','constants.view')->first()->id,
-    Permission::where('name','issues.view')->first()->id,
+            // view permissions
+            Permission::where('name','users.view')->first()->id,
+            Permission::where('name','engineers.view')->first()->id,
+            Permission::where('name','teams.view')->first()->id,
+            Permission::where('name','constants.view')->first()->id,
+            Permission::where('name','issues.view')->first()->id,
 
-    // edit ticket only
-    Permission::where('name','issues.edit')->first()->id,
-]);
+            // edit ticket only
+            Permission::where('name','issues.edit')->first()->id,
+        ]);
 
 
     }

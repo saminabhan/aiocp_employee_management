@@ -39,14 +39,23 @@ public function index(Request $request)
             });
             break;
 
-        case 'governorate_manager':
-            $query->where(function ($q) use ($user) {
-                $q->whereHas('engineer', function ($eng) use ($user) {
-                    $eng->where('work_governorate_id', $user->governorate_id);
-                })
-                ->orWhere('user_id', $user->id);
-            });
-            break;
+            case 'governorate_manager':
+                $query->where(function ($q) use ($user) {
+
+                        $q->whereHas('engineer', function ($eng) use ($user) {
+                        $eng->where('work_governorate_id', $user->governorate_id);
+                    });
+
+                    $q->orWhereHas('user', function ($u) use ($user) {
+                        $u->where('governorate_id', $user->governorate_id)
+                        ->whereHas('role', function ($r) {
+                            $r->where('name', 'survey_supervisor');
+                        });
+                    });
+                    $q->orWhere('user_id', $user->id);
+
+                });
+                break;
 
             case 'north_support':
                 $query->where(function ($q) {
@@ -153,6 +162,12 @@ public function index(Request $request)
                 $q->whereHas('engineer', function ($eng) use ($user) {
                     $eng->where('work_governorate_id', $user->governorate_id);
                 })
+                ->orWhereHas('user', function ($u) use ($user) {
+                    $u->where('governorate_id', $user->governorate_id)
+                    ->whereHas('role', function ($r) {
+                        $r->where('name', 'survey_supervisor');
+                    });
+                })
                 ->orWhere('user_id', $user->id);
             });
             break;
@@ -246,17 +261,64 @@ public function create()
     $eng = [];
 
     switch ($user->role->name ?? '') {
+case 'admin':
 
-        case 'system_admin':
-            $eng = Engineer::where('is_active', true)->get();
-            break;
+    $engineers = Engineer::where('is_active', true)->get()
+        ->map(function ($eng) {
+            return (object)[
+                'id'   => 'eng_' . $eng->id,
+                'name' => $eng->full_name,
+                'type' => 'engineer'
+            ];
+        });
 
-        case 'governorate_manager':
-            $eng = Engineer::where('is_active', true)
-                           ->where('work_governorate_id', $user->governorate_id)
-                           ->get();
-            break;
+    $surveySupervisors = User::whereHas('role', function ($r) {
+            $r->where('name', 'survey_supervisor');
+        })
+        ->get()
+        ->map(function ($user) {
+            return (object)[
+                'id'   => 'sup_' . $user->id,
+                'name' => $user->name,
+                'type' => 'supervisor'
+            ];
+        });
 
+    $governorateManagers = User::whereHas('role', function ($r) {
+            $r->where('name', 'governorate_manager');
+        })
+        ->get()
+        ->map(function ($user) {
+            return (object)[
+                'id'   => 'gm_' . $user->id,
+                'name' => $user->name,
+                'type' => 'gov_manager'
+            ];
+        });
+
+    $eng = collect()
+            ->merge($engineers)
+            ->merge($surveySupervisors)
+            ->merge($governorateManagers);
+
+    break;
+
+
+case 'governorate_manager':
+
+    $engineers = Engineer::where('is_active', true)
+                        ->where('work_governorate_id', $user->governorate_id)
+                        ->get();
+
+    $surveySupervisors = User::whereHas('role', function ($r) {
+                                $r->where('name', 'survey_supervisor');
+                            })
+                            ->where('governorate_id', $user->governorate_id)
+                            ->get();
+
+    $eng = $engineers->merge($surveySupervisors);
+
+    break;
         case 'survey_supervisor':
             $eng = Engineer::where('is_active', true)
                            ->where('main_work_area_code', $user->main_work_area_code)
@@ -466,10 +528,24 @@ public function show(Issue $issue)
             break;
 
         case 'governorate_manager':
-            if (!$issue->engineer || $issue->engineer->work_governorate_id != $user->governorate_id) {
+
+            $engineer = $issue->engineer;
+            $issueOwner = $issue->user;
+
+            $belongsToEngineerGov = $engineer && $engineer->work_governorate_id == $user->governorate_id;
+
+            $belongsToSurveySupervisorGov =
+                $issueOwner &&
+                $issueOwner->governorate_id == $user->governorate_id &&
+                $issueOwner->role &&
+                $issueOwner->role->name === 'survey_supervisor';
+
+            if (!$belongsToEngineerGov && !$belongsToSurveySupervisorGov) {
                 abort(403, 'ليس لديك صلاحية لعرض هذه التذكرة');
             }
+
             break;
+
             case 'north_support':
 
                     if ($issue->user->role->name === 'admin') {

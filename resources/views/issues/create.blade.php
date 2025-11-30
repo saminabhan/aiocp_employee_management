@@ -157,21 +157,35 @@
                     @csrf
 
             {{-- المهندس (للأدمن فقط) --}}
-                @if(count($engineers) > 0)
-                <div class="mb-4">
-                    <label class="form-label">
-                        اختر المهندس <small class="text-muted">(اختياري - اتركه فارغاً لتذكرة شخصية)</small>
-                    </label>
-                    <select name="engineer_id" class="form-select">
-                            <option value="">تذكرة شخصية</option>
-                        @foreach($engineers as $engineer)
-                            <option value="{{ $engineer->id }}" {{ old('engineer_id') == $engineer->id ? 'selected' : '' }}>
-                                {{ $engineer->full_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            @endif
+@if(isset($engineers) && count($engineers) > 0)
+    <div class="mb-4">
+        <label class="form-label">
+            اختر الموظف <small class="text-muted">(اختياري - اتركه فارغاً لتذكرة شخصية)</small>
+        </label>
+
+        <select name="engineer_id" class="form-select">
+            <option value="">تذكرة شخصية</option>
+
+            @foreach($engineers as $engineer)
+
+                @php
+                    $isEngineer = $engineer instanceof \App\Models\Engineer;
+
+                    $value = $isEngineer ? $engineer->id : 'sup_' . $engineer->id;
+
+                    $label = $isEngineer
+                                ? $engineer->full_name
+                                : $engineer->name;
+                @endphp
+
+                <option value="{{ $value }}" {{ old('engineer_id') == $value ? 'selected' : '' }}>
+                    {{ $label }}
+                </option>
+
+            @endforeach
+        </select>
+    </div>
+@endif
 
             <div class="mb-4">
                 <label class="form-label">

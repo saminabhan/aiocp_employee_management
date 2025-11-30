@@ -503,10 +503,14 @@
                 <span>التقاربر</span>
                 <!-- <div class="nav-badge">!</div> -->
             </div>
-            <div class="nav-item">
+          @if(user_can('attendance.view'))
+            <a href="{{ route('attendance.index') }}" 
+            class="nav-item {{ request()->routeIs('attendance.*') ? 'active' : '' }}" 
+            style="text-decoration: none;">
                 <i class="fas fa-business-time"></i>
                 <span>الدوام اليومي</span>
-            </div>
+            </a>
+            @endif
 
             <div class="sidebar-divider"></div>
 

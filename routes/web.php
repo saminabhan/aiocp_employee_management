@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\SmsPasswordResetController;
 use App\Http\Controllers\ConstantController;
+use App\Http\Controllers\DailyAttendanceController;
 use App\Http\Controllers\EngineerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -187,7 +188,39 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('readAll');
         Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
     });
-
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        
+        Route::get('/', [DailyAttendanceController::class, 'index'])
+             ->name('index')
+             ->middleware('permission:attendance.view');
+        
+        Route::get('/create', [DailyAttendanceController::class, 'create'])
+             ->name('create')
+             ->middleware('permission:attendance.create');
+        
+        Route::post('/store', [DailyAttendanceController::class, 'store'])
+             ->name('store')
+             ->middleware('permission:attendance.create');
+        
+        Route::get('/{id}/edit', [DailyAttendanceController::class, 'edit'])
+             ->name('edit')
+             ->middleware('permission:attendance.edit');
+        
+        Route::put('/{id}', [DailyAttendanceController::class, 'update'])
+             ->name('update')
+             ->middleware('permission:attendance.edit');
+        
+        Route::delete('/{id}', [DailyAttendanceController::class, 'destroy'])
+             ->name('destroy')
+             ->middleware('permission:attendance.delete');
+        
+        Route::get('/statistics', [DailyAttendanceController::class, 'statistics'])
+             ->name('statistics')
+             ->middleware('permission:attendance.view');
+        
+        Route::post('/check-availability', [DailyAttendanceController::class, 'checkAvailability'])
+             ->name('checkAvailability');
+    });
 });
 
 
