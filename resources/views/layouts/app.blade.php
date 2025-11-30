@@ -750,16 +750,16 @@ function getTimeAgo(dateString) {
 }
 
 // Auto refresh notifications every 30 seconds
-setInterval(() => {
-    if (notificationDropdown.classList.contains('show')) {
-        loadNotifications();
-    } else {
+// setInterval(() => {
+//     if (notificationDropdown.classList.contains('show')) {
+//         loadNotifications();
+//     } else {
         // Just update badge
-        fetch('{{ route("notifications.fetch") }}')
-            .then(response => response.json())
-            .then(data => updateBadge(data.unread_count));
-    }
-}, 30000);
+//         fetch('{{ route("notifications.fetch") }}')
+//             .then(response => response.json())
+//             .then(data => updateBadge(data.unread_count));
+//     }
+// }, 30000);
 </script>
 </body>
 </html>

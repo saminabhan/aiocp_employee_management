@@ -181,7 +181,7 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
         ->name('governorate.supervisors.show')
         ->middleware('permission:survey.supervisor.view');
 
-            Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::get('/fetch', [NotificationController::class, 'fetch'])->name('fetch');
         Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');

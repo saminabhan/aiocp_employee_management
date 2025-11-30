@@ -4,9 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="description" content="نظام إدارة عمليات حصر الأضرار DAPG هو منصة متكاملة لإدارة فرق العمل والمهندسين والمشرفين في جميع المحافظات، تهدف إلى تنظيم مهام الميدانية، تسجيل الزيارات، متابعة التذاكر والحالات، وتوثيق بيانات الأضرار بدقة عالية.
+يسهّل النظام عملية التواصل بين الإدارات، توزيع المهام، مراقبة الإنجاز، وإعداد تقارير دقيقة تساعد في اتخاذ القرارات بسرعة وكفاءة.">
+
   <title>تسجيل الدخول - AIOCP</title>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap");
+
+    body{
+    background-image: url('{{ asset("assets/images/login/bg.png") }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    }
 
     *,
     *::before,
@@ -24,19 +40,17 @@
       width: 100%;
       min-height: 100vh;
       overflow: auto;
-      background-color: #F5F5F5;
       padding: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
     .box {
       position: relative;
       width: 100%;
       max-width: 900px;
       min-height: 520px;
-      background-color: #fff;
+      background-color: #f1f1f1;
       border-radius: 2.5rem;
       box-shadow: 0 40px 30px -20px rgba(0, 0, 0, 0.27);
     }
@@ -367,7 +381,6 @@
       width: 55%;
       right: 45%;
       top: 0;
-      background-color: #7f92a02b;
       border-radius: 2rem;
       display: grid;
       grid-template-rows: auto 1fr;
@@ -375,6 +388,17 @@
       overflow: hidden;
       transition: 0.8s ease-in-out;
     }
+    .carousel {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.carousel .images-wrapper .image {
+    opacity: 0 !important;     /* نخفي الصور */
+    position: absolute;
+}
+
 
     .images-wrapper {
       display: grid;
@@ -411,16 +435,17 @@
     }
 
     .text-slider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+     display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
     }
 
     .text-wrap {
       max-height: 2.2rem;
       overflow: hidden;
       margin-bottom: 1.5rem;
+      color: #fff;
     }
 
     .text-group {
@@ -457,7 +482,7 @@
 
     .bullets span.active {
       width: 1rem;
-      background-color: #151111;
+      background-color: #fff;
       border-radius: 1rem;
     }
 
@@ -843,9 +868,9 @@
 
         <div class="carousel">
           <div class="images-wrapper">
-            <img src="{{ asset('assets/images/login/image1.png') }}" class="image img-1 show" alt="" onerror="this.src='https://i.ibb.co/nP8H853/Mobile-login-rafiki.png'" />
-            <img src="{{ asset('assets/images/login/image2.png') }}" class="image img-2" alt="" onerror="this.style.display='none'" />
-            <img src="{{ asset('assets/images/login/image3.png') }}" class="image img-3" alt="" onerror="this.style.display='none'" />
+            <img src="{{ asset('assets/images/login/1.png') }}" class="image img-1 show" alt="" onerror="this.style.display='none'" />
+            <img src="{{ asset('assets/images/login/2.png') }}" class="image img-2" alt="" onerror="this.style.display='none'" />
+            <img src="{{ asset('assets/images/login/3.png') }}" class="image img-3" alt="" onerror="this.style.display='none'" />
           </div>
 
           <div class="text-slider">
@@ -866,7 +891,7 @@
         </div>
       </div>   
           <footer class="login-footer">
-              © 2025 جميع الحقوق محفوظة – الهيئة العربية الدولية للإعمار في فلسطين
+              © 2025 الهيئة العربية الدولية للإعمار في فلسطين
           </footer>
     </div>
 
@@ -1227,7 +1252,29 @@
     }, 3500);
 </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  const carousel = document.querySelector(".carousel");
+const sliderImages = [
+    "{{ asset('assets/images/login/1.png') }}",
+    "{{ asset('assets/images/login/2.png') }}",
+    "{{ asset('assets/images/login/3.png') }}"
+];
 
+function updateBackground(index) {
+    carousel.style.backgroundImage = `url('${sliderImages[index]}')`;
+}
+
+// تشغيل أول صورة
+updateBackground(0);
+
+// عند الضغط على bullets
+bullets.forEach((bullet, index) => {
+    bullet.addEventListener("click", () => {
+        updateBackground(index);
+    });
+});
+
+</script>
 </body>
 
 </html>
