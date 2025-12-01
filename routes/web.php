@@ -12,6 +12,7 @@ use App\Http\Controllers\GovernorateSupervisorController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\WorkCodeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -223,6 +224,8 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
 
     Route::get('/users/profile/{id}', [ProfileController::class, 'show'])
     ->name('profile.view');
+
+    Route::get('/work-codes', [WorkCodeController::class, 'index'])->name('workCodes.index');
 
 });
 

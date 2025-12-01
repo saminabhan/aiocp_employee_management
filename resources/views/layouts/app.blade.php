@@ -491,6 +491,14 @@
             </a>
             @endif
 
+                <a href="{{ route('workCodes.index') }}" 
+                class="nav-item {{ request()->routeIs('workCodes.*') ? 'active' : '' }}" 
+                style="text-decoration: none;">
+                    <i class="fas fa-layer-group"></i>
+                    <span>أكواد مناطق العمل</span>
+                </a>
+
+
             @if(user_can('survey.supervisor.view'))
                 <a href="{{ route('governorate.supervisors.index') }}" class="nav-item {{ request()->routeIs('governorate.supervisors.*') ? 'active' : '' }}" style="text-decoration: none;">
                     <i class="fas fa-user-tie"></i>

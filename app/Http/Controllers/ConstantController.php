@@ -36,6 +36,7 @@ public function store(Request $request)
         'name' => 'required',
         'parent' => 'nullable|integer|exists:constants,id',
         'governorate_id' => 'nullable|integer|exists:constants,id',
+        'description' => 'nullable|string',
     ]);
 
     if (Constant::where('name', $request->name)->exists()) {
@@ -48,6 +49,7 @@ public function store(Request $request)
         'name' => $request->name,
         'parent' => $request->parent,
         'governorate_id' => $request->governorate_id,
+        'description' => $request->description,
     ]);
 
     return redirect()->route('constants.index')
@@ -73,6 +75,7 @@ public function update(Request $request, $id)
         'name' => 'required',
         'parent' => 'nullable|integer|exists:constants,id',
         'governorate_id' => 'nullable|integer|exists:constants,id',
+        'description' => 'nullable|string',
     ]);
 
     $exists = Constant::where('name', $request->name)
@@ -89,6 +92,7 @@ public function update(Request $request, $id)
         'name' => $request->name,
         'parent' => $request->parent,
         'governorate_id' => $request->governorate_id,
+        'description' => $request->description,
     ]);
 
     return redirect()->route('constants.index')

@@ -31,21 +31,25 @@
                     <input type="text" name="name" class="form-control" value="{{ $constant->name }}" required>
                 </div>
 
-               <div class="mb-3">
-                    <label class="form-label fw-bold">التصنيف</label>
-                    <select name="parent" class="form-select">
+                @if($constant->parent == null)
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">التصنيف</label>
+                        <select name="parent" class="form-select">
                             <option value="">أساسي</option>
-                        @foreach($parents as $p)
-                            @if($p->id != $constant->id)
-                                <option value="{{ $p->id }}" 
-                                    {{ $constant->parent == $p->id ? 'selected' : '' }}>
-                                    {{ $p->name }}
-                                </option>
-                            @endif
-                        @endforeach
+                            @foreach($parents as $p)
+                                @if($p->id != $constant->id)
+                                    <option value="{{ $p->id }}" 
+                                        {{ $constant->parent == $p->id ? 'selected' : '' }}>
+                                        {{ $p->name }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
 
-                    </select>
-                </div>
+                @else
+                    <input type="hidden" name="parent" value="{{ $constant->parent }}">
+                @endif
 
                 @if($constant->parent == 55)
                     <div class="mb-3 mt-3">
@@ -60,6 +64,11 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="description">الوصف</label>
+                        <textarea name="description" id="description" class="form-control" rows="4">{{ old('description', $constant->description) }}</textarea>
+                    </div>
+
                 @endif
 
 

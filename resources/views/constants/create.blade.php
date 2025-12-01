@@ -36,6 +36,11 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="description">الوصف</label>
+                        <textarea name="description" id="description" class="form-control">{{ old('description', $constant->description ?? '') }}</textarea>
+                    </div>
+
                 @endif
 
                 @if(request()->has('parent'))
