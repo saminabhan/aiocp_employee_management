@@ -230,7 +230,6 @@ document.addEventListener("DOMContentLoaded", function() {
     $hasAllowedRole = $user->hasRole($allowedRoles);
     $hasPermissionButNoRole = ($user->role_id === null && $user->hasPermission('issues.edit'));
     
-    // يمكن تعديل الحالة إذا كان لديه رول مسموح أو صلاحية بدون رول
     $canUpdateStatus = ($hasAllowedRole || $hasPermissionButNoRole) && $issue->status != 'closed';
 @endphp
 
@@ -245,7 +244,9 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="info-item">
                 <div class="info-label">مقدم التذكرة</div>
                 <div class="info-value">
-                    {{ $issue->submitter_name }}
+                    <a href="{{ $issue->submitter_profile_url }}" class="text-primary fw-bold text-decoration-none">
+                        {{ $issue->submitter_name }}
+                    </a>
                     <span class="badge bg-secondary ms-2">{{ $issue->submitter_type }}</span>
                 </div>
             </div>
@@ -283,6 +284,50 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="info-value">{{ $issue->updated_at->format('Y-m-d H:i') }}</div>
                 </div>
             @endif
+
+          @if ($issue->engineer_id && $issue->engineer)
+
+                <div class="info-item">
+                    <div class="info-label">نوع نظام الهاتف</div>
+                    <div class="info-value">
+                        {{ $issue->engineer->phone_type ?? 'غير متوفر' }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">اسم الهاتف</div>
+                    <div class="info-value">
+                        {{ $issue->engineer->phone_name ?? 'غير متوفر' }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">إصدار النظام</div>
+                    <div class="info-value">
+                        {{ $issue->engineer->os_version ?? 'غير متوفر' }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">كود منطقة العمل الرئيسي</div>
+                    <div class="info-value">
+                         <span class="badge-status closed">
+                            {{ $issue->engineer->mainWorkAreaCode->name ?? 'غير متوفر' }}
+                        </span>
+                    </div>
+                </div>
+
+                 <div class="info-item">
+                    <div class="info-label">كود منطقة العمل الفرعي</div>
+                    <div class="info-value">
+                         <span class="badge-status closed">
+                            {{ $issue->engineer->subWorkAreaCode->name ?? 'غير متوفر' }}
+                        </span>
+                    </div>
+                </div>
+
+            @endif
+
         </div>
 
         <div class="section-title">
@@ -304,7 +349,6 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="col-md-4 col-sm-6">
             <div class="card shadow-sm border-0 h-100" style="border-radius: 12px; overflow: hidden;">
                 
-                {{-- Header: نوع المرفق --}}
                 <div class="card-header bg-light border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="badge-custom badge-primary">

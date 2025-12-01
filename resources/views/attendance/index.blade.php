@@ -380,7 +380,6 @@
         </div>
     </div>
 
-    <!-- الإحصائيات -->
     <div class="stats-row">
         <div class="stats-card">
             <div class="stat-value">{{ $todayStats['total'] }}</div>
@@ -407,7 +406,6 @@
         </div>
     </div>
 
-    <!-- الفلاتر -->
     <div class="filter-card">
         <form method="GET" action="{{ route('attendance.index') }}" class="row g-3">
             <div class="col-md-4">
@@ -435,7 +433,6 @@
         </form>
     </div>
 
-    <!-- الجدول -->
     <div class="table-card">
         <table class="custom-table">
             <thead>
@@ -459,9 +456,9 @@
                         <div class="user-info">
                             @if($attendance->user_type === 'engineer' && $attendance->engineer)
                                 @if($attendance->engineer->personal_image)
-                                    <img src="{{ asset('storage/' . $attendance->engineer->personal_image) }}" class="user-avatar" alt="{{ $attendance->engineer->name }}">
+                                    <img src="{{ asset('storage/' . $attendance->engineer->personal_image) }}" class="user-avatar" alt="{{ $attendance->engineer->full_name }}">
                                 @else
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($attendance->engineer->name) }}&background=0C4079&color=fff&size=90" class="user-avatar" alt="{{ $attendance->engineer->name }}">
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($attendance->engineer->full_name) }}&background=0C4079&color=fff&size=90" class="user-avatar" alt="{{ $attendance->engineer->full_name }}">
                                 @endif
                                 <div class="user-details">
                                     <h6>{{ $attendance->engineer->full_name }}</h6>

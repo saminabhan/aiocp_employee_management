@@ -205,8 +205,11 @@ public function store(Request $request)
 
     $team = Team::create($validated);
 
-    Engineer::whereIn('id', $validated['engineer_ids'])
-        ->update(['team_id' => $team->id]);
+Engineer::whereIn('id', $validated['engineer_ids'])
+    ->update([
+        'team_id' => $team->id,
+        'sub_work_area_code' => $validated['sub_work_area_code'],
+    ]);
 
     return redirect()->route('teams.index')
         ->with('success', 'تم إنشاء الفريق بنجاح');
@@ -445,18 +448,20 @@ $newEngineers = array_map('intval', array_values(array_unique($validated['engine
 $validated['engineer_ids'] = $newEngineers;
 
 $team->update($validated);
+$team->refresh();
 
+Engineer::whereIn('id', $validated['engineer_ids'])
+    ->update([
+        'team_id' => $team->id,
+        'sub_work_area_code' => $team->sub_work_area_code,
+    ]);
 
-$toRemove = array_values(array_diff($oldEngineers, $newEngineers)); // أرقام
-$toAdd    = array_values(array_diff($newEngineers, $oldEngineers)); // أرقام
-
-if (!empty($toRemove)) {
-    Engineer::whereIn('id', $toRemove)->update(['team_id' => null]);
-}
-
-if (!empty($toAdd)) {
-    Engineer::whereIn('id', $toAdd)->update(['team_id' => $team->id]);
-}
+Engineer::whereNotIn('id', $validated['engineer_ids'])
+    ->where('team_id', $team->id)
+    ->update([
+        'team_id' => null,
+        'sub_work_area_code' => null,
+    ]);
 
     return redirect()->route('teams.index')
         ->with('success', 'تم تحديث الفريق بنجاح');
@@ -527,7 +532,10 @@ public function destroy(Team $team)
 
     if (is_array($team->engineer_ids) && count($team->engineer_ids) > 0) {
         Engineer::whereIn('id', $team->engineer_ids)
-            ->update(['team_id' => null]);
+            ->update([
+                'team_id' => null,
+                'sub_work_area_code' => null,
+            ]);
     }
 
     $team->delete();

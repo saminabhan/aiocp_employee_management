@@ -116,6 +116,82 @@
         background: #fff3cd;
     }
 
+    /* جدول الموظفين */
+    .employees-table-wrapper {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    .employees-table {
+        width: 100%;
+        margin: 0;
+    }
+
+    .employees-table thead {
+        position: sticky;
+        top: 0;
+        background: #0C4079;
+        color: white;
+        z-index: 10;
+    }
+
+    .employees-table th {
+        padding: 12px;
+        font-weight: 600;
+        text-align: center;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .employees-table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .employees-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .checkbox-cell {
+        width: 50px;
+    }
+
+    .checkbox-cell input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .select-all-row {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .selected-count {
+        background: #e3f2fd;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+        color: #0C4079;
+        font-weight: 600;
+        display: none;
+    }
+
+    .no-employees {
+        text-align: center;
+        padding: 30px;
+        color: #6c757d;
+    }
+
+    .no-employees i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
     /* الأزرار */
     .btn-submit {
         background: #0C4079;
@@ -142,6 +218,18 @@
         margin-top: 10px;
     }
 
+    .filter-controls {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    
+    input[type="date"] {
+        direction: rtl;
+        text-align: right;
+    }
+
 </style>
 @endpush
 
@@ -149,7 +237,6 @@
 @section('content')
 <div class="container" dir="rtl">
 
-    <!-- Header -->
     <div class="page-header">
         <h1 class="page-title">
             <i class="fas fa-calendar-check"></i>
@@ -163,104 +250,149 @@
         <form action="{{ route('attendance.store') }}" method="POST" id="attendanceForm">
             @csrf
 
-            <label class="form-label">نوع المستخدم <span class="required-star">*</span></label>
+            <div class="row mb-4">
+                <div class="mb-4">
+                    <label class="form-label">نوع المستخدم <span class="required-star">*</span></label>
+                    <div class="user-type-boxes">
+                        <label class="user-type-card {{ $userType == 'engineer' ? 'active' : '' }}" data-type="engineer">
+                            <input type="radio" name="user_type" value="engineer" hidden {{ $userType == 'engineer' ? 'checked' : '' }}>
+                            <i class="fas fa-hard-hat"></i>
+                            <div>مهندسين حصر</div>
+                        </label>
 
-            <div class="user-type-boxes mb-4">
-                <label class="user-type-card {{ old('user_type')=='engineer' ? 'active' : '' }}" data-type="engineer">
-                    <input type="radio" name="user_type" value="engineer" hidden {{ old('user_type')=='engineer' ? 'checked' : '' }}>
-                    <i class="fas fa-hard-hat"></i>
-                    <div>مهندس حصر</div>
-                </label>
-
-                <label class="user-type-card {{ old('user_type')=='supervisor' ? 'active' : '' }}" data-type="supervisor">
-                    <input type="radio" name="user_type" value="supervisor" hidden {{ old('user_type')=='supervisor' ? 'checked' : '' }}>
-                    <i class="fas fa-user-tie"></i>
-                    <div>مشرف حصر</div>
-                </label>
-            </div>
-
-
-            <div class="mb-4">
-                <label class="form-label">اختر الشخص <span class="required-star">*</span></label>
-
-                <select name="user_id" id="engineerSelect" class="form-select user-select" style="display:none;">
-                    <option value="">-- اختر المهندس --</option>
-                    @foreach($engineers as $engineer)
-                        <option value="{{ $engineer->id }}" {{ old('user_id')==$engineer->id ? 'selected' : '' }}>
-                            {{ $engineer->full_name }} - {{ $engineer->national_id }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <select name="user_id" id="supervisorSelect" class="form-select user-select" style="display:none;">
-                    <option value="">-- اختر المشرف --</option>
-                    @foreach($supervisors as $supervisor)
-                        <option value="{{ $supervisor->id }}" {{ old('user_id')==$supervisor->id ? 'selected' : '' }}>
-                            {{ $supervisor->name }} - {{ $supervisor->mainWorkArea->name }}
-                        </option>
-                    @endforeach
-                </select>
-
-            </div>
-
-
-            <div class="mb-4">
-                <label class="form-label">تاريخ الدوام <span class="required-star">*</span></label>
-
-                <!-- <div class="alert alert-info py-2">
-                    <i class="fas fa-info-circle"></i>
-                    يمكن التسجيل ليوم واحد للخلف فقط.
-                </div> -->
-
-                <input type="date" name="attendance_date" id="attendanceDate"
-                       class="form-control"
-                       value="{{ old('attendance_date', now()->format('Y-m-d')) }}"
-                       min="{{ $minDate }}" max="{{ $maxDate }}">
-
-                <div class="date-warning" id="fridayWarning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    التاريخ المختار يوم جمعة (إجازة أسبوعية)
+                        <label class="user-type-card {{ $userType == 'supervisor' ? 'active' : '' }}" data-type="supervisor">
+                            <input type="radio" name="user_type" value="supervisor" hidden {{ $userType == 'supervisor' ? 'checked' : '' }}>
+                            <i class="fas fa-user-tie"></i>
+                            <div>مشرفين حصر</div>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">تاريخ الدوام <span class="required-star">*</span></label>
+                    <input type="date" name="attendance_date" id="attendanceDate"
+                        class="form-control"
+                        value="{{ $selectedDate }}"
+                        min="{{ $minDate }}" max="{{ $maxDate }}">
+                    
+                    <div class="date-warning" id="fridayWarning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        التاريخ المختار يوم جمعة (إجازة أسبوعية)
+                    </div>
                 </div>
             </div>
 
+            <div class="mb-4">
+                <label class="form-label">حالة الحضور <span class="required-star">*</span></label>
+                <div class="status-cards">
+                    <label class="status-card present active">
+                        <input type="radio" name="status" value="present" hidden checked>
+                        <i class="fas fa-check-circle text-success"></i>
+                        <div>حاضر</div>
+                    </label>
 
-            <label class="form-label">حالة الحضور <span class="required-star">*</span></label>
+                    <label class="status-card absent">
+                        <input type="radio" name="status" value="absent" hidden>
+                        <i class="fas fa-times-circle text-danger"></i>
+                        <div>غائب</div>
+                    </label>
 
-            <div class="status-cards mb-4">
-
-                <label class="status-card present {{ old('status','present')=='present' ? 'active' : '' }}">
-                    <input type="radio" name="status" value="present" hidden {{ old('status','present')=='present' ? 'checked' : '' }}>
-                    <i class="fas fa-check-circle text-success"></i>
-                    <div>حاضر</div>
-                </label>
-
-                <label class="status-card absent {{ old('status')=='absent' ? 'active' : '' }}">
-                    <input type="radio" name="status" value="absent" hidden {{ old('status')=='absent' ? 'checked' : '' }}>
-                    <i class="fas fa-times-circle text-danger"></i>
-                    <div>غائب</div>
-                </label>
-
-                <label class="status-card leave {{ old('status')=='leave' ? 'active' : '' }}">
-                    <input type="radio" name="status" value="leave" hidden {{ old('status')=='leave' ? 'checked' : '' }}>
-                    <i class="fas fa-briefcase text-warning"></i>
-                    <div>إجازة</div>
-                </label>
-
+                    <label class="status-card leave">
+                        <input type="radio" name="status" value="leave" hidden>
+                        <i class="fas fa-briefcase text-warning"></i>
+                        <div>إجازة</div>
+                    </label>
+                </div>
             </div>
 
+            <div class="mb-4">
+                <label class="form-label">اختر الموظفين <span class="required-star">*</span></label>
+                
+                <div class="selected-count" id="selectedCount">
+                    تم اختيار <span id="countNumber">0</span> موظف
+                </div>
+
+                <div class="employees-table-wrapper">
+                    <table class="employees-table table mb-0" id="engineersTable" style="{{ $userType == 'engineer' ? '' : 'display:none' }}">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell">
+                                    <input type="checkbox" id="selectAllEngineers">
+                                </th>
+                                <th>#</th>
+                                <th>الاسم الكامل</th>
+                                <th>الرقم الوطني</th>
+                                <th>المحافظة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($availableEngineers as $index => $engineer)
+                            <tr>
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" name="user_ids[]" value="{{ $engineer->id }}" class="employee-checkbox engineer-checkbox">
+                                </td>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $engineer->full_name }}</td>
+                                <td>{{ $engineer->national_id }}</td>
+                                <td>{{ $engineer->workGovernorate->name ?? '-' }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="no-employees">
+                                    <i class="fas fa-inbox"></i>
+                                    <div>جميع المهندسين تم تسجيل دوامهم في هذا التاريخ</div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <table class="employees-table table mb-0" id="supervisorsTable" style="{{ $userType == 'supervisor' ? '' : 'display:none' }}">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell">
+                                    <input type="checkbox" id="selectAllSupervisors">
+                                </th>
+                                <th>#</th>
+                                <th>الاسم</th>
+                                <th>منطقة العمل</th>
+                                <th>المحافظة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($availableSupervisors as $index => $supervisor)
+                            <tr>
+                                <td class="checkbox-cell">
+                                    <input type="checkbox" name="user_ids[]" value="{{ $supervisor->id }}" class="employee-checkbox supervisor-checkbox">
+                                </td>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $supervisor->name }}</td>
+                                <td>{{ $supervisor->mainWorkArea->name ?? '-' }}</td>
+                                <td>{{ $supervisor->governorate->name ?? '-' }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="no-employees">
+                                    <i class="fas fa-inbox"></i>
+                                    <div>جميع المشرفين تم تسجيل دوامهم في هذا التاريخ</div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <div class="mb-4">
                 <label class="form-label">ملاحظات</label>
-                <textarea name="notes" class="form-control" rows="3">{{ old('notes') }}</textarea>
+                <textarea name="notes" class="form-control" rows="3" placeholder="أضف ملاحظات عامة لجميع الموظفين المحددين..."></textarea>
             </div>
-
 
             <div class="d-flex justify-content-between">
                 <a href="{{ route('attendance.index') }}" class="btn btn-back">
                     <i class="fas fa-arrow-right"></i> رجوع
                 </a>
 
-                <button type="submit" class="btn btn-submit btn-primary">
+                <button type="submit" class="btn btn-submit btn-primary" id="submitBtn" disabled>
                     <i class="fas fa-save"></i> حفظ الدوام
                 </button>
             </div>
@@ -278,27 +410,67 @@
 
 document.querySelectorAll('.user-type-card').forEach(card => {
     card.addEventListener('click', function () {
-
         document.querySelectorAll('.user-type-card').forEach(c => c.classList.remove('active'));
         this.classList.add('active');
 
         let type = this.dataset.type;
-
-        document.querySelectorAll('.user-select').forEach(sel => {
-            sel.style.display = "none";
-            sel.removeAttribute("name");
-        });
-
+        
         if (type === "engineer") {
-            engineerSelect.style.display = "block";
-            engineerSelect.setAttribute("name", "user_id");
+            engineersTable.style.display = "table";
+            supervisorsTable.style.display = "none";
+            document.querySelectorAll('.supervisor-checkbox').forEach(cb => cb.checked = false);
         } else {
-            supervisorSelect.style.display = "block";
-            supervisorSelect.setAttribute("name", "user_id");
+            engineersTable.style.display = "table";
+            supervisorsTable.style.display = "none";
+            document.querySelectorAll('.engineer-checkbox').forEach(cb => cb.checked = false);
         }
+        
+        updateSelectedCount();
+        
+        const date = attendanceDate.value;
+        window.location.href = `{{ route('attendance.create') }}?date=${date}&user_type=${type}`;
     });
 });
 
+document.getElementById('selectAllEngineers')?.addEventListener('change', function() {
+    document.querySelectorAll('.engineer-checkbox').forEach(cb => {
+        cb.checked = this.checked;
+    });
+    updateSelectedCount();
+});
+
+document.getElementById('selectAllSupervisors')?.addEventListener('change', function() {
+    document.querySelectorAll('.supervisor-checkbox').forEach(cb => {
+        cb.checked = this.checked;
+    });
+    updateSelectedCount();
+});
+
+document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectedCount);
+});
+
+function updateSelectedCount() {
+    const checkedBoxes = document.querySelectorAll('.employee-checkbox:checked');
+    const count = checkedBoxes.length;
+    
+    document.getElementById('countNumber').textContent = count;
+    document.getElementById('selectedCount').style.display = count > 0 ? 'block' : 'none';
+    document.getElementById('submitBtn').disabled = count === 0;
+}
+
+function checkFriday() {
+    const date = new Date(attendanceDate.value);
+    fridayWarning.style.display = (date.getDay() === 5) ? 'block' : 'none';
+}
+
+attendanceDate.addEventListener("change", function() {
+    checkFriday();
+    const userType = document.querySelector('input[name="user_type"]:checked')?.value || 'engineer';
+    window.location.href = `{{ route('attendance.create') }}?date=${this.value}&user_type=${userType}`;
+});
+
+checkFriday();
 
 document.querySelectorAll('.status-card').forEach(card => {
     card.addEventListener('click', function () {
@@ -308,51 +480,42 @@ document.querySelectorAll('.status-card').forEach(card => {
     });
 });
 
-
-function checkFriday() {
-    const date = new Date(attendanceDate.value);
-    fridayWarning.style.display = (date.getDay() === 5) ? 'block' : 'none';
-}
-attendanceDate.addEventListener("change", checkFriday);
-checkFriday();
-
-
-let checkTimeout;
-document.getElementById('attendanceForm').addEventListener('change', function(e) {
-
-    if (!['user_type','user_id','attendance_date'].includes(e.target.name)) return;
-
-    clearTimeout(checkTimeout);
-
-    checkTimeout = setTimeout(() => {
-
-        let userType = document.querySelector('input[name="user_type"]:checked')?.value;
-        let userId = document.querySelector('.user-select[style*="block"]')?.value;
-        let date = attendanceDate.value;
-
-        if (!userType || !userId || !date) return;
-
-        fetch('{{ route("attendance.checkAvailability") }}', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ user_type: userType, user_id: userId, date: date })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.available) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'تنبيه',
-                    text: data.message,
-                });
-            }
+document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+    const checkedBoxes = document.querySelectorAll('.employee-checkbox:checked');
+    
+    if (checkedBoxes.length === 0) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'warning',
+            title: 'تنبيه',
+            text: 'يجب اختيار موظف واحد على الأقل',
         });
-
-    }, 400);
+        return false;
+    }
 });
 
+updateSelectedCount();
+
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    let input = document.getElementById('attendanceDate');
+
+    flatpickr("#attendanceDate", {
+        dateFormat: "Y-m-d",
+        defaultDate: input.value,
+        minDate: input.min,
+        maxDate: input.max,
+        locale: "ar",
+        allowInput: true,
+        position: "below right",
+        disableMobile: true
+    });
+});
 </script>
 @endpush

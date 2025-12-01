@@ -153,6 +153,11 @@ public function user()
         return $this->belongsTo(Constant::class, 'main_work_area_code');
     }
 
+    public function subWorkAreaCode()
+    {
+        return $this->belongsTo(Constant::class, 'sub_work_area_code');
+    }
+
     public function specialization()
     {
         return $this->belongsTo(Constant::class, 'specialization_id');

@@ -95,7 +95,6 @@ class User extends Authenticatable
         return false;
     }
 
-    // Assign direct permission
     public function givePermissionTo($permission)
     {
         if (is_string($permission)) {
@@ -105,7 +104,6 @@ class User extends Authenticatable
         $this->permissions()->syncWithoutDetaching([$permission->id]);
     }
 
-    // Combine role + direct permissions
     public function getAllPermissions()
     {
         if ($this->isSuperAdmin()) {

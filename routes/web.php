@@ -38,7 +38,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('constants', ConstantController::class);
 
-    // -------- Users --------
     Route::get('users', [UserController::class, 'index'])
         ->name('users.index')
         ->middleware('permission:users.view');
@@ -221,6 +220,10 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
         Route::post('/check-availability', [DailyAttendanceController::class, 'checkAvailability'])
              ->name('checkAvailability');
     });
+
+    Route::get('/users/profile/{id}', [ProfileController::class, 'show'])
+    ->name('profile.view');
+
 });
 
 

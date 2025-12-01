@@ -55,6 +55,20 @@ class Issue extends Model
         return 'غير محدد';
     }
 
+    public function getSubmitterProfileUrlAttribute()
+    {
+    if ($this->engineer_id) {
+        return route('engineers.show', $this->engineer_id);
+    }
+
+    if ($this->user_id) {
+        return route('profile.view', $this->user_id);
+    }
+
+    return null;
+    }
+
+
 
     public function getSubmitterTypeAttribute()
     {

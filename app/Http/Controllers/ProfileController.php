@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -77,5 +78,12 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->route('profile.index')->with('success', 'تم تغيير كلمة المرور بنجاح');
+    }
+
+    public function show($id)
+    {
+    $user = User::with(['role'])->findOrFail($id);
+
+    return view('support.users-profile', compact('user'));
     }
 }

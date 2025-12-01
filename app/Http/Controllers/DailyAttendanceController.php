@@ -68,10 +68,13 @@ class DailyAttendanceController extends Controller
         return view('attendance.index', compact('attendances', 'date', 'userType', 'todayStats'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $user = auth()->user();
+        $selectedDate = $request->input('date', now()->format('Y-m-d'));
+        $userType = $request->input('user_type', 'engineer');
 
+        // جلب الموظفين حسب الصلاحية
         switch ($user->role->name) {
             case 'admin':
                 $engineers = Engineer::where('is_active', true)->get();
@@ -90,62 +93,127 @@ class DailyAttendanceController extends Controller
                 abort(403);
         }
 
+        // فلترة الموظفين الذين لم يتم تسجيل دوامهم في التاريخ المحدد
+        $registeredEngineers = DailyAttendance::where('user_type', 'engineer')
+            ->whereDate('attendance_date', $selectedDate)
+            ->pluck('engineer_id')
+            ->toArray();
+
+        $registeredSupervisors = DailyAttendance::where('user_type', 'supervisor')
+            ->whereDate('attendance_date', $selectedDate)
+            ->pluck('user_id')
+            ->toArray();
+
+        $availableEngineers = $engineers->reject(function($eng) use ($registeredEngineers) {
+            return in_array($eng->id, $registeredEngineers);
+        });
+
+        $availableSupervisors = $supervisors->reject(function($sup) use ($registeredSupervisors) {
+            return in_array($sup->id, $registeredSupervisors);
+        });
+
         $maxDate = now()->format('Y-m-d');
         $minDate = null;
 
-        return view('attendance.create', compact('engineers', 'supervisors', 'maxDate', 'minDate'));
+        return view('attendance.create', compact(
+            'availableEngineers', 
+            'availableSupervisors', 
+            'maxDate', 
+            'minDate',
+            'selectedDate',
+            'userType'
+        ));
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'user_type' => 'required|in:engineer,supervisor',
-            'user_id' => 'required',
-            'attendance_date' => 'required|date|before_or_equal:today',
-            'status' => 'required|in:present,absent,leave',
-            'notes' => 'nullable|string|max:500'
-        ]);
+{
+    $request->validate([
+        'user_type' => 'required|in:engineer,supervisor',
+        'user_ids' => 'required|array|min:1',
+        'user_ids.*' => 'required|integer',
+        'attendance_date' => 'required|date|before_or_equal:today',
+        'status' => 'required|in:present,absent,leave',
+        'notes' => 'nullable|string|max:500'
+    ]);
 
-        $user = auth()->user();
-        $targetUser = null;
+    $user = auth()->user();
+    $date = $request->attendance_date;
+    $dayType = DailyAttendance::getDayType($date);
 
-        if ($request->user_type === 'engineer') {
-            $targetUser = Engineer::findOrFail($request->user_id);
-            if ($user->role->name === 'governorate_manager' &&
-                $targetUser->work_governorate_id != $user->governorate_id) {
-                abort(403);
-            }
-        } else {
-            $targetUser = User::findOrFail($request->user_id);
-            if ($user->role->name === 'governorate_manager' &&
-                $targetUser->governorate_id != $user->governorate_id) {
-                abort(403);
-            }
-        }
-
-        $date = $request->attendance_date;
-        $dayType = DailyAttendance::getDayType($date);
-
-        if ($dayType === 'friday') {
-            $request->merge(['status' => 'weekend']);
-        }
-
-        $data = [
-            'user_type' => $request->user_type,
-            'attendance_date' => $date,
-            'day_type' => $dayType,
-            'status' => $request->status,
-            'notes' => $request->notes,
-            'recorded_by' => auth()->id(),
-            'engineer_id' => $request->user_type === 'engineer' ? $request->user_id : null,
-            'user_id' => $request->user_type === 'supervisor' ? $request->user_id : null,
-        ];
-
-        DailyAttendance::create($data);
-
-        return redirect()->route('attendance.index')
-            ->with('success', 'تم تسجيل الدوام بنجاح');
+    if ($dayType === 'friday') {
+        return redirect()->back()
+            ->withInput()
+            ->withErrors(['attendance_date' => 'التاريخ المختار يوم جمعة (إجازة). لا يمكن تسجيل الدوام في يوم الجمعة.']);
     }
+
+    $status = $request->status;
+
+    $successCount = 0;
+    $errors = [];
+
+    DB::beginTransaction();
+    try {
+        foreach ($request->user_ids as $userId) {
+
+            if ($request->user_type === 'engineer') {
+                $targetUser = Engineer::findOrFail($userId);
+                if ($user->role->name === 'governorate_manager' &&
+                    $targetUser->work_governorate_id != $user->governorate_id) {
+                    $errors[] = "لا يمكن تسجيل دوام {$targetUser->full_name} - خارج نطاق المحافظة";
+                    continue;
+                }
+            } else {
+                $targetUser = User::findOrFail($userId);
+                if ($user->role->name === 'governorate_manager' &&
+                    $targetUser->governorate_id != $user->governorate_id) {
+                    $errors[] = "لا يمكن تسجيل دوام {$targetUser->name} - خارج نطاق المحافظة";
+                    continue;
+                }
+            }
+
+            $exists = DailyAttendance::where('user_type', $request->user_type)
+                ->where($request->user_type === 'engineer' ? 'engineer_id' : 'user_id', $userId)
+                ->whereDate('attendance_date', $date)
+                ->exists();
+
+            if ($exists) {
+                $name = $request->user_type === 'engineer' ? $targetUser->full_name : $targetUser->name;
+                $errors[] = "تم تسجيل دوام {$name} مسبقاً";
+                continue;
+            }
+
+            $data = [
+                'user_type' => $request->user_type,
+                'attendance_date' => $date,
+                'day_type' => $dayType,
+                'status' => $status,
+                'notes' => $request->notes,
+                'recorded_by' => auth()->id(),
+                'engineer_id' => $request->user_type === 'engineer' ? $userId : null,
+                'user_id' => $request->user_type === 'supervisor' ? $userId : null,
+            ];
+
+            DailyAttendance::create($data);
+            $successCount++;
+        }
+
+        DB::commit();
+
+        $message = "تم تسجيل دوام {$successCount} موظف بنجاح";
+        if (count($errors) > 0) {
+            $message .= " | تحذيرات: " . implode(', ', $errors);
+        }
+
+        return redirect()->route('attendance.index', ['date' => $date])
+            ->with('success', $message);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'حدث خطأ أثناء حفظ الدوام: ' . $e->getMessage());
+    }
+}
 
     public function edit($id)
     {
@@ -256,40 +324,5 @@ class DailyAttendanceController extends Controller
             'engineers' => $engineers ?? collect(),
             'supervisors' => $supervisors ?? collect()
         ];
-    }
-
-    public function checkAvailability(Request $request)
-    {
-        $request->validate([
-            'user_type' => 'required|in:engineer,supervisor',
-            'user_id' => 'required',
-            'date' => 'required|date'
-        ]);
-
-        $user = auth()->user();
-
-        if ($request->user_type === 'engineer') {
-            $target = Engineer::findOrFail($request->user_id);
-            if ($user->role->name === 'governorate_manager' &&
-                $target->work_governorate_id != $user->governorate_id) {
-                abort(403);
-            }
-        } else {
-            $target = User::findOrFail($request->user_id);
-            if ($user->role->name === 'governorate_manager' &&
-                $target->governorate_id != $user->governorate_id) {
-                abort(403);
-            }
-        }
-
-        $exists = DailyAttendance::where('user_type', $request->user_type)
-            ->where($request->user_type === 'engineer' ? 'engineer_id' : 'user_id', $request->user_id)
-            ->whereDate('attendance_date', $request->date)
-            ->exists();
-
-        return response()->json([
-            'available' => !$exists,
-            'message' => $exists ? 'تم تسجيل الدوام مسبقاً لهذا التاريخ' : 'يمكن التسجيل'
-        ]);
     }
 }
