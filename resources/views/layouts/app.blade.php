@@ -513,10 +513,14 @@
                         <span>إعدادات الحساب</span>
                     </a>
 
-                    <a href="{{ route('sessions.index') }}" class="dropdown-item-custom">
-                        <i class="fas fa-user-clock"></i>
-                        <span>جلسات الدخول</span>
-                    </a>
+                   @auth
+                        @if(auth()->user()->role->name === 'admin')
+                            <a href="{{ route('sessions.index') }}" class="dropdown-item-custom">
+                                <i class="fas fa-user-clock"></i>
+                                <span>جلسات دخول النظام</span>
+                            </a>
+                        @endif
+                    @endauth
 
                     <div class="dropdown-divider"></div>
                     <form method="POST" action="{{ route('logout') }}">

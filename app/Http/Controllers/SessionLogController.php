@@ -9,6 +9,10 @@ class SessionLogController extends Controller
 {
     public function index()
     {
+        if (!auth()->check() || auth()->user()->role->name !== 'admin') {
+            abort(403, 'غير مسموح بالوصول');
+        }
+
         $sessions = DB::table('sessions')
             ->orderBy('last_activity', 'desc')
             ->paginate(15);
