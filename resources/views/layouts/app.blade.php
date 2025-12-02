@@ -392,6 +392,12 @@
                         <i class="fas fa-question-circle"></i>
                         <span>المساعدة</span>
                     </a> -->
+
+                    <a href="{{ route('sessions.index') }}" class="dropdown-item-custom">
+                        <i class="fas fa-user-clock"></i>
+                        <span>جلسات الدخول</span>
+                    </a>
+
                     <div class="dropdown-divider"></div>
                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
