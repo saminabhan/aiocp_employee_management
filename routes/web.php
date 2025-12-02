@@ -74,7 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('users.role.permissions')
         ->middleware('permission:users.create'); 
 
-    Route::get('/get-work-areas/{governorateId}', [UserController::class, 'getWorkAreas']);
+    Route::get('/get-work-areas-users/{governorateId}', [UserController::class, 'getWorkAreas']);
 
     // -------- Engineers --------
     Route::prefix('engineers')->name('engineers.')->group(function () {

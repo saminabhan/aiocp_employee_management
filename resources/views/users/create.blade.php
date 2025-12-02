@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 citySelect.disabled = false;
             });
 
-        fetch(`/get-work-areas/${govId}`)
+        fetch(`/get-work-areas-users/${govId}`)
             .then(res => res.json())
             .then(data => {
                 data.forEach(a => areaSelect.innerHTML += `<option value="${a.id}">${a.name}</option>`);

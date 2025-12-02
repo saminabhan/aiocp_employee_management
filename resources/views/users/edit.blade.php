@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 citySelect.disabled = false;
             });
 
-fetch(`/get-work-areas/${govId}?user_id={{ $user->id }}`)
+fetch(`/get-work-areas-users/${govId}?user_id={{ $user->id }}`)
             .then(res => res.json())
             .then(data => {
 

@@ -751,8 +751,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="required">العملة</label>
-                        <select name="salary_currency_id" class="form-control @error('salary_currency_id') is-invalid @enderror" required>
+                        <label>العملة</label>
+                        <select name="salary_currency_id" class="form-control @error('salary_currency_id') is-invalid @enderror">
                             <option value="">اختر العملة</option>
                             @foreach($currencies as $currency)
                                 <option value="{{ $currency->id }}" {{ old('salary_currency_id') == $currency->id ? 'selected' : '' }}>
