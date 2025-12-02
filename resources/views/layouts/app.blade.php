@@ -280,9 +280,9 @@
             </div>
             @endif
 
-            <div class="nav-icon">
+            <!-- <div class="nav-icon">
                 <i class="fas fa-search"></i>
-            </div>
+            </div> -->
 
           <div style="position: relative;">
     <div class="nav-icon notification-icon" id="notificationBtn">
@@ -506,11 +506,11 @@
                 </a>
             @endif
 
-            <div class="nav-item">
+            <!-- <div class="nav-item">
                 <i class="fas fa-chart-bar"></i>
                 <span>التقاربر</span>
-                <!-- <div class="nav-badge">!</div> -->
-            </div>
+                <div class="nav-badge">!</div>
+            </div> -->
           @if(user_can('attendance.view'))
             <a href="{{ route('attendance.index') }}" 
             class="nav-item {{ request()->routeIs('attendance.*') ? 'active' : '' }}" 
