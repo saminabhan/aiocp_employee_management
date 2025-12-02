@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
+use App\Models\User;
 
 class SessionLogController extends Controller
 {
@@ -15,13 +15,7 @@ class SessionLogController extends Controller
 
         $sessions->transform(function ($session) {
 
-            try {
-                $data = unserialize(Crypt::decrypt($session->payload));
-            } catch (\Exception $e) {
-                $data = [];
-            }
-
-            $session->user = isset($data['login_web']) ? $data['login_web'] : null;
+            $session->user = User::find($session->user_id);
 
             $session->last_activity_formatted = date('Y-m-d H:i:s', $session->last_activity);
 

@@ -83,33 +83,33 @@
 
                                 <td>{{ $session->ip_address }}</td>
 
-                             <td style="max-width: 250px; text-align: right;">
-    @php
-        $agent = new Jenssegers\Agent\Agent();
-        $agent->setUserAgent($session->user_agent);
+                                <td style="max-width: 250px; text-align: right;">
+                                    @php
+                                        $agent = new Jenssegers\Agent\Agent();
+                                        $agent->setUserAgent($session->user_agent);
 
-        $device = $agent->device() ?: 'غير معروف';
-        $browser = $agent->browser() ?: 'غير معروف';
-        $platform = $agent->platform() ?: 'غير معروف';
+                                        $device = $agent->device() ?: 'غير معروف';
+                                        $browser = $agent->browser() ?: 'غير معروف';
+                                        $platform = $agent->platform() ?: 'غير معروف';
 
-        // تحديد نوع الأيقونة
-        $icon = 'fa-desktop';
-        if ($agent->isPhone()) $icon = 'fa-mobile-alt';
-        elseif ($agent->isTablet()) $icon = 'fa-tablet-alt';
-    @endphp
+                                        // تحديد نوع الأيقونة
+                                        $icon = 'fa-desktop';
+                                        if ($agent->isPhone()) $icon = 'fa-mobile-alt';
+                                        elseif ($agent->isTablet()) $icon = 'fa-tablet-alt';
+                                    @endphp
 
-    <div style="display: flex; flex-direction: column;">
-        <span>
-            <i class="fas {{ $icon }} text-primary"></i>
-            <b>{{ $device }}</b>
-        </span>
+                                    <div style="display: flex; flex-direction: column;">
+                                        <span>
+                                            <i class="fas {{ $icon }} text-primary"></i>
+                                            <b>{{ $device }}</b>
+                                        </span>
 
-        <small class="text-muted">
-            <i class="fas fa-globe"></i>
-            {{ $browser }} — {{ $platform }}
-        </small>
-    </div>
-</td>
+                                        <small class="text-muted">
+                                            <i class="fas fa-globe"></i>
+                                            {{ $browser }} — {{ $platform }}
+                                        </small>
+                                    </div>
+                                </td>
 
 
                                 <td>{{ $session->last_activity_formatted }}</td>
