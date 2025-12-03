@@ -114,14 +114,19 @@
         </div>
 
         <div class="row mb-4">
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
                 <div class="info-title">الاسم الكامل:</div>
                 <div class="info-value">{{ $user->name }}</div>
             </div>
 
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
                 <div class="info-title">اسم المستخدم:</div>
                 <div class="info-value">{{ $user->username }}</div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="info-title">رقم الهاتف:</div>
+                <div class="info-value">{{ $user->phone }}</div>
             </div>
         </div>
 
