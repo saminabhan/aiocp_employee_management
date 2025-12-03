@@ -6,8 +6,10 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Constant;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -69,7 +71,6 @@ public function store(Request $req)
     $req->validate([
         'name' => 'required',
         'username' => 'required|unique:users,username',
-        'password' => 'required',
         'phone' => 'required|unique:users,phone',
         'governorate_id' => 'nullable|exists:constants,id',
         'city_id' => 'nullable|exists:constants,id',
@@ -78,7 +79,6 @@ public function store(Request $req)
         'name.required' => 'الرجاء إدخال اسم المستخدم',
         'username.required' => 'الرجاء إدخال اسم الدخول',
         'username.unique' => 'اسم الدخول مستخدم مسبقًا',
-        'password.required' => 'الرجاء إدخال كلمة المرور',
         'phone.required' => 'الرجاء إدخال رقم الجوال',
         'phone.unique' => 'رقم الجوال مستخدم مسبقًا',
         'governorate_id.exists' => 'المحافظة المحددة غير موجودة',
@@ -101,11 +101,13 @@ public function store(Request $req)
         ]);
     }
 
+    $rawPassword = Str::random(6);
+
     $data = [
         'name' => $req->name,
         'username' => $req->username,
         'phone' => $req->phone,
-        'password' => bcrypt($req->password),
+        'password' => bcrypt($rawPassword),
         'role_id' => $req->role_id != "custom" ? $req->role_id : null,
         'governorate_id' => $req->governorate_id,
         'city_id' => $req->city_id,
@@ -125,8 +127,29 @@ public function store(Request $req)
         }
     }
 
+    $message =
+        "مرحبا {$req->name}، تم إنشاء حسابك بنجاح.\n" .
+        "اسم المستخدم: {$req->username}\n" .
+        "كلمة المرور: {$rawPassword}\n" .
+        "رابط تسجيل الدخول:\n" . url('/login') . "\n\n" .
+        "يرجى تغيير كلمة المرور عند أول دخول.";
+
+    $mobile = $req->phone;
+    if (substr($mobile, 0, 1) === '0') {
+        $mobile = '972' . substr($mobile, 1);
+    }
+
+    $smsService = new SmsService();
+    $smsService->send(
+        $mobile,
+        $message,
+        null,
+        auth()->id()
+    );
+
     return redirect()->route('users.index')->with('success', 'تم إضافة المستخدم بنجاح');
 }
+
 
 public function edit($id)
 {

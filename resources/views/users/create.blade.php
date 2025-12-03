@@ -81,11 +81,6 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-medium">كلمة المرور</label>
-                                        <input type="password" name="password" class="form-control" required>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
                                         <label class="form-label fw-medium">اختر الدور</label>
                                         <select id="role" name="role_id" class="form-select">
                                             <option value="">— اختر الدور —</option>
