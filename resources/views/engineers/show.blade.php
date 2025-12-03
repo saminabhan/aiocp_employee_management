@@ -729,7 +729,11 @@ document.addEventListener("DOMContentLoaded", function() {
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        backdrop: false
+        backdrop: false,
+        customClass: {
+            popup: 'medium-small-toast'
+        }
+
     });
 });
 </script>
