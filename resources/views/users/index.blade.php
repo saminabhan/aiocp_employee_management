@@ -4,14 +4,12 @@
 
 @push('styles')
 <style>
-    /* ===== Global Style ===== */
 .page-wrapper {
     padding: 20px;
     min-height: 100vh;
     font-family: 'Cairo', sans-serif;
 }
 
-/* ===== Header Top Card ===== */
 .header-card {
         background: white;
         padding: 25px;
@@ -49,7 +47,6 @@
         color: white;
     }
 
-/* ===== Sub Toolbar ===== */
 .sub-toolbar {
     background: #fff;
     padding: 18px;
@@ -61,7 +58,6 @@
     align-items: center;
 }
 
-/* Search Box */
 .search-box {
     width: 320px;
     background: #f7f9fc;
@@ -76,7 +72,6 @@
     box-shadow: 0 0 10px rgba(13,60,102,0.2);
 }
 
-/* Users Count badge */
 .count-badge {
     background: #0C4079;
     color: #fff;
@@ -86,7 +81,6 @@
     font-size: 15px;
 }
 
-/* ===== Table Card ===== */
 .table-card {
     background: #fff;
     border-radius: 16px;
@@ -95,7 +89,6 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-/* Table Header */
 .table thead {
     background: #0d3c66;
     color: #fff;
@@ -107,7 +100,6 @@
     border: none;
 }
 
-/* Table Body */
 .table tbody tr {
     transition: 0.2s;
 }
@@ -124,7 +116,6 @@
     border-bottom: 1px solid #f0f3f8;
 }
 
-/* ==== Action Buttons ==== */
 .action-btns {
     display: flex;
     justify-content: center;
@@ -147,12 +138,10 @@
     transform: translateY(-2px);
 }
 
-/* Icons Colors */
 .btn-view   { background: #e3f2fd; color: #1769aa; }
 .btn-edit   { background: #fff4e5; color: #ef6c00; }
 .btn-delete { background: #fdecea; color: #c62828; }
 
-/* ===== Responsive ===== */
 @media (max-width: 768px) {
     .search-box { width: 100%; }
     .sub-toolbar{ flex-direction: column; gap: 12px; }
@@ -189,7 +178,6 @@
 
 <div class="page-wrapper">
 
-    <!-- ==== HEADER ==== -->
     <div class="header-card d-flex justify-content-between align-items-center flex-wrap">
         <h1 class="page-title">
             <i class="fas fa-users-cog"></i>
@@ -203,7 +191,6 @@
         @endif
     </div>
 
-    <!-- ==== SUB TOOLBAR ==== -->
     <div class="sub-toolbar">
         <input type="text" id="searchInput" class="search-box"
                placeholder="ابحث عن مستخدم بالاسم أو اسم المستخدم...">
@@ -213,7 +200,6 @@
         </div>
     </div>
 
-    <!-- ==== TABLE ==== -->
     <div class="table-card">
         <table class="table table-hover mb-0">
             <thead>
