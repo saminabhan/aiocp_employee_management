@@ -260,82 +260,105 @@ public function create()
     $user = auth()->user();
     $eng = [];
 
-    switch ($user->role->name ?? '') {
-case 'admin':
+switch ($user->role->name ?? '') {
 
-    $engineers = Engineer::where('is_active', true)->get()
-        ->map(function ($eng) {
-            return (object)[
-                'id'   => 'eng_' . $eng->id,
-                'name' => $eng->full_name,
-                'type' => 'engineer'
-            ];
-        });
+    case 'admin':
 
-    $surveySupervisors = User::whereHas('role', function ($r) {
-            $r->where('name', 'survey_supervisor');
-        })
-        ->get()
-        ->map(function ($user) {
-            return (object)[
-                'id'   => 'sup_' . $user->id,
-                'name' => $user->name,
-                'type' => 'supervisor'
-            ];
-        });
+        $engineers = Engineer::where('is_active', true)->get()
+            ->map(function ($eng) {
+                return (object)[
+                    'id'   => 'eng_' . $eng->id,
+                    'name' => $eng->full_name,
+                    'type' => 'engineer'
+                ];
+            });
 
-    $governorateManagers = User::whereHas('role', function ($r) {
-            $r->where('name', 'governorate_manager');
-        })
-        ->get()
-        ->map(function ($user) {
-            return (object)[
-                'id'   => 'gm_' . $user->id,
-                'name' => $user->name,
-                'type' => 'gov_manager'
-            ];
-        });
+        $surveySupervisors = User::whereHas('role', fn($r) => 
+                $r->where('name', 'survey_supervisor')
+            )->get()
+            ->map(function ($user) {
+                return (object)[
+                    'id'   => 'sup_' . $user->id,
+                    'name' => $user->name,
+                    'type' => 'supervisor'
+                ];
+            });
 
-    $eng = collect()
+        $governorateManagers = User::whereHas('role', fn($r) => 
+                $r->where('name', 'governorate_manager')
+            )->get()
+            ->map(function ($user) {
+                return (object)[
+                    'id'   => 'gm_' . $user->id,
+                    'name' => $user->name,
+                    'type' => 'gov_manager'
+                ];
+            });
+
+        $eng = collect()
             ->merge($engineers)
             ->merge($surveySupervisors)
             ->merge($governorateManagers);
 
-    break;
+        break;
 
 
-case 'governorate_manager':
 
-    $engineers = Engineer::where('is_active', true)
-                        ->where('work_governorate_id', $user->governorate_id)
-                        ->get();
+    case 'governorate_manager':
 
-    $surveySupervisors = User::whereHas('role', function ($r) {
-                                $r->where('name', 'survey_supervisor');
-                            })
-                            ->where('governorate_id', $user->governorate_id)
-                            ->get();
+        $engineers = Engineer::where('is_active', true)
+            ->where('work_governorate_id', $user->governorate_id)
+            ->get()
+            ->map(function ($eng) {
+                return (object)[
+                    'id'   => 'eng_' . $eng->id,
+                    'name' => $eng->full_name,
+                    'type' => 'engineer'
+                ];
+            });
 
-    $eng = $engineers->merge($surveySupervisors);
+        $surveySupervisors = User::whereHas('role', fn($r) =>
+                $r->where('name', 'survey_supervisor')
+            )
+            ->where('governorate_id', $user->governorate_id)
+            ->get()
+            ->map(function ($u) {
+                return (object)[
+                    'id'   => 'sup_' . $u->id,
+                    'name' => $u->name,
+                    'type' => 'supervisor'
+                ];
+            });
 
-    break;
-        case 'survey_supervisor':
-            $eng = Engineer::where('is_active', true)
-                           ->where('main_work_area_code', $user->main_work_area_code)
-                           ->get();
-            break;
+        $eng = collect()->merge($engineers)->merge($surveySupervisors);
+        break;
 
-        case 'field_engineer':
-            $eng = [];
-            break;
 
-        default:
-            $eng = Engineer::where('is_active', true)->get();
-            if (!$user->hasPermission('issues.create')) {
-                abort(403, 'غير مصرح لك بإنشاء تذكرة');
-            }
-            break;
-    }
+
+    case 'survey_supervisor':
+
+        $eng = Engineer::where('is_active', true)
+            ->where('main_work_area_code', $user->main_work_area_code)
+            ->get()
+            ->map(function ($eng) {
+                return (object)[
+                    'id'   => 'eng_' . $eng->id,
+                    'name' => $eng->full_name,
+                    'type' => 'engineer'
+                ];
+            });
+
+        break;
+
+
+    case 'field_engineer':
+        $eng = collect();
+        break;
+
+
+    default:
+        abort(403, 'غير مصرح لك بإنشاء تذكرة');
+}
 
     return view('issues.create', [
         'problemTypes' => $problemTypes,
@@ -349,101 +372,124 @@ public function store(Request $request)
     $user = auth()->user();
 
     $validated = $request->validate([
-        'engineer_id' => 'nullable|exists:engineers,id',
+        'engineer_id' => 'nullable|string',
         'problem_type_id' => 'required|exists:constants,id',
         'description' => 'required|string|max:5000',
         'priority' => 'required|in:low,medium,high',
 
-'attachments.*.attachment_type_id' => 'nullable|exists:constants,id|required_with:attachments.*.file',
+        'attachments.*.attachment_type_id' => 'nullable|exists:constants,id|required_with:attachments.*.file',
 
-'attachments.*.file' => [
-    'nullable',
-    'file',
-    'max:20480',
-    'required_with:attachments.*.attachment_type_id',
-    'mimetypes:' .
-        'image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/heic,image/heif,' .
-        'application/pdf,' .
-        'video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,' .
-        'video/x-ms-wmv,video/webm,video/3gpp,video/3gpp2,' .
-        'video/x-m4v,video/mpeg,video/x-flv,' .
-        'application/octet-stream'
-],
+        'attachments.*.file' => [
+            'nullable',
+            'file',
+            'max:20480',
+            'required_with:attachments.*.attachment_type_id',
+            'mimetypes:' .
+                'image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/heic,image/heif,' .
+                'application/pdf,' .
+                'video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,' .
+                'video/x-ms-wmv,video/webm,video/3gpp,video/3gpp2,' .
+                'video/x-m4v,video/mpeg,video/x-flv,' .
+                'application/octet-stream'
+        ],
     ]);
+
+    $assigneeRaw = $request->input('engineer_id');
+
+    $engineerId = null;
+    $assignedToUserId = null;
+
+    if ($assigneeRaw) {
+
+        $parts = explode('_', $assigneeRaw);
+
+        if (count($parts) !== 3) {
+            abort(400, "Invalid assignee format");
+        }
+
+        [$fromRole, $toRole, $id] = $parts;
+
+        if ($toRole === 'eng') {
+            $engineerId = intval($id);
+        }
+
+        if (in_array($toRole, ['sup', 'gm'])) {
+            $assignedToUserId = intval($id);
+        }
+    }
 
 
     switch ($user->role->name ?? '') {
 
-        case 'system_admin':
-            $validated['user_id'] = $user->id;
+        case 'admin':
             break;
 
         case 'governorate_manager':
-            if ($validated['engineer_id']) {
-                $eng = Engineer::find($validated['engineer_id']);
+
+            if ($engineerId) {
+                $eng = Engineer::find($engineerId);
 
                 if ($eng->work_governorate_id != $user->governorate_id) {
                     abort(403, "لا تملك صلاحية تحويل تذكرة لهذا المهندس");
                 }
             }
-            $validated['user_id'] = $user->id;
+
             break;
 
         case 'survey_supervisor':
-            if ($validated['engineer_id']) {
-                $eng = Engineer::find($validated['engineer_id']);
+
+            if ($engineerId) {
+                $eng = Engineer::find($engineerId);
 
                 if ($eng->main_work_area_code != $user->main_work_area_code) {
                     abort(403, "لا يمكنك تحويل تذكرة لمهندس خارج منطقة العمل");
                 }
             }
-            $validated['user_id'] = $user->id;
+
             break;
 
         case 'field_engineer':
-            $validated['engineer_id'] = $user->engineer_id;
-            $validated['user_id'] = $user->id;
+            $engineerId = $user->engineer_id;
+            $assignedToUserId = null;
             break;
 
         default:
             if (!$user->hasPermission('issues.create')) {
                 abort(403, 'غير مصرح لك بإنشاء تذكرة');
             }
-            $validated['user_id'] = $user->id;
             break;
     }
 
+    $validated['user_id'] = $assignedToUserId ?? $user->id;
+
+    $validated['engineer_id'] = $engineerId;
 
     $issue = Issue::create($validated);
 
-if ($request->has('attachments')) {
-    foreach ($request->attachments as $att) {
+    if ($request->has('attachments')) {
+        foreach ($request->attachments as $att) {
 
-        if (!isset($att['file'])) {
-            continue;
+            if (!isset($att['file'])) continue;
+
+            $file = $att['file'];
+            $path = $file->store('issue_attachments', 'public');
+
+            IssueAttachment::create([
+                'issue_id' => $issue->id,
+                'attachment_type_id' => $att['attachment_type_id'],
+                'file_path' => $path,
+                'file_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'file_size' => $file->getSize(),
+            ]);
         }
-
-        $file = $att['file'];
-        $path = $file->store('issue_attachments', 'public');
-
-        IssueAttachment::create([
-            'issue_id' => $issue->id,
-            'attachment_type_id' => $att['attachment_type_id'],
-            'file_path' => $path,
-            'file_name' => $file->getClientOriginalName(),
-            'mime_type' => $file->getMimeType(),
-            'file_size' => $file->getSize(),
-        ]);
     }
-}
-
 
     $this->sendNotificationToSupport($issue, $user);
 
     return redirect()->route('issues.index')
         ->with('success', 'تم إنشاء التذكرة بنجاح');
 }
-
 
 private function sendNotificationToSupport($issue, $creatorUser)
 {
