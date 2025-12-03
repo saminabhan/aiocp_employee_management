@@ -112,7 +112,14 @@
                                 </td>
 
 
-                                <td>{{ $session->last_activity_formatted }}</td>
+                                <td>
+                                    {{ $session->last_activity_formatted }}
+                                    <br>
+                                    <small class="text-muted">
+                                        ({{ \Carbon\Carbon::parse($session->last_activity)->diffForHumans(null, false, false, false) }})
+                                    </small>
+                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>
