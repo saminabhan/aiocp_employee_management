@@ -5,6 +5,43 @@
 
 @push('styles')
 <style>
+      .page-header {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0C4079;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-add {
+        background: #0C4079;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .btn-add:hover {
+        background: #083058;
+        color: white;
+    }
+    
     .action-btns {
     display: flex;
     justify-content: center;
@@ -147,16 +184,21 @@
 </style>
 @endpush
 @section('content')
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h1 class="page-title">
+                <i class="fas fa-calendar-check"></i>
+                إدارة المستخدمين
+            </h1>
+            @if(user_can('users.create'))
+            <a href="{{ route('users.create') }}" class="btn-add">
+                <i class="fas fa-plus"></i>
+                إضافة مستخدم
+            </a>
+            @endif
+        </div>
+    </div>
 
-<div class="d-flex justify-content-between mb-3">
-    <h3>إدارة المستخدمين</h3>
-
-     @if(user_can('users.create'))
-    <a href="{{ route('users.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> إضافة مستخدم
-    </a>
-    @endif
-</div>
 
 @if (Session::has('success'))
 <script>
