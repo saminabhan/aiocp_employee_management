@@ -39,20 +39,20 @@ nav[role="navigation"] {
     border-radius: 6px !important;
     padding: 6px 10px !important;
     border: 1px solid #dee2e6 !important;
-    color: #3b7ddd !important;
+    color: #0C4079 !important;
     text-decoration: none !important;
     transition: all 0.2s !important;
 }
 
 .pagination .page-link:hover {
-    background-color: #3b7ddd !important;
+    background-color: #0C4079 !important;
     color: #fff !important;
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #3b7ddd !important;
+    background-color: #0C4079 !important;
     color: #fff !important;
-    border-color: #3b7ddd !important;
+    border-color: #0C4079 !important;
 }
 </style>
 
