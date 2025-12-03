@@ -34,16 +34,16 @@ body {
     align-items: start;
 }
 
+/* Desktop Sidebar */
 .index-sidebar {
     background: white;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
+    top: 80px;
+    max-height: calc(100vh - 100px);
     overflow-y: auto;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .index-title {
@@ -80,6 +80,7 @@ body {
     font-weight: 600;
     transition: all 0.2s;
     border: 1px solid transparent;
+    cursor: pointer;
 }
 
 .index-link:hover {
@@ -115,6 +116,85 @@ body {
     color: #6c757d;
 }
 
+.mobile-tabs-container {
+    display: none;
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.mobile-tabs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.mobile-tabs-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0C4079;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobile-tabs-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.mobile-tabs-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-tabs {
+    display: flex;
+    gap: 8px;
+    padding-bottom: 5px;
+    min-width: max-content;
+}
+
+.mobile-tab {
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #e9ecef;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mobile-tab:hover {
+    background: #e9ecef;
+}
+
+.mobile-tab.active {
+    background: #0C4079;
+    color: white;
+    border-color: #0C4079;
+}
+
+.mobile-tab .tab-count {
+    display: inline-block;
+    margin-right: 5px;
+    padding: 2px 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+.mobile-tab.active .tab-count {
+    background: rgba(255,255,255,0.3);
+}
+
 .content-area {
     display: flex;
     flex-direction: column;
@@ -126,13 +206,12 @@ body {
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    scroll-margin-top: 20px;
     display: none;
 }
 
 .gov-section.active {
     display: block;
-    animation: fadeIn 0.4s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -294,47 +373,22 @@ body {
     font-size: 12px;
 }
 
-.mobile-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+.index-sidebar::-webkit-scrollbar {
+    width: 6px;
 }
 
-.mobile-overlay.show {
-    opacity: 1;
+.index-sidebar::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 10px;
 }
 
-.mobile-index-toggle {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    width: 50px;
-    height: 50px;
+.index-sidebar::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 10px;
+}
+
+.index-sidebar::-webkit-scrollbar-thumb:hover {
     background: #0C4079;
-    color: white;
-    border-radius: 50%;
-    border: none;
-    box-shadow: 0 4px 12px rgba(12,64,121,0.3);
-    z-index: 1000;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.mobile-index-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(12,64,121,0.4);
-}
-
-.mobile-index-toggle:active {
-    transform: scale(0.95);
 }
 
 @media (max-width: 992px) {
@@ -343,30 +397,10 @@ body {
     }
     
     .index-sidebar {
-        position: fixed;
-        top: 0;
-        right: -300px;
-        bottom: 0;
-        width: 280px;
-        max-height: 100vh;
-        z-index: 1001;
-        border-radius: 0;
-        transform: translateX(0);
-        opacity: 1;
+        display: none;
     }
     
-    .index-sidebar.show {
-        right: 0;
-        box-shadow: -4px 0 12px rgba(0,0,0,0.15);
-    }
-    
-    .mobile-index-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .mobile-overlay {
+    .mobile-tabs-container {
         display: block;
     }
     
@@ -395,24 +429,15 @@ body {
     .gov-name {
         font-size: 16px;
     }
-}
-
-.index-sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.index-sidebar::-webkit-scrollbar-track {
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.index-sidebar::-webkit-scrollbar-thumb {
-    background: #dee2e6;
-    border-radius: 10px;
-}
-
-.index-sidebar::-webkit-scrollbar-thumb:hover {
-    background: #0C4079;
+    
+    .mobile-tabs-container {
+        padding: 12px;
+    }
+    
+    .mobile-tab {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
 }
 </style>
 @endpush
@@ -427,9 +452,28 @@ body {
         </h1>
     </div>
 
+    <div class="mobile-tabs-container">
+        <div class="mobile-tabs-header">
+            <div class="mobile-tabs-title">
+                <i class="fas fa-map-marked-alt"></i>
+                المحافظات
+            </div>
+        </div>
+        <div class="mobile-tabs-scroll">
+            <div class="mobile-tabs">
+                @foreach($governorates as $index => $gov)
+                    <div class="mobile-tab {{ $index === 0 ? 'active' : '' }}" data-target="gov-{{ $index }}">
+                        <span class="tab-count">{{ count($gov['codes']) }}</span>
+                        {{ $gov['name'] }}
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
     <div class="main-layout">
         
-        <aside class="index-sidebar" id="indexSidebar">
+        <aside class="index-sidebar">
             <div class="index-title">
                 <i class="fas fa-list"></i>
                 الفهرس
@@ -437,7 +481,7 @@ body {
             <ul class="index-list">
                 @foreach($governorates as $index => $gov)
                     <li class="index-item">
-                        <a href="#gov-{{ $index }}" class="index-link" data-gov="{{ $index }}">
+                        <a class="index-link {{ $index === 0 ? 'active' : '' }}" data-target="gov-{{ $index }}">
                             <span class="index-icon">
                                 <i class="fas fa-map-marker-alt"></i>
                             </span>
@@ -452,7 +496,7 @@ body {
         <div class="content-area">
 
             @foreach($governorates as $index => $gov)
-                <div class="gov-section" id="gov-{{ $index }}">
+                <div class="gov-section {{ $index === 0 ? 'active' : '' }}" id="gov-{{ $index }}">
                     
                     <div class="gov-header">
                         <div class="gov-icon">
@@ -517,80 +561,47 @@ body {
 
     </div>
 
-    <button class="mobile-index-toggle" onclick="toggleIndex()">
-        <i class="fas fa-list"></i>
-    </button>
-
-    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleIndex()"></div>
-
 </div>
 
 <script>
-document.querySelectorAll('.index-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        
-        if (targetElement) {
-            document.querySelectorAll('.gov-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            targetElement.classList.add('active');
-            
-            document.querySelector('.content-area').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-            
-            document.querySelectorAll('.index-link').forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            
-            if (window.innerWidth <= 992) {
-                toggleIndex();
-            }
-        }
+function switchSection(targetId) {
+    document.querySelectorAll('.gov-section').forEach(section => {
+        section.classList.remove('active');
     });
-});
-
-function toggleIndex() {
-    const sidebar = document.getElementById('indexSidebar');
-    const overlay = document.getElementById('mobileOverlay');
     
-    sidebar.classList.toggle('show');
-    overlay.classList.toggle('show');
+    const targetSection = document.getElementById(targetId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
     
-    if (sidebar.classList.contains('show')) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = '';
+    document.querySelectorAll('.index-link, .mobile-tab').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    document.querySelectorAll(`[data-target="${targetId}"]`).forEach(link => {
+        link.classList.add('active');
+    });
+    
+    if (window.innerWidth <= 992) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const firstSection = document.querySelector('.gov-section');
-    const firstLink = document.querySelector('.index-link');
-    
-    if (firstSection) {
-        firstSection.classList.add('active');
-    }
-    if (firstLink) {
-        firstLink.classList.add('active');
-    }
+document.querySelectorAll('.index-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('data-target');
+        switchSection(targetId);
+    });
 });
 
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const sidebar = document.getElementById('indexSidebar');
-        const overlay = document.getElementById('mobileOverlay');
+document.querySelectorAll('.mobile-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        switchSection(targetId);
         
-        if (sidebar.classList.contains('show')) {
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
-            document.body.style.overflow = '';
-        }
-    }
+        this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
 });
 </script>
 
