@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     @if($teams->hasPages())
     <div class="pagination-wrapper">
-        {{ $teams->links() }}
+        {{ $teams->links('vendor.pagination.bootstrap-custom') }}
     </div>
     @endif
 </div>

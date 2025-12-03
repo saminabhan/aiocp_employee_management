@@ -321,7 +321,7 @@
         @endforeach
 
         <div class="d-flex justify-content-center">
-            {{ $notifications->links() }}
+            {{ $notifications->links('vendor.pagination.bootstrap-custom') }}
         </div>
     @else
         <div class="empty-notifications">
