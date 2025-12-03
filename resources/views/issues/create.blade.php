@@ -169,13 +169,16 @@
             @foreach($engineers as $engineer)
 
                 @php
-                    $isEngineer = $engineer instanceof \App\Models\Engineer;
+                    $typeLabel = match($engineer->type) {
+                        'engineer'      => 'مهندس ميداني',
+                        'supervisor'    => 'مشرف مهندسين الحصر',
+                        'gov_manager'   => 'مدير محافظة',
+                        default         => 'موظف'
+                    };
 
-                    $value = $isEngineer ? $engineer->id : 'sup_' . $engineer->id;
+                    $value = $engineer->id;
 
-                    $label = $isEngineer
-                                ? $engineer->full_name
-                                : $engineer->name;
+                    $label = $engineer->name . " ({$typeLabel})";
                 @endphp
 
                 <option value="{{ $value }}" {{ old('engineer_id') == $value ? 'selected' : '' }}>
