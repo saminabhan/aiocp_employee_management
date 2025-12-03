@@ -122,7 +122,7 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
         ->middleware('permission:issues.create');
 
     Route::post('/issues/{issue}/status', [EngineerIssueController::class, 'updateStatus'])
-        ->name('issues.updateStatus')
+        ->name('issues.updateStatus-engineer')
         ->middleware('permission:issues.edit');
 
     Route::resource('issues', IssueController::class)

@@ -17,4 +17,9 @@ class AppIssue extends Model
     {
         return $this->belongsTo(Engineer::class, 'engineer_id');
     }
+        public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }
