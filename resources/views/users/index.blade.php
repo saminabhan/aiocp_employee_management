@@ -176,6 +176,46 @@
 
 @section('content')
 
+@if (Session::has('success'))
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        toast: true,
+        position: 'bottom-start',
+        icon: 'success',
+        title: '{{ Session::get("success") }}',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: false,
+        customClass: {
+            popup: 'medium-small-toast'
+        }
+    });
+});
+</script>
+@endif
+@if (Session::has('error'))
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        toast: true,
+        position: 'bottom-start',
+        icon: 'error',
+        title: '{{ Session::get("error") }}',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: false,
+        customClass: {
+            popup: 'medium-small-toast'
+        }
+    });
+});
+</script>
+@endif
+
+
 <div class="page-wrapper">
 
     <div class="header-card d-flex justify-content-between align-items-center flex-wrap">

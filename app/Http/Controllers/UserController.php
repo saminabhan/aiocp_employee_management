@@ -153,6 +153,13 @@ public function store(Request $req)
 
 public function edit($id)
 {
+        $protectedUserId = 4;
+
+    if ($id == $protectedUserId) {
+        return redirect()->route('users.index')
+                         ->with('error', 'لا يمكن تعديل هذا المستخدم.');
+    }
+
     $user = User::with('permissions')->findOrFail($id);
 
     $roles = Role::where('name', '!=', 'field_engineer')->get();
