@@ -53,7 +53,6 @@ class SmsService
 
         } catch (\Exception $e) {
 
-            // لو صار خطأ
             $sms->update([
                 'status'       => 'failed',
                 'api_response' => $e->getMessage(),
