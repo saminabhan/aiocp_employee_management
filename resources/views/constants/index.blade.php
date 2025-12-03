@@ -43,7 +43,7 @@
         .child:hover {
             background: #f8fafc;
         }
-            .page-header {
+        .page-header {
         background: white;
         padding: 25px;
         border-radius: 12px;
@@ -97,7 +97,7 @@
                 <i class="fas fa-plus"></i>
                 إضافة ثابت جديد
             </a>
-        @endif
+            @endif
 
         </div>
     </div>
