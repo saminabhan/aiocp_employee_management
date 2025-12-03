@@ -2,18 +2,25 @@
 
 @section('title', 'إدارة المستخدمين')
 
-
 @push('styles')
 <style>
-      .page-header {
+    /* ===== Global Style ===== */
+.page-wrapper {
+    padding: 20px;
+    min-height: 100vh;
+    font-family: 'Cairo', sans-serif;
+}
+
+/* ===== Header Top Card ===== */
+.header-card {
         background: white;
         padding: 25px;
         border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-    .page-title {
+.page-title {
         font-size: 24px;
         font-weight: 700;
         color: #0C4079;
@@ -21,7 +28,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-    }
+}
 
     .btn-add {
         background: #0C4079;
@@ -41,253 +48,255 @@
         background: #083058;
         color: white;
     }
-    
-    .action-btns {
+
+/* ===== Sub Toolbar ===== */
+.sub-toolbar {
+    background: #fff;
+    padding: 18px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Search Box */
+.search-box {
+    width: 320px;
+    background: #f7f9fc;
+    border: 2px solid #d4dbea;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 15px;
+    transition: all ease-in-out 0.25s;
+}
+.search-box:focus {
+    border-color: #0d3c66;
+    box-shadow: 0 0 10px rgba(13,60,102,0.2);
+}
+
+/* Users Count badge */
+.count-badge {
+    background: #0C4079;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+/* ===== Table Card ===== */
+.table-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* Table Header */
+.table thead {
+    background: #0d3c66;
+    color: #fff;
+}
+.table thead th {
+    padding: 16px;
+    font-size: 15px;
+    text-align: center;
+    border: none;
+}
+
+/* Table Body */
+.table tbody tr {
+    transition: 0.2s;
+}
+.table tbody tr:hover {
+    background: #f4f8ff;
+}
+
+.table tbody td {
+    padding: 16px;
+    font-size: 15px;
+    vertical-align: middle;
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid #f0f3f8;
+}
+
+/* ==== Action Buttons ==== */
+.action-btns {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .btn-action {
-        width: 35px;
-        height: 35px;
-        border-radius: 8px;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .btn-view {
-        background: #e3f2fd;
-        color: #1976d2;
-    }
-
-    .btn-edit {
-        background: #fff3e0;
-        color: #f57c00;
-    }
-
-    .btn-delete {
-        background: #ffebee;
-        color: #c62828;
-    }
-
-    .btn-action:hover {
-        transform: translateY(-2px);
-    }
-
-     
-    @media (max-width: 992px) {
-
-    .table-header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-    }
-
-    .search-box {
-        width: 100%;
-    }
-
-    .btn-add {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .custom-table th,
-    .custom-table td {
-        padding: 10px;
-        font-size: 13px;
-    }
-
-    .engineer-avatar {
-        width: 40px;
-        height: 40px;
-    }
-
-    .engineer-details h6 {
-        font-size: 13px;
-    }
-
-    .engineer-details p {
-        font-size: 11px;
-    }
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    font-size: 17px;
+    transition: 0.2s ease;
 }
 
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+
+/* Icons Colors */
+.btn-view   { background: #e3f2fd; color: #1769aa; }
+.btn-edit   { background: #fff4e5; color: #ef6c00; }
+.btn-delete { background: #fdecea; color: #c62828; }
+
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
+    .search-box { width: 100%; }
+    .sub-toolbar{ flex-direction: column; gap: 12px; }
 
-    .page-title {
-        font-size: 20px;
-        text-align: center;
-    }
+    .table thead { display: none; }
 
-    .page-header {
-        text-align: center;
-    }
-
-    .custom-table thead {
-        display: none;
-    }
-
-    .custom-table tbody tr {
+    .table tbody tr {
         display: block;
-        margin-bottom: 15px;
         padding: 15px;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 12px;
+        border-radius: 12px;
+        border: 1px solid #f1f1f1;
     }
 
-    .custom-table tbody td {
+    .table tbody td {
         display: flex;
         justify-content: space-between;
-        padding: 10px 5px;
-        border-bottom: 1px solid #f3f3f3;
+        padding: 10px 6px;
+        border-bottom: 1px solid #eee;
     }
 
-    .custom-table tbody td:last-child {
-        border-bottom: none;
-    }
+    .table tbody td:last-child { border-bottom: none; }
 
-    .custom-table tbody td::before {
+    .table tbody td::before {
         content: attr(data-label);
-        font-weight: bold;
-        color: #0C4079;
-    }
-
-    .action-btns {
-        justify-content: flex-start;
+        font-weight: 700;
+        color: #0d3c66;
     }
 }
 
-@media (max-width: 480px) {
+</style>@endpush
 
-    .btn-add {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .engineer-avatar {
-        width: 35px;
-        height: 35px;
-    }
-
-    .engineer-details h6 {
-        font-size: 12px;
-    }
-}
-
-</style>
-@endpush
 @section('content')
-    <div class="page-header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <h1 class="page-title">
-                <i class="fas fa-calendar-check"></i>
-                إدارة المستخدمين
-            </h1>
-            @if(user_can('users.create'))
-            <a href="{{ route('users.create') }}" class="btn-add">
-                <i class="fas fa-plus"></i>
-                إضافة مستخدم
-            </a>
-            @endif
+
+<div class="page-wrapper">
+
+    <!-- ==== HEADER ==== -->
+    <div class="header-card d-flex justify-content-between align-items-center flex-wrap">
+        <h1 class="page-title">
+            <i class="fas fa-users-cog"></i>
+            إدارة المستخدمين
+        </h1>
+
+        @if(user_can('users.create'))
+        <a href="{{ route('users.create') }}" class="btn-add">
+            <i class="fas fa-plus"></i> إضافة مستخدم
+        </a>
+        @endif
+    </div>
+
+    <!-- ==== SUB TOOLBAR ==== -->
+    <div class="sub-toolbar">
+        <input type="text" id="searchInput" class="search-box"
+               placeholder="ابحث عن مستخدم بالاسم أو اسم المستخدم...">
+
+        <div class="count-badge">
+            عدد المستخدمين: {{ count($users) }}
         </div>
     </div>
 
+    <!-- ==== TABLE ==== -->
+    <div class="table-card">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>اسم المستخدم</th>
+                    <th>الدور</th>
+                    <th width="150px">التحكم</th>
+                </tr>
+            </thead>
 
-@if (Session::has('success'))
+            <tbody>
+                @foreach($users as $user)
+                <tr>
+                    <td data-label="#">{{ $loop->iteration }}</td>
+                    <td data-label="الاسم">{{ $user->name }}</td>
+                    <td data-label="اسم المستخدم">{{ $user->username }}</td>
+                    <td data-label="الدور">
+                        @if($user->role?->display_name)
+                            {{ $user->role->display_name }}
+                            @if ($user->governorate_id)
+                                - {{ $user->governorate?->name }}
+                            @endif
+                        @else
+                            موظف
+                        @endif
+                    </td>
+
+                    <td data-label="التحكم">
+                        <div class="action-btns">
+
+                            @if($user->id == 4)
+                                <span class="badge bg-secondary">مدير النظام</span>
+                            @else
+
+                                @if(user_can('users.view'))
+                                <a href="{{ route('users.show', $user->id) }}" class="btn-action btn-view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @endif
+
+                                @if(user_can('users.edit'))
+                                <a href="{{ route('users.edit', $user->id) }}" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @endif
+
+                                @if(user_can('users.delete'))
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                      onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')"
+                                      style="display:inline;">
+                                    @csrf @method('DELETE')
+                                    <button class="btn-action btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                                @endif
+
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+@endsection
+
+@push('scripts')
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    Swal.fire({
-        toast: true,
-        position: 'bottom-start',
-        icon: 'success',
-        title: '{{ Session::get("success") }}',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        backdrop: false,
-        customClass: {
-            popup: 'medium-small-toast'
-        }
+document.getElementById("searchInput").addEventListener("keyup", function () {
+    let value = this.value.toLowerCase();
+    let rows = document.querySelectorAll(".table tbody tr");
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(value) ? "" : "none";
     });
 });
 </script>
-@endif
-
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>الاسم</th>
-            <th>اسم المستخدم</th>
-            <th>الدور</th>
-            <th width="150px">التحكم</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach($users as $user)
-        <tr>
-    <td data-label="#">{{$loop->iteration}}</td>
-    <td data-label="الاسم">{{ $user->name }}</td>
-    <td data-label="اسم المستخدم">{{ $user->username }}</td>
-    <td data-label="الدور">
-    @if ( $user->role?->display_name ) 
-    {{ $user->role->display_name }}
-        @if ($user->governorate_id != null)
-            - {{ $user->governorate?->name }}
-            
-        @endif
-        @else
-        {{ 'موظف' }}
-    @endif    
- </td>
-
-    <td data-label="التحكم">
-        <div class="action-btns">
-
-            @if($user->id == 4)
-                <span class="badge bg-secondary">مدير النظام</span>
-            @else
-
-                @if(user_can('users.view'))
-                <a href="{{ route('users.show', $user->id) }}" class="btn-action btn-view" title="عرض">
-                    <i class="fas fa-eye"></i>
-                </a>
-                @endif
-
-                @if(user_can('users.edit'))
-                <a href="{{ route('users.edit', $user->id) }}" class="btn-action btn-edit" title="تعديل">
-                    <i class="fas fa-edit"></i>
-                </a>
-                @endif
-
-                @if(user_can('users.delete'))
-                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                      style="display: inline;"
-                      onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-action btn-delete" title="حذف">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </form>
-                @endif
-
-            @endif
-
-        </div>
-    </td>
-</tr>
-
-        @endforeach
-    </tbody>
-</table>
-
-@endsection
+@endpush

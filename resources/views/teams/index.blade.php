@@ -160,6 +160,70 @@
         display: flex;
         justify-content: center;
     }
+    /* ===================  Responsive Table  =================== */
+@media (max-width: 768px) {
+
+    .custom-table thead {
+        display: none;
+    }
+
+    .custom-table, 
+    .custom-table tbody, 
+    .custom-table tr, 
+    .custom-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .custom-table tbody tr {
+        margin-bottom: 15px;
+        background: #ffffff;
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        border: 1px solid #eee;
+    }
+
+    .custom-table tbody tr:hover {
+        background: #fff !important;
+    }
+
+    .custom-table tbody td {
+        padding: 10px 5px;
+        text-align: right;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        position: relative;
+    }
+
+    .custom-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #0C4079;
+        flex-basis: 55%;
+        text-align: right;
+    }
+
+    .custom-table tbody td:last-child {
+        margin-top: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        display: block;
+        text-align: center !important;
+    }
+
+    .action-btns {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        margin: 4px;
+    }
+}
+
 </style>
 @endpush
 

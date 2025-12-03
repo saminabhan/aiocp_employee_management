@@ -171,6 +171,71 @@
         color: #1976d2;
     }
 
+    /* ===================  Responsive Table  =================== */
+@media (max-width: 768px) {
+
+    .custom-table thead {
+        display: none;
+    }
+
+    .custom-table, 
+    .custom-table tbody, 
+    .custom-table tr, 
+    .custom-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .custom-table tbody tr {
+        margin-bottom: 15px;
+        background: #ffffff;
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        border: 1px solid #eee;
+    }
+
+    .custom-table tbody tr:hover {
+        background: #fff !important;
+    }
+
+    .custom-table tbody td {
+        padding: 10px 5px;
+        text-align: right;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        position: relative;
+    }
+
+    .custom-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #0C4079;
+        flex-basis: 55%;
+        text-align: right;
+    }
+
+    .custom-table tbody td:last-child {
+        margin-top: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        display: block;
+        text-align: center !important;
+    }
+
+    .action-btns {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        margin: 4px;
+    }
+}
+
+
 </style>
 @endpush
 
@@ -295,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="issues-card">
         @if($issues->count())
             <div class="table-responsive">
-                <table class="issues-table">
+                <table class="issues-table custom-table">
                     <thead>
                         <tr>
                             <th style="width: 50px;">#</th>
@@ -312,31 +377,31 @@ document.addEventListener("DOMContentLoaded", function() {
                     <tbody>
                         @foreach($issues as $index => $issue)
                             <tr>
-                                <td>{{ $issues->firstItem() + $index }}</td>
-                                <td>{{ $issue->problem->name ?? 'غير محدد' }}</td>
-                                <td>{{ $issue->submitter_name }}</td>
-                                <td>
+                                <td data-label="#">{{ $issues->firstItem() + $index }}</td>
+                                <td data-label="نوع المشكلة">{{ $issue->problem->name ?? 'غير محدد' }}</td>
+                                <td data-label="مقدم التذكرة">{{ $issue->submitter_name }}</td>
+                                <td data-label="النوع">
                                     <span class="badge bg-secondary">{{ $issue->submitter_type }}</span>
                                 </td>
-                                <td style="max-width: 250px; text-align: right;">
+                                <td style="max-width: 250px; text-align: right;" data-label="الوصف">
                                     {{ Str::limit($issue->description, 50) }}
                                 </td>
-                                <td>
+                                <td data-label="الأولوية">
                                     <span class="badge-priority {{ $issue->priority }}">
                                         @if($issue->priority == 'low') منخفضة
                                         @elseif($issue->priority == 'medium') متوسطة
                                         @else عالية @endif
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="الحالة">
                                     <span class="badge-status {{ $issue->status }}">
                                         @if($issue->status == 'open') مفتوحة
                                         @elseif($issue->status == 'in_progress') قيد المعالجة
                                         @else مغلقة @endif
                                     </span>
                                 </td>
-                                <td>{{ $issue->created_at->format('Y-m-d') }}</td>
-                                <td>
+                                <td data-label="التاريخ">{{ $issue->created_at->format('Y-m-d') }}</td>
+                                <td data-label="الإجراءات">
                                     <a href="{{ route('issues.show', $issue) }}" class="btn-action btn-view" title="عرض التفاصيل">
                                         <i class="fas fa-eye"></i>
                                     </a>
