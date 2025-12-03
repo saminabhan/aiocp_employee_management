@@ -260,105 +260,105 @@ public function create()
     $user = auth()->user();
     $eng = [];
 
-switch ($user->role->name ?? '') {
+    switch ($user->role->name ?? '') {
 
-    case 'admin':
+        case 'admin':
 
-        $engineers = Engineer::where('is_active', true)->get()
-            ->map(function ($eng) {
-                return (object)[
-                    'id'   => 'eng_' . $eng->id,
-                    'name' => $eng->full_name,
-                    'type' => 'engineer'
-                ];
-            });
+            $engineers = Engineer::where('is_active', true)->get()
+                ->map(function ($eng) {
+                    return (object)[
+                        'id'   => 'eng_' . $eng->id,
+                        'name' => $eng->full_name,
+                        'type' => 'engineer'
+                    ];
+                });
 
-        $surveySupervisors = User::whereHas('role', fn($r) => 
-                $r->where('name', 'survey_supervisor')
-            )->get()
-            ->map(function ($user) {
-                return (object)[
-                    'id'   => 'sup_' . $user->id,
-                    'name' => $user->name,
-                    'type' => 'supervisor'
-                ];
-            });
+            $surveySupervisors = User::whereHas('role', fn($r) =>
+                    $r->where('name', 'survey_supervisor')
+                )->get()
+                ->map(function ($user) {
+                    return (object)[
+                        'id'   => 'sup_' . $user->id,
+                        'name' => $user->name,
+                        'type' => 'supervisor'
+                    ];
+                });
 
-        $governorateManagers = User::whereHas('role', fn($r) => 
-                $r->where('name', 'governorate_manager')
-            )->get()
-            ->map(function ($user) {
-                return (object)[
-                    'id'   => 'gm_' . $user->id,
-                    'name' => $user->name,
-                    'type' => 'gov_manager'
-                ];
-            });
+            $governorateManagers = User::whereHas('role', fn($r) =>
+                    $r->where('name', 'governorate_manager')
+                )->get()
+                ->map(function ($user) {
+                    return (object)[
+                        'id'   => 'gm_' . $user->id,
+                        'name' => $user->name,
+                        'type' => 'gov_manager'
+                    ];
+                });
 
-        $eng = collect()
-            ->merge($engineers)
-            ->merge($surveySupervisors)
-            ->merge($governorateManagers);
+            $eng = collect()
+                ->merge($engineers)
+                ->merge($surveySupervisors)
+                ->merge($governorateManagers);
 
-        break;
-
-
-
-    case 'governorate_manager':
-
-        $engineers = Engineer::where('is_active', true)
-            ->where('work_governorate_id', $user->governorate_id)
-            ->get()
-            ->map(function ($eng) {
-                return (object)[
-                    'id'   => 'eng_' . $eng->id,
-                    'name' => $eng->full_name,
-                    'type' => 'engineer'
-                ];
-            });
-
-        $surveySupervisors = User::whereHas('role', fn($r) =>
-                $r->where('name', 'survey_supervisor')
-            )
-            ->where('governorate_id', $user->governorate_id)
-            ->get()
-            ->map(function ($u) {
-                return (object)[
-                    'id'   => 'sup_' . $u->id,
-                    'name' => $u->name,
-                    'type' => 'supervisor'
-                ];
-            });
-
-        $eng = collect()->merge($engineers)->merge($surveySupervisors);
-        break;
+            break;
 
 
 
-    case 'survey_supervisor':
+        case 'governorate_manager':
 
-        $eng = Engineer::where('is_active', true)
-            ->where('main_work_area_code', $user->main_work_area_code)
-            ->get()
-            ->map(function ($eng) {
-                return (object)[
-                    'id'   => 'eng_' . $eng->id,
-                    'name' => $eng->full_name,
-                    'type' => 'engineer'
-                ];
-            });
+            $engineers = Engineer::where('is_active', true)
+                ->where('work_governorate_id', $user->governorate_id)
+                ->get()
+                ->map(function ($eng) {
+                    return (object)[
+                        'id'   => 'eng_' . $eng->id,
+                        'name' => $eng->full_name,
+                        'type' => 'engineer'
+                    ];
+                });
 
-        break;
+            $surveySupervisors = User::whereHas('role', fn($r) =>
+                    $r->where('name', 'survey_supervisor')
+                )
+                ->where('governorate_id', $user->governorate_id)
+                ->get()
+                ->map(function ($u) {
+                    return (object)[
+                        'id'   => 'sup_' . $u->id,
+                        'name' => $u->name,
+                        'type' => 'supervisor'
+                    ];
+                });
+
+            $eng = collect()->merge($engineers)->merge($surveySupervisors);
+            break;
 
 
-    case 'field_engineer':
-        $eng = collect();
-        break;
+
+        case 'survey_supervisor':
+
+            $eng = Engineer::where('is_active', true)
+                ->where('main_work_area_code', $user->main_work_area_code)
+                ->get()
+                ->map(function ($eng) {
+                    return (object)[
+                        'id'   => 'eng_' . $eng->id,
+                        'name' => $eng->full_name,
+                        'type' => 'engineer'
+                    ];
+                });
+
+            break;
 
 
-    default:
-        abort(403, 'غير مصرح لك بإنشاء تذكرة');
-}
+        case 'field_engineer':
+            $eng = collect();
+            break;
+
+
+        default:
+            abort(403, 'غير مصرح لك بإنشاء تذكرة');
+    }
 
     return view('issues.create', [
         'problemTypes' => $problemTypes,
@@ -367,17 +367,20 @@ switch ($user->role->name ?? '') {
     ]);
 }
 
+
 public function store(Request $request)
 {
     $user = auth()->user();
 
     $validated = $request->validate([
         'engineer_id' => 'nullable|string',
+
         'problem_type_id' => 'required|exists:constants,id',
         'description' => 'required|string|max:5000',
         'priority' => 'required|in:low,medium,high',
 
-        'attachments.*.attachment_type_id' => 'nullable|exists:constants,id|required_with:attachments.*.file',
+        'attachments.*.attachment_type_id' =>
+            'nullable|exists:constants,id|required_with:attachments.*.file',
 
         'attachments.*.file' => [
             'nullable',
@@ -394,6 +397,7 @@ public function store(Request $request)
         ],
     ]);
 
+
     $assigneeRaw = $request->input('engineer_id');
 
     $engineerId = null;
@@ -403,18 +407,17 @@ public function store(Request $request)
 
         $parts = explode('_', $assigneeRaw);
 
-        if (count($parts) !== 3) {
+        if (count($parts) !== 2) {
             abort(400, "Invalid assignee format");
         }
 
-        [$fromRole, $toRole, $id] = $parts;
+        [$type, $id] = $parts;
+        $id = intval($id);
 
-        if ($toRole === 'eng') {
-            $engineerId = intval($id);
-        }
-
-        if (in_array($toRole, ['sup', 'gm'])) {
-            $assignedToUserId = intval($id);
+        if ($type === 'eng') {
+            $engineerId = $id;
+        } else {
+            $assignedToUserId = $id;
         }
     }
 
@@ -424,34 +427,38 @@ public function store(Request $request)
         case 'admin':
             break;
 
+
         case 'governorate_manager':
 
             if ($engineerId) {
                 $eng = Engineer::find($engineerId);
 
-                if ($eng->work_governorate_id != $user->governorate_id) {
+                if (!$eng || $eng->work_governorate_id != $user->governorate_id) {
                     abort(403, "لا تملك صلاحية تحويل تذكرة لهذا المهندس");
                 }
             }
 
             break;
 
+
         case 'survey_supervisor':
 
             if ($engineerId) {
                 $eng = Engineer::find($engineerId);
 
-                if ($eng->main_work_area_code != $user->main_work_area_code) {
+                if (!$eng || $eng->main_work_area_code != $user->main_work_area_code) {
                     abort(403, "لا يمكنك تحويل تذكرة لمهندس خارج منطقة العمل");
                 }
             }
 
             break;
 
+
         case 'field_engineer':
             $engineerId = $user->engineer_id;
             $assignedToUserId = null;
             break;
+
 
         default:
             if (!$user->hasPermission('issues.create')) {
@@ -464,9 +471,13 @@ public function store(Request $request)
 
     $validated['engineer_id'] = $engineerId;
 
+
+
     $issue = Issue::create($validated);
 
+
     if ($request->has('attachments')) {
+
         foreach ($request->attachments as $att) {
 
             if (!isset($att['file'])) continue;
@@ -485,11 +496,13 @@ public function store(Request $request)
         }
     }
 
+
     $this->sendNotificationToSupport($issue, $user);
 
     return redirect()->route('issues.index')
         ->with('success', 'تم إنشاء التذكرة بنجاح');
 }
+
 
 private function sendNotificationToSupport($issue, $creatorUser)
 {
