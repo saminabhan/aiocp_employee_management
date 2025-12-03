@@ -1,14 +1,57 @@
 @extends('layouts.app')
 
+@push('styles')
+    <style>
+            .header-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0C4079;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .btn-back {
+        background: #6c757d;
+        color: white;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+        color: #fff;
+    }
+    </style>
+@endpush
 @section('content')
 <div class="container">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-bold">تعديل ثابت</h3>
-        <a href="{{ route('constants.index') }}" class="btn btn-secondary">
-            رجوع
+    <div class="header-card d-flex justify-content-between align-items-center flex-wrap">
+        <h1 class="page-title">
+            <i class="fas fa-edit"></i>
+            تعديل ثابت
+        </h1>
+
+        <a href="{{ route('constants.index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> رجوع
         </a>
     </div>
+
 
     <div class="card shadow-sm">
         <div class="card-body">

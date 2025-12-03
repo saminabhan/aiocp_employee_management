@@ -1,9 +1,39 @@
 @extends('layouts.app')
 
+@push('styles')
+    <style>
+    .page-header {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0C4079;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    </style>
+@endpush
 @section('content')
 <div class="container">
 
-    <h3 class="fw-bold mb-4">إضافة ثابت جديد</h3>
+<div class="page-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h1 class="page-title">
+                <i class="fas fa-plus"></i>
+                إضافة ثابت جديد
+            </h1>
+        </div>
+    </div>
+
 
     <div class="card shadow-sm">
         <div class="card-body">
