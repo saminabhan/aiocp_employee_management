@@ -111,12 +111,11 @@
                                     </div>
                                 </td>
 
-
-                                <td>
+                               <td>
                                     {{ $session->last_activity_formatted }}
                                     <br>
                                     <small class="text-muted">
-                                        ({{ \Carbon\Carbon::parse($session->last_activity)->diffForHumans(null, false, false, false) }})
+                                        ({{ \Carbon\Carbon::parse($session->last_activity)->locale('ar')->diffForHumans() }})
                                     </small>
                                 </td>
 
