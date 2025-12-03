@@ -808,16 +808,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>قيمة الراتب</label>
-                        <input type="number" step="0.01" name="salary_amount" class="form-control @error('salary_amount') is-invalid @enderror" value="{{ old('salary_amount', $engineer->salary_amount) }}" min="0">
+                        <label class="required">قيمة الراتب</label>
+                        <input type="number" step="0.01" name="salary_amount" class="form-control @error('salary_amount') is-invalid @enderror" value="{{ old('salary_amount', $engineer->salary_amount) }}" min="0" required>
                         @error('salary_amount')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label>العملة</label>
-                        <select name="salary_currency_id" class="form-control @error('salary_currency_id') is-invalid @enderror">
+                        <label class="required">العملة</label>
+                        <select name="salary_currency_id" class="form-control @error('salary_currency_id') is-invalid @enderror" required>
                             <option value="">اختر العملة</option>
                             @foreach($currencies as $currency)
                                 <option value="{{ $currency->id }}" {{ old('salary_currency_id', $engineer->salary_currency_id) == $currency->id ? 'selected' : '' }}>
