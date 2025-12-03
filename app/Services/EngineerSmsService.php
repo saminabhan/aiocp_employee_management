@@ -7,41 +7,54 @@ use App\Models\SmsMessage;
 
 class EngineerSmsService
 {
-    private $apiUrl = 'http://hotsms.ps/sendbulksms.php';
-    private $apiToken = '66ef464c07d8f';
-    private $sender = 'SAMI NET';
+    private $apiUrl;
+    private $username;
+    private $password;
+    private $sender;
+
+    public function __construct()
+    {
+        $this->apiUrl   = config('services.sms.url');
+        $this->username = config('services.sms.username');
+        $this->password = config('services.sms.password');
+        $this->sender   = config('services.sms.sender');
+    }
 
     public function send($phone, $messageContent, $engineerId = null, $userId = null)
     {
         $sms = SmsMessage::create([
-            'phone' => $phone,
-            'message' => $messageContent,
-            'status' => 'pending',
-            'engineer_id' => $engineerId,
-            'user_id' => $userId,
+            'phone'        => $phone,
+            'message'      => $messageContent,
+            'status'       => 'pending',
+            'engineer_id'  => $engineerId,
+            'user_id'      => $userId,
         ]);
 
         try {
-            $response = Http::get($this->apiUrl, [
-                'api_token' => $this->apiToken,
+
+            $params = [
+                'user_name' => $this->username,
+                'user_pass' => $this->password,
                 'sender'    => $this->sender,
                 'mobile'    => $phone,
-                'type'      => '0',
+                'type'      => 0,
                 'text'      => $messageContent,
-            ]);
+            ];
+            $response = Http::timeout(20)->get($this->apiUrl, $params);
 
             $apiResponse = $response->body();
 
             $sms->update([
-                'status' => $response->successful() ? 'sent' : 'failed',
+                'status'       => $response->successful() ? 'sent' : 'failed',
                 'api_response' => $apiResponse
             ]);
 
-            return true;
+            return $response->successful();
 
         } catch (\Exception $e) {
+
             $sms->update([
-                'status' => 'failed',
+                'status'       => 'failed',
                 'api_response' => $e->getMessage()
             ]);
 

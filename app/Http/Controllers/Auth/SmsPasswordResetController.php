@@ -16,6 +16,18 @@ class SmsPasswordResetController extends Controller
 {
     protected $codeValidityMinutes = 5;
 
+    private function sendSms($mobile, $text)
+    {
+        return Http::get(config('services.sms.url'), [
+            'user_name' => config('services.sms.username'),
+            'user_pass' => config('services.sms.password'),
+            'sender'    => config('services.sms.sender'),
+            'mobile'    => $mobile,
+            'type'      => 0,
+            'text'      => $text,
+        ]);
+    }
+
     public function sendCodeAjax(Request $request)
     {
         $request->validate([
@@ -36,9 +48,7 @@ class SmsPasswordResetController extends Controller
             ]);
         }
 
-        $lastOtp = UserOtp::where('user_id', $user->id)
-                           ->latest()
-                           ->first();
+        $lastOtp = UserOtp::where('user_id', $user->id)->latest()->first();
 
         if ($lastOtp && $lastOtp->created_at->diffInSeconds(now()) < 60) {
             return response()->json([
@@ -64,13 +74,7 @@ class SmsPasswordResetController extends Controller
         $firstName = explode(' ', $user->name ?? $user->username)[0];
         $message = "عزيزي {$firstName} , رمز التحقق الخاص بك هو: {$code}.";
 
-        Http::get('http://hotsms.ps/sendbulksms.php', [
-            'api_token' => '66ef464c07d8f',
-            'sender' => 'SAMI NET',
-            'mobile' => $mobile,
-            'type' => 0,
-            'text' => $message,
-        ]);
+        $this->sendSms($mobile, $message);
 
         Log::info('تم إرسال رمز SMS (DB)', [
             'user' => $user->id,
@@ -171,13 +175,7 @@ class SmsPasswordResetController extends Controller
 
         $message = "عزيزي {$firstName} {$lastName}, رمز التحقق الخاص بك هو: {$code}.";
 
-        Http::get('http://hotsms.ps/sendbulksms.php', [
-            'api_token' => '68643d711e1f4',
-            'sender' => 'Solar Bills',
-            'mobile' => $mobile,
-            'type' => 0,
-            'text' => $message,
-        ]);
+        $this->sendSms($mobile, $message);
 
         return response()->json([
             'success' => true,
