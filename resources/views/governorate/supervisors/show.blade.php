@@ -4,7 +4,10 @@
 
 @push('styles')
 <style>
-
+body {
+    background: #f4f6fa;
+    font-family: 'Cairo', sans-serif;
+}
 .page-header {
     background: white;
     padding: 25px;
