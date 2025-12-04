@@ -8,43 +8,60 @@ use Illuminate\Http\Request;
 
 class GovernorateSupervisorController extends Controller
 {
-   public function index()
-{
-    $user = auth()->user();
+    public function index()
+    {
+        $user = auth()->user();
 
-    $query = User::where('role_id', function($q) {
-        $q->select('id')
-          ->from('roles')
-          ->where('name', 'survey_supervisor');
-    })
-    ->with(['city', 'mainWorkArea']);
+        if (!$user->role_id) {
+            abort(403);
+        }
 
-    if ($user->role->name === 'governorate_manager') {
-        $query->where('governorate_id', $user->governorate_id);
+        $query = User::where('role_id', function($q) {
+            $q->select('id')->from('roles')->where('name', 'survey_supervisor');
+        })->with(['city', 'mainWorkArea']);
+
+        if ($user->role->name === 'governorate_manager') {
+            $query->where('governorate_id', $user->governorate_id);
+        } elseif ($user->role->name !== 'admin') {
+            abort(403);
+        }
+
+        $supervisors = $query->get();
+
+        return view('governorate.supervisors.index', compact('supervisors'));
     }
-
-    $supervisors = $query->get();
-
-    return view('governorate.supervisors.index', compact('supervisors'));
-}
-
-
 
 public function show($id)
 {
     $user = auth()->user();
 
-    $supervisor = User::where('id', $id)
+    if (!$user->role_id) {
+        abort(403);
+    }
+
+    $supervisorQuery = User::where('id', $id)
         ->where('role_id', function($q) {
             $q->select('id')->from('roles')->where('name', 'survey_supervisor');
-        })
-        ->where('governorate_id', $user->governorate_id)
-        ->firstOrFail();
+        });
 
-    $teams = Team::where('supervisor_id', $supervisor->id)
-        ->with('members')
-        ->get();
+    if ($user->role->name === 'governorate_manager') {
+        $supervisorQuery->where('governorate_id', $user->governorate_id);
+    } elseif ($user->role->name !== 'admin') {
+        abort(403);
+    }
+
+    $supervisor = $supervisorQuery->firstOrFail();
+
+    $mainWorkCode = $supervisor->main_work_area_code;
+
+    if (!$mainWorkCode) {
+        $teams = collect();
+    } else {
+$teams = Team::where('main_work_area_code', $mainWorkCode)
+    ->get();
+    }
 
     return view('governorate.supervisors.show', compact('supervisor', 'teams'));
 }
+
 }

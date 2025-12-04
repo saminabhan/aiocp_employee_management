@@ -103,5 +103,28 @@ class Team extends Model
     {
         return $this->belongsTo(Constant::class, 'sub_work_area_code');
     }
+public function engineersFiltered()
+{
+    $user = auth()->user();
+
+    // إذا كان المشرف
+    if ($user->role->name === 'survey_supervisor') {
+
+        // IDs من الفريق
+        $teamEngineerIds = is_array($this->engineer_ids)
+            ? $this->engineer_ids
+            : json_decode($this->engineer_ids, true);
+
+        if (!$teamEngineerIds) return collect([]);
+
+        // ارجع فقط المهندسين اللي الهم نفس main_work_area_code
+        return Engineer::whereIn('id', $teamEngineerIds)
+            ->where('main_work_area_code', $user->main_work_area_code)
+            ->get();
+    }
+
+    // غير المشرف → ارجع كل المهندسين
+    return $this->engineers();
+}
 
 }
