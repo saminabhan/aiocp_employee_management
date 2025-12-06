@@ -519,7 +519,23 @@
                                 <i class="fas fa-user-clock"></i>
                                 <span>جلسات دخول النظام</span>
                             </a>
+
+                            <a href="{{ route('errors.index') }}" class="dropdown-item-custom">
+                                <i class="fas fa-bug"></i>
+                                <span>سجلات الأخطاء</span>
+                            </a>
+
+                            <a href="{{ route('activities.index') }}" class="dropdown-item-custom">
+                                <i class="fas fa-route"></i>
+                                <span>نشاط المستخدمين</span>
+                            </a>
+
+                            <a href="{{ route('analytics.index') }}" class="dropdown-item-custom">
+                                <i class="fas fa-chart-line"></i>
+                                <span>التحليلات</span>
+                            </a>
                         @endif
+
                     @endauth
 
                     <div class="dropdown-divider"></div>

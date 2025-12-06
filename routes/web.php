@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\SmsPasswordResetController;
 use App\Http\Controllers\ConstantController;
 use App\Http\Controllers\DailyAttendanceController;
@@ -8,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EngineerIssueController;
+use App\Http\Controllers\ErrorsController;
 use App\Http\Controllers\GovernorateSupervisorController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\NotificationController;
@@ -230,6 +233,12 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
 
     Route::get('/sessions', [SessionLogController::class, 'index'])
     ->name('sessions.index');
+    Route::get('errors', [ErrorsController::class, 'index'])->name('errors.index');
+    Route::get('errors/{id}', [ErrorsController::class, 'show'])->name('errors.show');
+
+    Route::get('activities', [ActivityController::class, 'index'])->name('activities.index');
+
+    Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
 });
 
