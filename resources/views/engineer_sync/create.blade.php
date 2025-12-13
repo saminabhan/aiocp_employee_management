@@ -197,7 +197,7 @@
                             </td>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $engineer->full_name }}</td>
-                            <td>{{ $engineer->mainWorkAreaCode->name }}</td>
+                            <td>{{ $engineer->mainWorkAreaCode?->name ?? 'غير محدد' }}</td>
                         </tr>
                         @empty
                         <tr>
