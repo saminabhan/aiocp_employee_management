@@ -56,4 +56,10 @@ class DailyEngineerSync extends Model
     {
         return $this->is_synced ? 'زامن' : 'لم يزامن';
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
+    }
+
 }

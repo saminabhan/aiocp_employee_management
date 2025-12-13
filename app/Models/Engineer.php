@@ -168,4 +168,10 @@ public function user()
         return $this->hasMany(DailyAttendance::class, 'engineer_id');
     }
 
+    public function dailySyncs()
+    {
+    return $this->hasMany(DailyEngineerSync::class);
+    }
+
+
 }

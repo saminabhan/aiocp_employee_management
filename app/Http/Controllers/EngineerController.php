@@ -246,31 +246,36 @@ public function getWorkAreas($gov_id)
 
 
 
-    public function show(Engineer $engineer)
-    {
-        $this->authorizeEngineer($engineer);
+public function show(Engineer $engineer)
+{
+    $this->authorizeEngineer($engineer);
 
-        $engineer->load([
-            'gender',
-            'maritalStatus',
-            'homeGovernorate',
-            'homeCity',
-            'workGovernorate',
-            'workCity',
-            'salaryCurrency',
-            'attendances' => function ($q) {
-                $q->orderBy('attendance_date', 'desc');
-            },
-            'issues' => function ($q) {
-                $q->orderBy('created_at', 'desc');
-            }
-        ]);
+    $engineer->load([
+        'gender',
+        'maritalStatus',
+        'homeGovernorate',
+        'homeCity',
+        'workGovernorate',
+        'workCity',
+        'salaryCurrency',
 
-        $problemTypes = Constant::childrenOfId(41)->get();
+        'attendances' => function ($q) {
+            $q->orderBy('attendance_date', 'desc');
+        },
 
-        return view('engineers.show', compact('engineer', 'problemTypes'));
-    }
+        'dailySyncs' => function ($q) {
+            $q->orderBy('sync_date', 'desc');
+        },
 
+        'issues' => function ($q) {
+            $q->orderBy('created_at', 'desc');
+        }
+    ]);
+
+    $problemTypes = Constant::childrenOfId(41)->get();
+
+    return view('engineers.show', compact('engineer', 'problemTypes'));
+}
 public function edit(Engineer $engineer)
 {
     $this->authorizeEngineer($engineer);

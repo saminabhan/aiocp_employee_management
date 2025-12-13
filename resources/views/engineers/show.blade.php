@@ -707,10 +707,38 @@
         cursor: pointer;
         transition: all 0.3s;
     }
-س
+
       .btn-action:hover {
         transform: translateY(-2px);
     }
+
+    .table-fixed {
+        table-layout: fixed;
+    }
+
+    .sync-date {
+        width: 18%;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .sync-day {
+        width: 22%;
+        font-size: 14px;
+    }
+
+    .sync-user {
+        width: 40%;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .sync-time {
+        width: 20%;
+        font-size: 13px;
+        color: #6c757d;
+    }
+
 </style>
 @endpush
 
@@ -814,6 +842,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 </li>
                 <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="employee-attendance-tab" data-bs-toggle="tab" data-bs-target="#employee-attendance" type="button" role="tab">الدوام</button>
+                </li>
+                <li class="nav-items-custom" role="presentation">
+                    <button class="nav-link" id="employee-sync-tab" data-bs-toggle="tab" data-bs-target="#employee-sync" type="button" role="tab">المزامنة</button>
                 </li>
                 <li class="nav-items-custom" role="presentation">
                     <button class="nav-link" id="employee-app-problems-tab" data-bs-toggle="tab" data-bs-target="#employee-app-problems" type="button" role="tab">المشاكل</button>
@@ -1070,6 +1101,50 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 </div>
 
+<div class="tab-pane fade" id="employee-sync" role="tabpanel" aria-labelledby="employee-sync-tab">
+    <div class="section-title">
+        <i class="fas fa-sync-alt"></i> جدول مزامنة الموظف
+    </div>
+
+    <div class="table-responsive mt-3">
+        <table class="table table-bordered table-striped text-center table-fixed equal-columns">
+            <thead class="table-light">
+                <tr>
+                    <th>التاريخ</th>
+                    <th>اليوم</th>
+                    <th>تمت المزامنة بواسطة</th>
+                    <th>وقت المزامنة</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @forelse($engineer->dailySyncs as $sync)
+                    <tr class="sync-row">
+                        <td class="sync-date">
+                            {{ \Carbon\Carbon::parse($sync->sync_date)->format('Y-m-d') }}
+                        </td>
+
+                        <td class="sync-day">
+                            {{ \Carbon\Carbon::parse($sync->sync_date)->locale('ar')->dayName }}
+                        </td>
+
+                        <td class="sync-user">
+                            {{ $sync->user?->name ?? 'غير معروف' }}
+                        </td>
+
+                        <td class="sync-time">
+                            {{ $sync->created_at->format('H:i') }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-muted">لا يوجد عمليات مزامنة</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 
     <div class="tab-pane fade" id="employee-app-problems" role="tabpanel" aria-labelledby="employee-app-problems-tab">
         <div class="section-title"><i class="fas fa-exclamation-triangle"></i> مشاكل التطبيق</div>
