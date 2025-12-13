@@ -185,7 +185,7 @@
                                         'survey supervisors' => 'إدارة مشرفين الحصر',
                                         'profile' => 'إدارة الملف الشخصي',
                                         'attendance' => 'إدارة الدوام اليومي',
-
+                                        'engineer_sync' => 'إدارة مزامنة المهندسين',
                                     ];
                                     $permissionsByCategory = $permissions->groupBy('category');
                                 @endphp

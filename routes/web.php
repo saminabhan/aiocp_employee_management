@@ -5,6 +5,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\SmsPasswordResetController;
 use App\Http\Controllers\ConstantController;
 use App\Http\Controllers\DailyAttendanceController;
+use App\Http\Controllers\DailyEngineerSyncController;
 use App\Http\Controllers\EngineerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -239,6 +240,23 @@ Route::get('/get-work-areas/{gov_id}', [EngineerController::class, 'getWorkAreas
     Route::get('activities', [ActivityController::class, 'index'])->name('activities.index');
 
     Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/engineer-sync', [DailyEngineerSyncController::class, 'index'])
+        ->name('engineer-sync.index');
+
+    Route::get('/engineer-sync/create', [DailyEngineerSyncController::class, 'create'])
+        ->name('engineer-sync.create');
+
+    Route::post('/engineer-sync', [DailyEngineerSyncController::class, 'store'])
+        ->name('engineer-sync.store');
+
+    Route::get('/engineer-sync/{id}/edit', [DailyEngineerSyncController::class, 'edit'])
+        ->name('engineer-sync.edit');
+
+    Route::put('/engineer-sync/{id}', [DailyEngineerSyncController::class, 'update'])
+        ->name('engineer-sync.update');
+
+    Route::delete('/engineer-sync/{id}', [DailyEngineerSyncController::class, 'destroy'])
+        ->name('engineer-sync.destroy');
 
 });
 

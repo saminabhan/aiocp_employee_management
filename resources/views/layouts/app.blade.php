@@ -642,6 +642,15 @@
             </a>
             @endif
 
+            @if(user_can('engineer_sync.view'))
+             <a href="{{ route('engineer-sync.index') }}" 
+               class="nav-item {{ request()->routeIs('engineer-sync.*') ? 'active' : '' }}" 
+               style="text-decoration: none;">
+                <i class="fas fa-sync-alt"></i>
+                <span>مزامنة المهندسين</span>
+            </a>
+            @endif
+
             <div class="sidebar-divider"></div>
 
             @if (user_can('issues.view'))

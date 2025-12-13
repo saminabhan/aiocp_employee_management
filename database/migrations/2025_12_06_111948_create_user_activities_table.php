@@ -15,7 +15,7 @@ public function up()
         $table->string('method')->nullable();
         $table->string('ip')->nullable();
         $table->text('user_agent')->nullable();
-        $table->string('action_type')->nullable(); // login, view, create, delete...
+        $table->string('action_type')->nullable();
         $table->json('additional_data')->nullable();
         $table->timestamps();
     });

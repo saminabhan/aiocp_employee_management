@@ -70,7 +70,12 @@ class PermissionRoleSeeder extends Seeder
             ['name' => 'attendance.create', 'display_name' => 'اضافة دوام اليومي', 'category' => 'attendance'],
             ['name' => 'attendance.edit', 'display_name' => 'تعديل دوام اليومي', 'category' => 'attendance'],
             ['name' => 'attendance.delete', 'display_name' => 'حذف دوام اليومي', 'category' => 'attendance'],
-            
+
+            //Sync
+            ['name' => 'engineer_sync.view',   'display_name' => 'عرض مزامنة المهندسين',   'category' => 'engineer_sync'],
+            ['name' => 'engineer_sync.create', 'display_name' => 'إضافة مزامنة مهندسين',  'category' => 'engineer_sync'],
+            ['name' => 'engineer_sync.edit',   'display_name' => 'تعديل مزامنة مهندسين',  'category' => 'engineer_sync'],
+            ['name' => 'engineer_sync.delete', 'display_name' => 'حذف مزامنة مهندسين',    'category' => 'engineer_sync'],
 
         ];
 
@@ -186,6 +191,12 @@ class PermissionRoleSeeder extends Seeder
             Permission::where('name','teams.edit')->first()->id,
             
             Permission::where('name','dashboard.view')->first()->id,
+
+            Permission::where('name','engineer_sync.view')->first()->id,
+            Permission::where('name','engineer_sync.create')->first()->id,
+            Permission::where('name','engineer_sync.edit')->first()->id,
+            Permission::where('name','engineer_sync.delete')->first()->id,
+
         ]);
 
         // Governorate Manager permissions
@@ -209,6 +220,11 @@ class PermissionRoleSeeder extends Seeder
             Permission::where('name','attendance.create')->first()->id,
             Permission::where('name','attendance.edit')->first()->id,
             Permission::where('name','attendance.delete')->first()->id,
+            
+            Permission::where('name','engineer_sync.view')->first()->id,
+            Permission::where('name','engineer_sync.create')->first()->id,
+            Permission::where('name','engineer_sync.edit')->first()->id,
+            Permission::where('name','engineer_sync.delete')->first()->id,
 
         ]);
 
